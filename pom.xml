@@ -8,11 +8,20 @@
     <artifactId>imovie</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <vertx.version>3.4.1</vertx.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
-            <version>3.4.1</version>
+            <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx.version}</version>
         </dependency>
     </dependencies>
 
