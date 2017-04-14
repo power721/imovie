@@ -1,6 +1,7 @@
 package org.har01d.imovie;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -19,17 +20,36 @@ public class MyApp {
 
         Router router = Router.router(vertx);
 
+        router.route("/movies/:id").method(HttpMethod.GET).method(HttpMethod.PUT).method(HttpMethod.DELETE).handler(routingContext -> {
+            HttpServerRequest request = routingContext.request();
+            HttpServerResponse response = routingContext.response();
+            String id = request.getParam("id");
+            String movie = movies.get(id);
+            if (movie == null) {
+                response.end("Page Not Found!");
+            } else {
+                routingContext.next();
+            }
+        });
+
         router.get("/movies/:id").handler(routingContext -> {
+            HttpServerRequest request = routingContext.request();
+            HttpServerResponse response = routingContext.response();
+            String id = request.getParam("id");
+            response.putHeader("content-type", "text/plain");
+            response.end(movies.get(id));
+        });
+
+        router.put("/movies/:id").handler(routingContext -> {
             HttpServerResponse response = routingContext.response();
             HttpServerRequest request = routingContext.request();
             String id = request.getParam("id");
             response.putHeader("content-type", "text/plain");
             String movie = movies.get(id);
-            if (movie != null) {
+                request.bodyHandler((buffer)->{
+
+                });
                 response.end(movie);
-            } else {
-                response.end("Page Not Found!");
-            }
         });
 
         router.post("/movies").handler(routingContext -> {
