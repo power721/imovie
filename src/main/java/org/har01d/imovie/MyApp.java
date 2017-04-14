@@ -8,15 +8,14 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import org.har01d.imovie.domain.Movie;
 
 public class MyApp {
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
-        AtomicInteger idGenerator = new AtomicInteger();
-        Map<String, String> movies = new HashMap<>();
+        Map<Integer, Movie> movies = new HashMap<>();
 
         Router router = Router.router(vertx);
 
@@ -24,7 +23,7 @@ public class MyApp {
             HttpServerRequest request = routingContext.request();
             HttpServerResponse response = routingContext.response();
             String id = request.getParam("id");
-            String movie = movies.get(id);
+            Movie movie = movies.get(id);
             if (movie == null) {
                 response.end("Page Not Found!");
             } else {
@@ -37,7 +36,7 @@ public class MyApp {
             HttpServerResponse response = routingContext.response();
             String id = request.getParam("id");
             response.putHeader("content-type", "text/plain");
-            response.end(movies.get(id));
+            response.end(movies.get(Integer.valueOf(id)).toString());
         });
 
         router.put("/movies/:id").handler(routingContext -> {
@@ -45,19 +44,19 @@ public class MyApp {
             HttpServerRequest request = routingContext.request();
             String id = request.getParam("id");
             response.putHeader("content-type", "text/plain");
-            String movie = movies.get(id);
+            Movie movie = movies.get(Integer.valueOf(id));
                 request.bodyHandler((buffer)->{
 
                 });
-                response.end(movie);
+                response.end(movie.toString());
         });
 
         router.post("/movies").handler(routingContext -> {
             HttpServerResponse response = routingContext.response();
             response.putHeader("content-type", "text/plain");
-            Integer id = idGenerator.incrementAndGet();
-            movies.put(id.toString(), "Movie " + id);
-            response.end("Movie ID: " + id);
+            Movie movie = new Movie("test ");
+            movies.put(movie.getId(), movie);
+            response.end(movie.toString());
         });
 
         router.route().handler(routingContext -> {
