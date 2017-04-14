@@ -1,6 +1,8 @@
 package org.har01d.imovie.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,5 +27,10 @@ public class MovieRepositoryImpl implements MovieRepository {
 
         movies.put(id, movie);
         return movie;
+    }
+
+    @Override
+    public List<Movie> findAll() {
+        return new ArrayList<>(movies.values());
     }
 }
