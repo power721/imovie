@@ -1,15 +1,14 @@
 package org.har01d.imovie.domain;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Movie {
-    private static AtomicInteger idGenerator = new AtomicInteger();
 
     private Integer id;
     private String name;
 
+    public Movie() {
+    }
+
     public Movie(String name) {
-        this.id = idGenerator.incrementAndGet();
         this.name = name;
     }
 

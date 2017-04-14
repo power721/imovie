@@ -6,16 +6,17 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
-import java.util.HashMap;
-import java.util.Map;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.MovieRepository;
+import org.har01d.imovie.domain.MovieRepositoryImpl;
 
 public class MyApp {
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
-        Map<Integer, Movie> movies = new HashMap<>();
+        MovieRepository movieRepository = new MovieRepositoryImpl();
+        movieRepository.save(new Movie("test"));
 
         Router router = Router.router(vertx);
 
@@ -23,20 +24,19 @@ public class MyApp {
             HttpServerRequest request = routingContext.request();
             HttpServerResponse response = routingContext.response();
             String id = request.getParam("id");
-            Movie movie = movies.get(id);
+            Movie movie = movieRepository.get(Integer.valueOf(id));
             if (movie == null) {
                 response.end("Page Not Found!");
             } else {
+                routingContext.put("movie", movie);
                 routingContext.next();
             }
         });
 
         router.get("/movies/:id").handler(routingContext -> {
-            HttpServerRequest request = routingContext.request();
             HttpServerResponse response = routingContext.response();
-            String id = request.getParam("id");
             response.putHeader("content-type", "text/plain");
-            response.end(movies.get(Integer.valueOf(id)).toString());
+            response.end(String.valueOf((Movie) routingContext.get("movie")));
         });
 
         router.put("/movies/:id").handler(routingContext -> {
@@ -44,7 +44,7 @@ public class MyApp {
             HttpServerRequest request = routingContext.request();
             String id = request.getParam("id");
             response.putHeader("content-type", "text/plain");
-            Movie movie = movies.get(Integer.valueOf(id));
+            Movie movie = movieRepository.get(Integer.valueOf(id));
                 request.bodyHandler((buffer)->{
 
                 });
@@ -55,7 +55,7 @@ public class MyApp {
             HttpServerResponse response = routingContext.response();
             response.putHeader("content-type", "text/plain");
             Movie movie = new Movie("test ");
-            movies.put(movie.getId(), movie);
+            movieRepository.save(movie);
             response.end(movie.toString());
         });
 
