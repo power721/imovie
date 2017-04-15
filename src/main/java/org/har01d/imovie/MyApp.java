@@ -26,18 +26,19 @@ public class MyApp {
 
         router.route().handler(BodyHandler.create());
 
-        router.route("/movies/:id").method(HttpMethod.GET).method(HttpMethod.PUT).method(HttpMethod.DELETE).handler(routingContext -> {
-            HttpServerRequest request = routingContext.request();
-            HttpServerResponse response = routingContext.response();
-            String id = request.getParam("id");
-            Movie movie = movieRepository.get(Integer.valueOf(id));
-            if (movie == null) {
-                response.setStatusCode(404).end("Cannot find the movie!");
-            } else {
-                routingContext.put("movie", movie);
-                routingContext.next();
-            }
-        });
+        router.route("/movies/:id").method(HttpMethod.GET).method(HttpMethod.PUT).method(HttpMethod.DELETE)
+            .handler(routingContext -> {
+                HttpServerRequest request = routingContext.request();
+                HttpServerResponse response = routingContext.response();
+                String id = request.getParam("id");
+                Movie movie = movieRepository.get(Integer.valueOf(id));
+                if (movie == null) {
+                    response.setStatusCode(404).end("Cannot find the movie!");
+                } else {
+                    routingContext.put("movie", movie);
+                    routingContext.next();
+                }
+            });
 
         router.get("/movies/:id").handler(routingContext -> {
             HttpServerResponse response = routingContext.response();
@@ -72,8 +73,12 @@ public class MyApp {
 
         router.route().handler(routingContext -> {
             HttpServerResponse response = routingContext.response();
-            response.putHeader("content-type", "text/plain");
-            response.end("Hello world!");
+            response.putHeader("content-type", "application/json");
+            response.setStatusCode(404).end("Page Not Found!");
+        }).failureHandler(routingContext -> {
+            HttpServerResponse response = routingContext.response();
+            response.putHeader("content-type", "application/json");
+            routingContext.fail(500);
         });
 
         server.requestHandler(router::accept).listen(9090);
