@@ -1,7 +1,5 @@
 package org.har01d.imovie.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,14 +50,25 @@ public class Person {
         this.name = name;
     }
 
-    @JsonView(JsonViews.List.class)
-    public List<Movie> getMovies() {
-        List<Movie> movies = new ArrayList<>();
-        movies.addAll(directMovies);
-        movies.addAll(editMovies);
-        movies.addAll(actMovies);
-        return movies;
+    public List<Movie> getDirectMovies() {
+        return directMovies;
     }
+
+    public List<Movie> getEditMovies() {
+        return editMovies;
+    }
+
+    public List<Movie> getActMovies() {
+        return actMovies;
+    }
+//    @JsonView(JsonViews.List.class)
+//    public List<Movie> getMovies() {
+//        List<Movie> movies = new ArrayList<>();
+//        movies.addAll(directMovies);
+//        movies.addAll(editMovies);
+//        movies.addAll(actMovies);
+//        return movies;
+//    }
 
     @Override
     public boolean equals(Object o) {
