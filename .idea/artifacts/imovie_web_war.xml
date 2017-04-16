@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="imovie-web:war">
+    <output-path>$PROJECT_DIR$/imovie-web/target</output-path>
+    <root id="archive" name="imovie-web-0.1.war">
+      <element id="artifact" artifact-name="imovie-web:war exploded" />
+    </root>
+  </artifact>
+</component>

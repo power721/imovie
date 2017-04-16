@@ -1,0 +1,49 @@
+# config context path to "/" by setting an empty string
+server:
+  contextPath:
+
+security:
+  ignored: /**
+
+spring:
+# JACKSON
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      fail-on-empty-beans: false
+    mapper:
+      DEFAULT_VIEW_INCLUSION: true
+  data:
+    rest:
+      basePath: /api
+# JPA
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      # possible values: validate | update | create | create-drop
+      ddl-auto: create-drop
+      use-new-id-generator-mappings: true
+  datasource:
+    url: jdbc:mysql://localhost/imovies?characterEncoding=UTF-8
+    username: root
+    password: admin@power.oj
+    driver-class-name: com.mysql.jdbc.Driver
+
+logging:
+  file: /tmp/imovie.log
+  level:
+    org.power.oj: DEBUG
+    org.springframework:
+      security: DEBUG
+
+---
+spring:
+  profiles: dev
+  jpa:
+    show-sql: true
+logging:
+  level:
+    org.springframework:
+     web: DEBUG
