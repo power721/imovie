@@ -7,6 +7,9 @@
           <element id="module-output" name="imovie-web" />
         </element>
         <element id="directory" name="lib">
+          <element id="archive" name="imovie-common-0.1.jar">
+            <element id="module-output" name="imovie-common" />
+          </element>
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-data-rest:1.5.2.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter:1.5.2.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot:1.5.2.RELEASE" />

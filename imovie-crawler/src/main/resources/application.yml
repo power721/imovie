@@ -1,0 +1,35 @@
+spring:
+# JPA
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      # possible values: validate | update | create | create-drop
+      ddl-auto: create
+      use-new-id-generator-mappings: true
+  datasource:
+    url: jdbc:mysql://localhost/imovies?characterEncoding=UTF-8
+    username: root
+    password: admin@power.oj
+    driver-class-name: com.mysql.jdbc.Driver
+
+logging:
+  file: /tmp/imovie-crawler.log
+  level:
+    org.power.oj: DEBUG
+    org.springframework:
+      security: DEBUG
+
+url:
+  rs05: http://www.rs05.com/movie/?p=
+
+---
+spring:
+  profiles: dev
+  jpa:
+    show-sql: true
+logging:
+  level:
+    org.springframework:
+     web: DEBUG

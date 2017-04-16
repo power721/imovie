@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/imovie.iml" filepath="$PROJECT_DIR$/imovie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imovie-common/imovie-common.iml" filepath="$PROJECT_DIR$/imovie-common/imovie-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imovie-crawler/imovie-crawler.iml" filepath="$PROJECT_DIR$/imovie-crawler/imovie-crawler.iml" />
       <module fileurl="file://$PROJECT_DIR$/imovie-web/imovie-web.iml" filepath="$PROJECT_DIR$/imovie-web/imovie-web.iml" />
     </modules>
   </component>

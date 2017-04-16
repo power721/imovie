@@ -11,6 +11,8 @@
 
     <modules>
         <module>imovie-web</module>
+        <module>imovie-common</module>
+        <module>imovie-crawler</module>
     </modules>
 
     <parent>

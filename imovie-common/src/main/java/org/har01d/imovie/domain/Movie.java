@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 public class Movie {
@@ -24,6 +23,10 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(JsonViews.List.class)
     private Integer id;
+
+    @NotNull
+    @JsonView(JsonViews.List.class)
+    private String title;
 
     @NotNull
     @JsonView(JsonViews.List.class)
@@ -91,7 +94,6 @@ public class Movie {
     private String dbScore;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
     @JsonView(JsonViews.Detail.class)
     private Date createdTime = new Date();
 
@@ -101,6 +103,14 @@ public class Movie {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getName() {

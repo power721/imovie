@@ -6,12 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="imovie-common" />
+        <module name="imovie-crawler" />
         <module name="imovie-web" />
+        <module name="movie-crawler" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="imovie" target="1.8" />
+      <module name="imovie-common" target="1.8" />
+      <module name="imovie-crawler" target="1.8" />
       <module name="imovie-web" target="1.8" />
+      <module name="movie-crawler" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
