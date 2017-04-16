@@ -55,13 +55,15 @@ public class Rs05ParserImpl implements Rs05Parser {
     @Autowired
     private RegionRepository regionRepository;
 
-    private boolean isV2;
+    private int infoType;
 
-    private String[] tokens = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
-        "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"};
-
-    private String[] tokens2 = new String[]{"◎译　　名", "◎片　　名", "◎年　　代", "◎国　　家", "◎类　　别", "◎语　　言",
-        "◎字　　幕", "◎IMDB评分", "◎文件格式", "◎视频尺寸", "◎文件大小", "◎片　　长", "◎导　　演", "◎主　　演"};
+    private String[][] tokens = new String[][]{
+        new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
+            "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"},
+        new String[]{"◎译　　名", "◎片　　名", "◎年　　代", "◎国　　家", "◎类　　别", "◎语　　言",
+            "◎字　　幕", "◎IMDB评分", "◎文件格式", "◎视频尺寸", "◎文件大小", "◎片　　长", "◎导　　演", "◎主　　演"},
+        new String[]{"主 演：", "导 演：", "类 型：", "地 区：", "语 言：", "年 份：", "片 名："},
+    };
 
     @Override
     public void parse(String url, Movie movie) throws IOException {
@@ -72,7 +74,7 @@ public class Rs05ParserImpl implements Rs05Parser {
         Set<Resource> resources = new HashSet<>();
 
         boolean actors = false;
-        isV2 = isVersion2(info);
+        infoType = getInfoType(info);
         movie.setSynopsis(findSynopsis(info));
 
         for (Node node : info.childNodes()) {
@@ -84,8 +86,10 @@ public class Rs05ParserImpl implements Rs05Parser {
                     for (Node child : children) {
                         if (child instanceof TextNode) {
                             String text = ((TextNode) child).text();
-                            if (isV2) {
+                            if (infoType == 1) {
                                 actors = getMetadata2(text.trim(), movie, actors);
+                            } else if (infoType == 2) {
+                                getMetadata3(text.trim(), movie);
                             } else {
                                 getMetadata(text.trim(), movie);
                             }
@@ -143,12 +147,7 @@ public class Rs05ParserImpl implements Rs05Parser {
 
     private boolean isInfoNode(String html) {
         int count = 0;
-        String[] array = tokens;
-        if (isV2) {
-            array = tokens2;
-        }
-
-        for (String token : array) {
+        for (String token : tokens[infoType]) {
             if (html.contains(token)) {
                 count++;
             }
@@ -225,6 +224,8 @@ public class Rs05ParserImpl implements Rs05Parser {
         if ((values = getValues(text, "导演:")) != null) {
             movie.setDirectors(getPersons(values));
             return true;
+        } else if ((values = getValues2(text, "导 演：")) != null) {
+            movie.setDirectors(getPersons(values));
         }
 
         if ((values = getValues(text, "编剧:")) != null) {
@@ -240,16 +241,22 @@ public class Rs05ParserImpl implements Rs05Parser {
         if ((values = getValues(text, "类型:")) != null) {
             movie.setCategories(getCategories(values));
             return true;
+        } else if ((values = getValues2(text, "类 型：")) != null) {
+            movie.setCategories(getCategories(values));
         }
 
         if ((values = getValues(text, "制片国家/地区:")) != null) {
             movie.setRegions(getRegions(values));
             return true;
+        } else if ((values = getValues2(text, "地 区：")) != null) {
+            movie.setRegions(getRegions(values));
         }
 
         if ((values = getValues(text, "语言:")) != null) {
             movie.setLanguages(getLanguages(values));
             return true;
+        } else if ((values = getValues2(text, "语 言：")) != null) {
+            movie.setLanguages(getLanguages(values));
         }
 
         if ((values = getValues(text, "又名:")) != null) {
@@ -262,6 +269,8 @@ public class Rs05ParserImpl implements Rs05Parser {
             movie.setReleaseDate(value);
             return true;
         } else if ((value = getValue2(text, "首播:")) != null) {
+            movie.setReleaseDate(value);
+        } else if ((value = getValue2(text, "年 份：")) != null) {
             movie.setReleaseDate(value);
         }
 
@@ -334,14 +343,62 @@ public class Rs05ParserImpl implements Rs05Parser {
         return false;
     }
 
-    private boolean isVersion2(Element info) {
+    private boolean getMetadata3(String text, Movie movie) {
+        Set<String> values;
+        if ((values = getValues2(text, "导 演：")) != null) {
+            movie.setDirectors(getPersons(values));
+        }
+
+//        if ((values = getValues(text, "编剧:")) != null) {
+//            movie.setEditors(getPersons(values));
+//            return true;
+//        }
+
+        if ((values = getValues(text, "主 演：")) != null) {
+            movie.setActors(getPersons(values));
+            return true;
+        }
+
+        if ((values = getValues2(text, "类 型：")) != null) {
+            movie.setCategories(getCategories(values));
+        }
+
+        if ((values = getValues2(text, "地 区：")) != null) {
+            movie.setRegions(getRegions(values));
+        }
+
+        if ((values = getValues2(text, "语 言：")) != null) {
+            movie.setLanguages(getLanguages(values));
+        }
+
+        if ((values = getValues(text, "片 名：")) != null) {
+            movie.setAliases(values);
+            return true;
+        }
+
+        String value;
+        if ((value = getValue2(text, "年 份：")) != null) {
+            movie.setReleaseDate(value);
+        }
+
+        return false;
+    }
+
+    private int getInfoType(Element info) {
         String text = info.text();
-        for (String token : tokens2) {
+        for (String token : tokens[2]) {
             if (text.contains(token)) {
-                return true;
+                return 2;
             }
         }
-        return false;
+
+        for (String token : tokens[1]) {
+            if (text.contains(token)) {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 
     private String findSynopsis(Element info) {
@@ -377,8 +434,10 @@ public class Rs05ParserImpl implements Rs05Parser {
         Set<String> values = new HashSet<>();
         String value = text.substring(prefix.length(), text.length());
         String regex = " / ";
-        if (isV2) {
+        if (infoType == 1) {
             regex = "/";
+        } else if (infoType == 2) {
+            regex = "，";
         }
         String[] vals = value.split(regex);
         for (String val : vals) {
@@ -408,12 +467,7 @@ public class Rs05ParserImpl implements Rs05Parser {
 
     private int getNextToken(String text, int start) {
         int index = text.length();
-        String[] array = tokens;
-        if (isV2) {
-            array = tokens2;
-        }
-
-        for (String token : array) {
+        for (String token : tokens[infoType]) {
             int i = text.indexOf(token, start);
             if (i > 0 && i < index) {
                 index = i;
