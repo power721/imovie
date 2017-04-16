@@ -21,6 +21,7 @@ import org.har01d.imovie.domain.RegionRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -134,6 +135,7 @@ public class Rs05ParserImpl implements Rs05Parser {
             }
         }
 
+        logger.info("get {} resources for movie {}", resources.size(), movie.getName());
         if (resources.isEmpty()) {
             return;
         }
@@ -567,10 +569,29 @@ public class Rs05ParserImpl implements Rs05Parser {
             }
 
             String title = element.text();
+            String newUri = UrlUtils.convertUrl(uri);
+            Optional<Resource> resource = resourceRepository.findFirstByUri(newUri);
+            if (resource.isPresent()) {
+                logger.warn("Find duplicate resource {}!", resource.get().getId());
+                return null;
+            }
+
+            Resource r = new Resource(newUri, title);
+            if (!newUri.equals(uri)) {
+                r.setOriginal(uri);
+            }
+            resourceRepository.save(r);
+            logger.debug("find new resource {}", title);
+            return r;
+        } else if ("embed".equals(element.tagName()) || html.contains("<embed ")) {
+            String uri = element.select("embed").first().attr("src");
+            String title = "在线观看/下载";
             Optional<Resource> resource = resourceRepository.findFirstByUri(uri);
             if (resource.isPresent()) {
-                return resource.get();
+                logger.warn("Find duplicate resource {}!", resource.get().getId());
+                return null;
             }
+
             Resource r = new Resource(uri, title);
             resourceRepository.save(r);
             logger.debug("find new resource {}", title);

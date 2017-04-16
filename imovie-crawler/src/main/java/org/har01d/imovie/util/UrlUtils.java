@@ -1,26 +1,36 @@
 package org.har01d.imovie.util;
 
 import java.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class UrlUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(UrlUtils.class);
+
     public static String convertUrl(String encodedUrl) {
-        if (encodedUrl.startsWith("thunder://")) {
-            byte[] bytes = Base64.getDecoder().decode(encodedUrl.substring("thunder://".length(), encodedUrl.length()));
-            String url = new String(bytes);
-            return url.substring(2, url.length() - 2);
-        }
+        try {
+            if (encodedUrl.startsWith("thunder://")) {
+                String base64 = encodedUrl.substring("thunder://".length(), encodedUrl.length());
+                byte[] bytes = Base64.getDecoder().decode(base64);
+                String url = new String(bytes);
+                return url.substring(2, url.length() - 2);
+            }
 
-        if (encodedUrl.startsWith("qqdl://")) {
-            byte[] bytes = Base64.getDecoder().decode(encodedUrl.substring("qqdl://".length(), encodedUrl.length()));
-            return new String(bytes);
-        }
+            if (encodedUrl.startsWith("qqdl://")) {
+                String base64 = encodedUrl.substring("qqdl://".length(), encodedUrl.length());
+                byte[] bytes = Base64.getDecoder().decode(base64);
+                return new String(bytes);
+            }
 
-        if (encodedUrl.startsWith("flashget://")) {
-            byte[] bytes = Base64.getDecoder()
-                .decode(encodedUrl.substring("flashget://".length(), encodedUrl.length()));
-            String url = new String(bytes);
-            return url.substring(10, url.length() - 10);
+            if (encodedUrl.startsWith("flashget://")) {
+                String base64 = encodedUrl.substring("flashget://".length(), encodedUrl.length());
+                byte[] bytes = Base64.getDecoder().decode(base64);
+                String url = new String(bytes);
+                return url.substring(10, url.length() - 10);
+            }
+        } catch (Exception e) {
+            logger.warn("convert {} failed!", encodedUrl, e);
         }
 
         return encodedUrl;

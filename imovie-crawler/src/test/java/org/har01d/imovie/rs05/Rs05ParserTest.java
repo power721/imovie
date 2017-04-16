@@ -18,7 +18,7 @@ public class Rs05ParserTest {
 
     @Test
     public void test() throws Exception {
-        String pageUrl = "http://www.rs05.com/movie347.html";
+        String pageUrl = "http://www.rs05.com/movie6418.html";
         Movie movie = new Movie();
         movie.setSource(pageUrl);
         parser.parse(pageUrl, movie);

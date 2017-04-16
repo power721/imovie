@@ -18,6 +18,10 @@ public class Resource {
     @Column(columnDefinition = "TEXT")
     private String uri;
 
+    @NotNull
+    @Column(columnDefinition = "TEXT")
+    private String original;
+
     private String title;
 
     public Resource() {
@@ -54,6 +58,14 @@ public class Resource {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOriginal() {
+        return original;
+    }
+
+    public void setOriginal(String original) {
+        this.original = original;
     }
 
     @Override
