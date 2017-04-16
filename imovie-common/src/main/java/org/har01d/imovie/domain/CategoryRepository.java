@@ -1,7 +1,8 @@
 package org.har01d.imovie.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends MyRepository<Category, Integer> {
 
+    Optional<Category> findFirstByName(String name);
 }

@@ -2,6 +2,7 @@ package org.har01d.imovie.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -35,8 +36,11 @@ public class Movie {
     @JsonView(JsonViews.List.class)
     private Integer year;
 
+    private String source;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.List.class)
-    private String region;
+    private Set<Region> regions;
 
     @Column(columnDefinition = "TEXT")
     @JsonView(JsonViews.List.class)
@@ -59,6 +63,10 @@ public class Movie {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
+    private Set<Tag> tags;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonView(JsonViews.Detail.class)
     private Set<Person> directors;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -69,9 +77,9 @@ public class Movie {
     @JsonView(JsonViews.Detail.class)
     private Set<Person> actors;
 
-    @ElementCollection
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
-    private Set<String> languages;
+    private Set<Language> languages;
 
     @ElementCollection
     @JsonView(JsonViews.Detail.class)
@@ -129,12 +137,20 @@ public class Movie {
         this.year = year;
     }
 
-    public String getRegion() {
-        return region;
+    public String getSource() {
+        return source;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public Set<Region> getRegions() {
+        return regions;
+    }
+
+    public void setRegions(Set<Region> regions) {
+        this.regions = regions;
     }
 
     public String getSynopsis() {
@@ -177,6 +193,14 @@ public class Movie {
         this.aliases = aliases;
     }
 
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
     public Set<Person> getDirectors() {
         return directors;
     }
@@ -201,11 +225,18 @@ public class Movie {
         this.actors = actors;
     }
 
-    public Set<String> getLanguages() {
+    public void addActors(Set<Person> actors) {
+        if (this.actors == null) {
+            this.actors = new HashSet<>();
+        }
+        this.actors.addAll(actors);
+    }
+
+    public Set<Language> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(Set<String> languages) {
+    public void setLanguages(Set<Language> languages) {
         this.languages = languages;
     }
 

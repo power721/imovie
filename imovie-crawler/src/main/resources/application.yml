@@ -33,3 +33,21 @@ logging:
   level:
     org.springframework:
      web: DEBUG
+
+---
+spring:
+  profiles: test
+# JPA
+  jpa:
+    show-sql: true
+    database: H2
+    hibernate:
+      # possible values: validate | update | create | create-drop
+      ddl-auto: update
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE
+logging:
+  level:
+    org.springframework:
+     web: DEBUG
