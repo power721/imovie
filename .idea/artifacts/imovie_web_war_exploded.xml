@@ -29,11 +29,7 @@
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.7" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-rest-webmvc:2.6.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-rest-core:2.6.1.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.hateoas:spring-hateoas:0.23.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.atteo:evo-inflector:1.2.1" />
-          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.24" />
-          <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.7.24" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-data-jpa:1.5.2.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-aop:1.5.2.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:4.3.7.RELEASE" />
@@ -58,6 +54,12 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.3.7.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-beans:4.3.7.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aspects:4.3.7.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.data:spring-data-rest-hal-browser:2.6.1.RELEASE" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.24" />
+          <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.7.24" />
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-hateoas:1.5.2.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.hateoas:spring-hateoas:0.23.0.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.3.7.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.3.7.RELEASE" />

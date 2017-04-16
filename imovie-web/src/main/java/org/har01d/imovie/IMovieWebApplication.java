@@ -6,10 +6,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
 @EnableWebMvc
-public class ImovieWebApplication {
+public class IMovieWebApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ImovieWebApplication.class, args);
+        SpringApplication.run(IMovieWebApplication.class, args);
     }
 
 }

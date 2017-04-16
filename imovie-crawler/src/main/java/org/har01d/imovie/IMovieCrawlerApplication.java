@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
-public class ImovieCrawlerApplication implements CommandLineRunner {
+public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private Environment environment;
@@ -18,7 +18,7 @@ public class ImovieCrawlerApplication implements CommandLineRunner {
     private Rs05Crawler rs05Crawler;
 
     public static void main(String[] args) {
-        SpringApplication.run(ImovieCrawlerApplication.class, args);
+        SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
 
     @Override
