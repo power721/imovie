@@ -41,7 +41,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int page = 1;
+        int page = 469;
         while (true) {
             String url = baseUrl + page;
             try {
@@ -52,18 +52,18 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 for (Element element : elements) {
                     Element header = element.select(".intro h2 a").first();
                     String title = header.attr("title");
-                    String name = getName(title);
 
                     String pageUrl = header.attr("href");
+                    if (movieRepository.findFirstBySource(pageUrl).isPresent()) {
+                        continue;
+                    }
+
+                    String name = getName(title);
                     String cover = element.select(".movie-thumbnails img").attr("data-original");
                     Element dou = element.select(".intro .dou a").first();
                     String dbUrl = dou.attr("href");
                     String dbScore = dou.text();
                     Elements tagElements = element.select(".tags a");
-
-                    if (movieRepository.findFirstBySource(pageUrl).isPresent()) {
-                        continue;
-                    }
 
                     Movie movie = new Movie();
                     movie.setSource(pageUrl);

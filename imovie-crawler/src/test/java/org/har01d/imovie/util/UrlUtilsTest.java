@@ -7,6 +7,12 @@ import org.junit.Test;
 public class UrlUtilsTest {
 
     @Test
+    public void test() throws Exception {
+        String encodedUrl = "thunder://QUFmdHA6Ly9keTpkeUB4bGEuMnR1LmNjOjIwNTI2L1vRuMDXz8LU2Hd3dy4ydHUuY2Nd1MS687y0t9kuQkTW0NOiy6vX1jEyODC438flLnJtdmJaWg==";
+        System.out.println(UrlUtils.convertUrl(encodedUrl));
+    }
+
+    @Test
     public void convertThunder() throws Exception {
         String encodedUrl = "thunder://QUFodHRwOi8vdG9vbC5sdS90ZXN0LnppcFpa";
         assertEquals("http://tool.lu/test.zip", UrlUtils.convertUrl(encodedUrl));

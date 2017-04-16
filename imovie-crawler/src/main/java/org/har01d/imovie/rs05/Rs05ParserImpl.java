@@ -30,6 +30,7 @@ import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -580,6 +581,16 @@ public class Rs05ParserImpl implements Rs05Parser {
             if (!newUri.equals(uri)) {
                 r.setOriginal(uri);
             }
+
+            try {
+                resourceRepository.save(r);
+                logger.debug("find new resource {}", title);
+                return r;
+            } catch (JpaSystemException e) {
+                logger.warn("save Resource failed!", e);
+            }
+
+            r = new Resource(uri, title);
             resourceRepository.save(r);
             logger.debug("find new resource {}", title);
             return r;
