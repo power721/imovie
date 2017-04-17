@@ -41,7 +41,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int page = 469;
+        int page = 1;
         while (true) {
             String url = baseUrl + page;
             try {
@@ -49,6 +49,11 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("#movielist li");
                 logger.info("get {} movies", elements.size());
+                if (elements.isEmpty()) {
+                    break;
+                }
+
+                int count = 0;
                 for (Element element : elements) {
                     Element header = element.select(".intro h2 a").first();
                     String title = header.attr("title");
@@ -74,6 +79,11 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     movie.setDbScore(dbScore);
                     movie.setTags(getTags(tagElements));
                     parser.parse(pageUrl, movie);
+                    count++;
+                }
+
+                if (count == 0) {
+                    break;
                 }
                 page++;
             } catch (IOException e) {

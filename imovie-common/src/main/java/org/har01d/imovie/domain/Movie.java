@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -49,7 +48,7 @@ public class Movie {
     @JsonView(JsonViews.List.class)
     private String cover;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
     private Set<Resource> resources;
 
@@ -82,6 +81,7 @@ public class Movie {
     private Set<Language> languages;
 
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     @JsonView(JsonViews.Detail.class)
     private Set<String> snapshots;
 

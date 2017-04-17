@@ -8,18 +8,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.har01d.imovie.domain.Category;
-import org.har01d.imovie.domain.CategoryRepository;
-import org.har01d.imovie.domain.Language;
-import org.har01d.imovie.domain.LanguageRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
-import org.har01d.imovie.domain.Person;
-import org.har01d.imovie.domain.PersonRepository;
-import org.har01d.imovie.domain.Region;
-import org.har01d.imovie.domain.RegionRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
@@ -40,22 +33,13 @@ public class Rs05ParserImpl implements Rs05Parser {
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
 
     @Autowired
+    private MovieService service;
+    
+    @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
-    private PersonRepository personRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private ResourceRepository resourceRepository;
-
-    @Autowired
-    private LanguageRepository languageRepository;
-
-    @Autowired
-    private RegionRepository regionRepository;
 
     private int infoType;
 
@@ -177,27 +161,27 @@ public class Rs05ParserImpl implements Rs05Parser {
     private void getOldMetadata(String text, Movie movie) {
         Set<String> values;
         if ((values = getValues2(text, "导演:")) != null) {
-            movie.setDirectors(getPersons(values));
+            movie.setDirectors(service.getPersons(values));
         }
 
         if ((values = getValues2(text, "编剧:")) != null) {
-            movie.setEditors(getPersons(values));
+            movie.setEditors(service.getPersons(values));
         }
 
         if ((values = getValues2(text, "主演:")) != null) {
-            movie.setActors(getPersons(values));
+            movie.setActors(service.getPersons(values));
         }
 
         if ((values = getValues2(text, "类型:")) != null) {
-            movie.setCategories(getCategories(values));
+            movie.setCategories(service.getCategories(values));
         }
 
         if ((values = getValues2(text, "制片国家/地区:")) != null) {
-            movie.setRegions(getRegions(values));
+            movie.setRegions(service.getRegions(values));
         }
 
         if ((values = getValues2(text, "语言:")) != null) {
-            movie.setLanguages(getLanguages(values));
+            movie.setLanguages(service.getLanguages(values));
         }
 
         if ((values = getValues2(text, "又名:")) != null) {
@@ -211,9 +195,9 @@ public class Rs05ParserImpl implements Rs05Parser {
             movie.setReleaseDate(value);
         }
 
-        if ((value = getValue2(text, "片长:")) != null) {
+        if ((value = getValue2(text, "片长:", 120)) != null) {
             movie.setRunningTime(value);
-        } else if ((value = getValue2(text, "单集片长:")) != null) {
+        } else if ((value = getValue2(text, "单集片长:", 120)) != null) {
             movie.setRunningTime(value);
         }
 
@@ -225,41 +209,41 @@ public class Rs05ParserImpl implements Rs05Parser {
     private boolean getMetadata(String text, Movie movie) {
         Set<String> values;
         if ((values = getValues(text, "导演:")) != null) {
-            movie.setDirectors(getPersons(values));
+            movie.setDirectors(service.getPersons(values));
             return true;
         } else if ((values = getValues2(text, "导 演：")) != null) {
-            movie.setDirectors(getPersons(values));
+            movie.setDirectors(service.getPersons(values));
         }
 
         if ((values = getValues(text, "编剧:")) != null) {
-            movie.setEditors(getPersons(values));
+            movie.setEditors(service.getPersons(values));
             return true;
         }
 
         if ((values = getValues(text, "主演:")) != null) {
-            movie.setActors(getPersons(values));
+            movie.setActors(service.getPersons(values));
             return true;
         }
 
         if ((values = getValues(text, "类型:")) != null) {
-            movie.setCategories(getCategories(values));
+            movie.setCategories(service.getCategories(values));
             return true;
         } else if ((values = getValues2(text, "类 型：")) != null) {
-            movie.setCategories(getCategories(values));
+            movie.setCategories(service.getCategories(values));
         }
 
         if ((values = getValues(text, "制片国家/地区:")) != null) {
-            movie.setRegions(getRegions(values));
+            movie.setRegions(service.getRegions(values));
             return true;
         } else if ((values = getValues2(text, "地 区：")) != null) {
-            movie.setRegions(getRegions(values));
+            movie.setRegions(service.getRegions(values));
         }
 
         if ((values = getValues(text, "语言:")) != null) {
-            movie.setLanguages(getLanguages(values));
+            movie.setLanguages(service.getLanguages(values));
             return true;
         } else if ((values = getValues2(text, "语 言：")) != null) {
-            movie.setLanguages(getLanguages(values));
+            movie.setLanguages(service.getLanguages(values));
         }
 
         if ((values = getValues(text, "又名:")) != null) {
@@ -277,10 +261,10 @@ public class Rs05ParserImpl implements Rs05Parser {
             movie.setReleaseDate(value);
         }
 
-        if ((value = getValue(text, "片长:")) != null) {
+        if ((value = getValue(text, "片长:", 120)) != null) {
             movie.setRunningTime(value);
             return true;
-        } else if ((value = getValue2(text, "单集片长:")) != null) {
+        } else if ((value = getValue2(text, "单集片长:", 120)) != null) {
             movie.setRunningTime(value);
         }
 
@@ -293,33 +277,33 @@ public class Rs05ParserImpl implements Rs05Parser {
 
     private boolean getMetadata2(String text, Movie movie, boolean addActors) {
         if (addActors) {
-            movie.addActors(getPersons(Collections.singleton(text.replaceAll(" ", "").trim())));
+            movie.addActors(service.getPersons(Collections.singleton(text.replaceAll(" ", "").trim())));
             return true;
         }
 
         Set<String> values;
         if ((values = getValues(text, "◎导　　演")) != null) {
-            movie.setDirectors(getPersons(values));
+            movie.setDirectors(service.getPersons(values));
             return false;
         }
 
         if ((values = getValues(text, "◎主　　演")) != null) {
-            movie.addActors(getPersons(values));
+            movie.addActors(service.getPersons(values));
             return true;
         }
 
         if ((values = getValues(text, "◎类　　别")) != null) {
-            movie.setCategories(getCategories(values));
+            movie.setCategories(service.getCategories(values));
             return false;
         }
 
         if ((values = getValues(text, "◎国　　家")) != null) {
-            movie.setRegions(getRegions(values));
+            movie.setRegions(service.getRegions(values));
             return false;
         }
 
         if ((values = getValues(text, "◎语　　言")) != null) {
-            movie.setLanguages(getLanguages(values));
+            movie.setLanguages(service.getLanguages(values));
             return false;
         }
 
@@ -334,7 +318,7 @@ public class Rs05ParserImpl implements Rs05Parser {
             return false;
         }
 
-        if ((value = getValue(text, "◎片　　长")) != null) {
+        if ((value = getValue(text, "◎片　　长", 120)) != null) {
             movie.setRunningTime(value);
             return false;
         }
@@ -349,29 +333,29 @@ public class Rs05ParserImpl implements Rs05Parser {
     private boolean getMetadata3(String text, Movie movie) {
         Set<String> values;
         if ((values = getValues2(text, "导 演：")) != null) {
-            movie.setDirectors(getPersons(values));
+            movie.setDirectors(service.getPersons(values));
         }
 
 //        if ((values = getValues(text, "编剧:")) != null) {
-//            movie.setEditors(getPersons(values));
+//            movie.setEditors(service.getPersons(values));
 //            return true;
 //        }
 
         if ((values = getValues(text, "主 演：")) != null) {
-            movie.setActors(getPersons(values));
+            movie.setActors(service.getPersons(values));
             return true;
         }
 
         if ((values = getValues2(text, "类 型：")) != null) {
-            movie.setCategories(getCategories(values));
+            movie.setCategories(service.getCategories(values));
         }
 
         if ((values = getValues2(text, "地 区：")) != null) {
-            movie.setRegions(getRegions(values));
+            movie.setRegions(service.getRegions(values));
         }
 
         if ((values = getValues2(text, "语 言：")) != null) {
-            movie.setLanguages(getLanguages(values));
+            movie.setLanguages(service.getLanguages(values));
         }
 
         if ((values = getValues(text, "片 名：")) != null) {
@@ -420,6 +404,15 @@ public class Rs05ParserImpl implements Rs05Parser {
         return text.substring(prefix.length(), text.length()).replaceAll("　", "").trim();
     }
 
+    private String getValue(String text, String prefix, int maxLen) {
+        String result = getValue(text, prefix);
+        if (result != null) {
+            return result.substring(0, Math.min(result.length(), maxLen));
+        } else {
+            return null;
+        }
+    }
+
     private String getValue2(String text, String prefix) {
         if (!text.contains(prefix)) {
             return null;
@@ -427,6 +420,15 @@ public class Rs05ParserImpl implements Rs05Parser {
         int index1 = text.indexOf(prefix) + prefix.length();
         int index2 = getNextToken(text, index1);
         return text.substring(index1, index2).trim();
+    }
+
+    private String getValue2(String text, String prefix, int maxLen) {
+        String result = getValue2(text, prefix);
+        if (result != null) {
+            return result.substring(0, Math.min(result.length(), maxLen));
+        } else {
+            return null;
+        }
     }
 
     private Set<String> getValues(String text, String prefix) {
@@ -479,66 +481,6 @@ public class Rs05ParserImpl implements Rs05Parser {
         return index;
     }
 
-    private Set<Person> getPersons(Set<String> names) {
-        Set<Person> persons = new HashSet<>();
-        for (String name : names) {
-            Optional<Person> person = personRepository.findFirstByName(name);
-            if (person.isPresent()) {
-                persons.add(person.get());
-            } else {
-                Person p = new Person(name);
-                personRepository.save(p);
-                persons.add(p);
-            }
-        }
-        return persons;
-    }
-
-    private Set<Category> getCategories(Set<String> names) {
-        Set<Category> categories = new HashSet<>();
-        for (String name : names) {
-            Optional<Category> category = categoryRepository.findFirstByName(name);
-            if (category.isPresent()) {
-                categories.add(category.get());
-            } else {
-                Category c = new Category(name);
-                categoryRepository.save(c);
-                categories.add(c);
-            }
-        }
-        return categories;
-    }
-
-    private Set<Language> getLanguages(Set<String> names) {
-        Set<Language> languages = new HashSet<>();
-        for (String name : names) {
-            Optional<Language> language = languageRepository.findFirstByName(name);
-            if (language.isPresent()) {
-                languages.add(language.get());
-            } else {
-                Language l = new Language(name);
-                languageRepository.save(l);
-                languages.add(l);
-            }
-        }
-        return languages;
-    }
-
-    private Set<Region> getRegions(Set<String> names) {
-        Set<Region> regions = new HashSet<>();
-        for (String name : names) {
-            Optional<Region> region = regionRepository.findFirstByName(name);
-            if (region.isPresent()) {
-                regions.add(region.get());
-            } else {
-                Region r = new Region(name);
-                regionRepository.save(r);
-                regions.add(r);
-            }
-        }
-        return regions;
-    }
-
     private String getImdbUrl(String imdb) {
         if (imdb.contains("http://www.imdb.com/title/")) {
             return imdb;
@@ -573,8 +515,7 @@ public class Rs05ParserImpl implements Rs05Parser {
             String newUri = UrlUtils.convertUrl(uri);
             Optional<Resource> resource = resourceRepository.findFirstByUri(newUri);
             if (resource.isPresent()) {
-                logger.warn("Find duplicate resource {}!", resource.get().getId());
-                return null;
+                return resource.get();
             }
 
             Resource r = new Resource(newUri, title);
@@ -599,8 +540,7 @@ public class Rs05ParserImpl implements Rs05Parser {
             String title = "在线观看/下载";
             Optional<Resource> resource = resourceRepository.findFirstByUri(uri);
             if (resource.isPresent()) {
-                logger.warn("Find duplicate resource {}!", resource.get().getId());
-                return null;
+                return resource.get();
             }
 
             Resource r = new Resource(uri, title);
