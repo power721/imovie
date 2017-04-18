@@ -20,7 +20,6 @@ public class Rs05ParserTest {
     public void test() throws Exception {
         String pageUrl = "http://www.rs05.com/movie6418.html";
         Movie movie = new Movie();
-        movie.setSource(pageUrl);
         parser.parse(pageUrl, movie);
     }
 
@@ -28,7 +27,6 @@ public class Rs05ParserTest {
     public void testChina() throws Exception {
         String pageUrl = "http://www.rs05.com/movie6867.html";
         Movie movie = new Movie();
-        movie.setSource(pageUrl);
         parser.parse(pageUrl, movie);
     }
 
@@ -36,7 +34,6 @@ public class Rs05ParserTest {
     public void testMissingField() throws Exception {
         String pageUrl = "http://www.rs05.com/movie6141.html";
         Movie movie = new Movie();
-        movie.setSource(pageUrl);
         parser.parse(pageUrl, movie);
     }
 
@@ -44,7 +41,6 @@ public class Rs05ParserTest {
     public void testOld() throws Exception {
         String pageUrl = "http://www.rs05.com/movie100087.html";
         Movie movie = new Movie();
-        movie.setSource(pageUrl);
         parser.parse(pageUrl, movie);
     }
 }

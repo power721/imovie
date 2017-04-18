@@ -18,10 +18,10 @@ public class BttParserTest {
 
     @Test
     public void test() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4350576.htm";
+        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4350535.htm";
         Movie movie = new Movie();
-        movie.setSource(pageUrl);
         movie.setTitle("test");
         parser.parse(pageUrl, movie);
     }
+
 }

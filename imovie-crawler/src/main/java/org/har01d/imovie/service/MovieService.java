@@ -5,6 +5,7 @@ import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
+import org.har01d.imovie.domain.Tag;
 
 public interface MovieService {
 
@@ -15,4 +16,6 @@ public interface MovieService {
     Set<Language> getLanguages(Set<String> names);
 
     Set<Region> getRegions(Set<String> names);
+
+    Set<Tag> getTags(Set<String> names);
 }

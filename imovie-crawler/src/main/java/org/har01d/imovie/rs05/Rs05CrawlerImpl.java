@@ -1,15 +1,13 @@
 package org.har01d.imovie.rs05;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.har01d.imovie.domain.Event;
+import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
-import org.har01d.imovie.domain.Tag;
-import org.har01d.imovie.domain.TagRepository;
+import org.har01d.imovie.domain.Source;
+import org.har01d.imovie.domain.SourceRepository;
+import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 public class Rs05CrawlerImpl implements Rs05Crawler {
 
     private static final Logger logger = LoggerFactory.getLogger(Rs05Crawler.class);
-    private static final Pattern TITLE_PATTERN = Pattern.compile("《(.*)》.*");
 
     @Value("${url.rs05}")
     private String baseUrl;
@@ -34,10 +31,16 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     private Rs05Parser parser;
 
     @Autowired
+    private DouBanParser douBanParser;
+
+    @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
-    private TagRepository tagRepository;
+    private SourceRepository sourceRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Override
     public void crawler() throws InterruptedException {
@@ -57,63 +60,43 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 for (Element element : elements) {
                     Element header = element.select(".intro h2 a").first();
                     String title = header.attr("title");
-
                     String pageUrl = header.attr("href");
-                    if (movieRepository.findFirstBySource(pageUrl).isPresent()) {
+                    if (sourceRepository.findFirstByUri(pageUrl) != null) {
                         continue;
                     }
 
-                    String name = getName(title);
-                    String cover = element.select(".movie-thumbnails img").attr("data-original");
-                    Element dou = element.select(".intro .dou a").first();
-                    String dbUrl = dou.attr("href");
-                    String dbScore = dou.text();
-                    Elements tagElements = element.select(".tags a");
+                    String dbUrl = element.select(".intro .dou a").attr("href");
 
-                    Movie movie = new Movie();
-                    movie.setSource(pageUrl);
-                    movie.setCover(cover);
-                    movie.setTitle(title);
-                    movie.setName(name);
-                    movie.setDbUrl(dbUrl);
-                    movie.setDbScore(dbScore);
-                    movie.setTags(getTags(tagElements));
-                    parser.parse(pageUrl, movie);
-                    count++;
+                    if (dbUrl.isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        Movie movie = movieRepository.findFirstByDbUrl(dbUrl);
+                        if (movie == null) {
+                            movie = douBanParser.parse(dbUrl);
+                            movieRepository.save(movie);
+                        }
+
+                        parser.parse(pageUrl, movie);
+                        sourceRepository.save(new Source(pageUrl));
+                        count++;
+                    } catch (IOException e) {
+                        if (eventRepository.findFirstBySource(pageUrl) == null) {
+                            eventRepository.save(new Event(pageUrl, e.getMessage()));
+                        }
+                        logger.error("Parse page failed: " + title, e);
+                    }
                 }
 
                 if (count == 0) {
-                    break;
+//                    break;
                 }
                 page++;
             } catch (IOException e) {
                 logger.error("Get HTML failed!", e);
             }
         }
-    }
-
-    private String getName(String title) {
-        Matcher matcher = TITLE_PATTERN.matcher(title);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return title;
-    }
-
-    private Set<Tag> getTags(Elements tagElements) {
-        Set<Tag> tags = new HashSet<>();
-        for (Element element : tagElements) {
-            String name = element.text().replace("#", "");
-            Optional<Tag> tag = tagRepository.findFirstByName(name);
-            if (tag.isPresent()) {
-                tags.add(tag.get());
-            } else {
-                Tag t = new Tag(name);
-                tagRepository.save(t);
-                tags.add(t);
-            }
-        }
-        return tags;
     }
 
 }

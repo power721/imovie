@@ -17,7 +17,7 @@ public class DouBanParserTest {
 
     @Test
     public void test() throws Exception {
-        parser.parse("https://movie.douban.com/subject/25934014/");
+        parser.parse("https://movie.douban.com/subject/1302698/");
     }
 
     @Test

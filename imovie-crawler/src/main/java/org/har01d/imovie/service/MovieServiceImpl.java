@@ -13,6 +13,8 @@ import org.har01d.imovie.domain.PersonRepository;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.RegionRepository;
 import org.har01d.imovie.domain.ResourceRepository;
+import org.har01d.imovie.domain.Tag;
+import org.har01d.imovie.domain.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private RegionRepository regionRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Override
     public Set<Person> getPersons(Set<String> names) {
@@ -99,6 +104,22 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         return regions;
+    }
+
+    @Override
+    public Set<Tag> getTags(Set<String> names) {
+        Set<Tag> tags = new HashSet<>();
+        for (String name : names) {
+            Optional<Tag> tag = tagRepository.findFirstByName(name);
+            if (tag.isPresent()) {
+                tags.add(tag.get());
+            } else {
+                Tag t = new Tag(name);
+                tagRepository.save(t);
+                tags.add(t);
+            }
+        }
+        return tags;
     }
 
 }

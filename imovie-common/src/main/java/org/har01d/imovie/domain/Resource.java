@@ -86,4 +86,9 @@ public class Resource {
     public int hashCode() {
         return uri.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return title + "[" + uri + "]";
+    }
 }

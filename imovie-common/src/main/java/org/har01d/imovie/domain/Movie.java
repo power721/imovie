@@ -35,8 +35,6 @@ public class Movie {
     @JsonView(JsonViews.List.class)
     private Integer year;
 
-    private String source;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.List.class)
     private Set<Region> regions;
@@ -46,11 +44,14 @@ public class Movie {
     private String synopsis;
 
     @JsonView(JsonViews.List.class)
+    private String thumb;
+
+    @JsonView(JsonViews.List.class)
     private String cover;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
-    private Set<Resource> resources;
+    private Set<Resource> resources = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
@@ -137,14 +138,6 @@ public class Movie {
         this.year = year;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     public Set<Region> getRegions() {
         return regions;
     }
@@ -159,6 +152,14 @@ public class Movie {
 
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
+    }
+
+    public String getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
     }
 
     public String getCover() {

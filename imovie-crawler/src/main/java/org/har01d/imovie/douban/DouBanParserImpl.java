@@ -9,7 +9,6 @@ import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,26 +34,31 @@ public class DouBanParserImpl implements DouBanParser {
         String year = header.child(1).text();
         String dbScore = content.select(".rating_num").text();
         Element subject = content.select(".subject").first();
-        String cover = subject.select("#mainpic img").attr("src");
+        String thumb = subject.select("#mainpic img").attr("src");
         Element info = subject.select("#info").first();
         Element synopsis = content.select(".related-info #link-report").first();
-        Elements elements = content.select("#related-pic img");
 
         Movie movie = new Movie();
-        movie.setSource(url);
         movie.setName(name);
         movie.setTitle(header.text());
-        movie.setCover(cover);
+        movie.setThumb(thumb);
+        movie.setCover(getCover(thumb));
         movie.setDbScore(dbScore);
         movie.setDbUrl(url);
         movie.setSynopsis(findSynopsis(synopsis));
         movie.setYear(Integer.valueOf(year.substring(1, year.length() - 1)));
 
         Set<String> snapshots = new HashSet<>();
-        for (Element element : elements) {
+        for (Element element : content.select("#related-pic img")) {
             snapshots.add(element.attr("src").replace("photo/albumicon", "photo/photo"));
         }
         movie.setSnapshots(snapshots);
+
+        Set<String> tags = new HashSet<>();
+        for (Element element : content.select(".tags-body a")) {
+            tags.add(element.text());
+        }
+        movie.setTags(service.getTags(tags));
 
         String[] lines = handleTokens(info.text());
         for (String line : lines) {
@@ -64,6 +68,10 @@ public class DouBanParserImpl implements DouBanParser {
         return movie;
     }
 
+    private String getCover(String url) {
+        return url.replace("movie_poster_cover/lpst", "photo/photo");
+    }
+
     private String[] handleTokens(String text) {
         for (String token : tokens) {
             text = text.replace(" " + token, "\n" + token);
@@ -71,14 +79,18 @@ public class DouBanParserImpl implements DouBanParser {
         return text.split("\n");
     }
 
-    private String findSynopsis(Element info) {
-        for (Element element : info.children()) {
+    private String findSynopsis(Element synopsis) {
+        if (synopsis == null) {
+            return null;
+        }
+
+        for (Element element : synopsis.children()) {
             String text = element.text();
             if (!text.contains("(展开全部)") && !text.contains("©豆瓣") && text.length() > 10) {
                 return text;
             }
         }
-        return info.text();
+        return synopsis.text();
     }
 
     private boolean getMetadata(String text, Movie movie) {
@@ -119,7 +131,7 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         String value;
-        if ((value = getValue(text, "上映日期:")) != null) {
+        if ((value = getValue(text, "上映日期:", 120)) != null) {
             movie.setReleaseDate(value);
             return true;
         } else if ((value = getValue(text, "首播:")) != null) {
