@@ -24,4 +24,12 @@ public class BttParserTest {
         parser.parse(pageUrl, movie);
     }
 
+    @Test
+    public void testBaidu() throws Exception {
+        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4350681.htm";
+        Movie movie = new Movie();
+        movie.setTitle("test");
+        parser.parse(pageUrl, movie);
+    }
+
 }

@@ -3,6 +3,8 @@ package org.har01d.imovie.douban;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class DouBanParserImpl implements DouBanParser {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanParser.class);
+    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
     private static final String[] tokens = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
         "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"};
 
@@ -31,7 +34,11 @@ public class DouBanParserImpl implements DouBanParser {
         Element content = doc.select("#content").first();
         Element header = content.select("h1").first();
         String name = header.child(0).text();
-        String year = header.child(1).text();
+        String year = null;
+        if (header.children().size() > 1) {
+            year = header.child(1).text();
+            year = year.substring(1, year.length() - 1);
+        }
         String dbScore = content.select(".rating_num").text();
         Element subject = content.select(".subject").first();
         String thumb = subject.select("#mainpic img").attr("src");
@@ -46,7 +53,6 @@ public class DouBanParserImpl implements DouBanParser {
         movie.setDbScore(dbScore);
         movie.setDbUrl(url);
         movie.setSynopsis(findSynopsis(synopsis));
-        movie.setYear(Integer.valueOf(year.substring(1, year.length() - 1)));
 
         Set<String> snapshots = new HashSet<>();
         for (Element element : content.select("#related-pic img")) {
@@ -63,6 +69,11 @@ public class DouBanParserImpl implements DouBanParser {
         String[] lines = handleTokens(info.text());
         for (String line : lines) {
             getMetadata(line, movie);
+        }
+        if (year != null) {
+            movie.setYear(Integer.valueOf(year));
+        } else {
+            getYear(movie);
         }
 
         return movie;
@@ -182,6 +193,19 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return values;
+    }
+
+    private void getYear(Movie movie) {
+        if (movie.getReleaseDate() != null) {
+            Matcher matcher = DATE_PATTERN.matcher(movie.getReleaseDate());
+            if (matcher.find()) {
+                int year = Integer.valueOf(matcher.group(1));
+                movie.setYear(year);
+            } else if (movie.getReleaseDate().matches("\\d{4}")) {
+                int year = Integer.valueOf(movie.getReleaseDate());
+                movie.setYear(year);
+            }
+        }
     }
 
     private String getImdbUrl(String imdb) {
