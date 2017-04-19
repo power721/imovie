@@ -44,7 +44,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int page = 440;
+        int page = 530;
         while (true) {
             String url = baseUrl + page;
             try {

@@ -135,10 +135,9 @@ public class BitTorrents {
         try (FileWriter fileWriter = new FileWriter(output)) {
             for (File file : dir.listFiles(filter)) {
                 System.out.println(file);
-                BitTorrentInfo info = parse(file);
                 fileWriter.write(file.getName());
                 fileWriter.write(": ");
-                fileWriter.write(info.getMagnet());
+                fileWriter.write(BtUtils.torrent2Magnet(file));
                 fileWriter.write("\n");
             }
         }
