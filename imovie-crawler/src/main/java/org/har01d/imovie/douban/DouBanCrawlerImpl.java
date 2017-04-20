@@ -1,6 +1,5 @@
 package org.har01d.imovie.douban;
 
-import java.io.IOException;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.ConfigRepository;
 import org.har01d.imovie.domain.Event;
@@ -45,8 +44,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
-        int i = getTagIndex();
-        for (; i < tags.length; ++i) {
+        for (int i = getTagIndex(); i < tags.length; ++i) {
             saveTagIndex(i);
             String tag = tags[i];
             int start = getStart(tag);
@@ -70,13 +68,13 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                                 movie = parser.parse(pageUrl);
                                 movieRepository.save(movie);
                                 total++;
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 eventRepository.save(new Event(pageUrl, e.getMessage()));
                                 logger.error("Parse page failed: " + pageUrl, e);
                             }
                         }
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     eventRepository.save(new Event(url, e.getMessage()));
                     logger.error("Get HTML failed: " + url, e);
                 }

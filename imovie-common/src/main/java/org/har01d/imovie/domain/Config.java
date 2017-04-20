@@ -8,7 +8,7 @@ import javax.persistence.Id;
 public class Config {
 
     @Id
-    private String key;
+    private String name;
 
     @Column(columnDefinition = "TEXT")
     private String value;
@@ -16,17 +16,17 @@ public class Config {
     public Config() {
     }
 
-    public Config(String key, String value) {
-        this.key = key;
+    public Config(String name, String value) {
+        this.name = name;
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getValue() {
@@ -39,7 +39,7 @@ public class Config {
 
     @Override
     public String toString() {
-        return "{" + key + "=" + value + "}";
+        return "{" + name + "=" + value + "}";
     }
 
 }
