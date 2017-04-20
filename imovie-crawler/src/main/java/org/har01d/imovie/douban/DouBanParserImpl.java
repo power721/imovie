@@ -149,10 +149,10 @@ public class DouBanParserImpl implements DouBanParser {
             movie.setReleaseDate(value);
         }
 
-        if ((value = getValue(text, "片长:", 120)) != null) {
+        if ((value = getValue(text, "片长:", 100)) != null) {
             movie.setRunningTime(value);
             return true;
-        } else if ((value = getValue(text, "单集片长:", 120)) != null) {
+        } else if ((value = getValue(text, "单集片长:", 100)) != null) {
             movie.setRunningTime(value);
         }
 
