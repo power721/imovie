@@ -1,6 +1,5 @@
 package org.har01d.imovie.rs05;
 
-import java.io.IOException;
 import org.har01d.imovie.domain.Event;
 import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
@@ -45,7 +44,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
-        int page = 1621;
+        int page = 1;
         while (true) {
             String url = baseUrl + page;
             try {
@@ -73,29 +72,35 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                         continue;
                     }
 
-                    try {
-                        Movie movie = movieRepository.findFirstByDbUrl(dbUrl);
-                        if (movie == null) {
+                    Movie movie = movieRepository.findFirstByDbUrl(dbUrl);
+                    if (movie == null) {
+                        try {
                             movie = douBanParser.parse(dbUrl);
                             movieRepository.save(movie);
+                        } catch (Exception e) {
+                            eventRepository.save(new Event(dbUrl, e.getMessage()));
+                            logger.error("Parse page failed: " + title, e);
                         }
-
-                        parser.parse(pageUrl, movie);
-                        sourceRepository.save(new Source(pageUrl));
-                        count++;
-                    } catch (IOException e) {
-                        if (eventRepository.findFirstBySource(pageUrl) == null) {
-                            eventRepository.save(new Event(pageUrl, e.getMessage()));
-                        }
-                        logger.error("Parse page failed: " + title, e);
                     }
+
+                    if (movie != null) {
+                        try {
+                            parser.parse(pageUrl, movie);
+                            sourceRepository.save(new Source(pageUrl));
+                            count++;
+                        } catch (Exception e) {
+                            eventRepository.save(new Event(pageUrl, e.getMessage()));
+                            logger.error("Parse page failed: " + title, e);
+                        }
+                    }
+
                 }
 
                 if (count == 0) {
 //                    break;
                 }
                 total += count;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Get HTML failed: " + url, e);
             }
             page++;
