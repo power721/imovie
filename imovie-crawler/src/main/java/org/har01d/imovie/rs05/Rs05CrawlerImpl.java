@@ -88,25 +88,25 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                             parser.parse(pageUrl, movie);
                             sourceRepository.save(new Source(pageUrl));
                             count++;
+                            total++;
                         } catch (Exception e) {
                             eventRepository.save(new Event(pageUrl, e.getMessage()));
                             logger.error("Parse page failed: " + title, e);
                         }
                     }
-
                 }
 
                 if (count == 0) {
 //                    break;
                 }
-                total += count;
             } catch (Exception e) {
+                eventRepository.save(new Event(url, e.getMessage()));
                 logger.error("Get HTML failed: " + url, e);
             }
             page++;
         }
 
-        logger.info("get {} movies", total);
+        logger.info("=== get {} movies ===", total);
     }
 
 }

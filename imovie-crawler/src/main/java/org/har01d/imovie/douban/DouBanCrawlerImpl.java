@@ -83,7 +83,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
             }
         }
 
-        logger.info("get {} movies", total);
+        logger.info("=== get {} movies ===", total);
     }
 
     private int getTagIndex() {
