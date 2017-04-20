@@ -95,10 +95,10 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 //                    break;
                 }
                 total += count;
-                page++;
             } catch (IOException e) {
-                logger.error("Get HTML failed!", e);
+                logger.error("Get HTML failed: " + url, e);
             }
+            page++;
         }
 
         logger.info("get {} movies", total);

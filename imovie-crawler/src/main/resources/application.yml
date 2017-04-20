@@ -23,6 +23,7 @@ logging:
 
 url:
   rs05: http://www.rs05.com/movie/?p=
+  douban: https://movie.douban.com
   btt:
     site: http://btbtt.co/
     page: http://btbtt.co/forum-index-fid-951-page-%d.htm
