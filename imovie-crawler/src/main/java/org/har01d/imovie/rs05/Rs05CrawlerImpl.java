@@ -44,7 +44,8 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int page = 530;
+        int total = 0;
+        int page = 1163;
         while (true) {
             String url = baseUrl + page;
             try {
@@ -68,6 +69,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     String dbUrl = element.select(".intro .dou a").attr("href");
 
                     if (dbUrl.isEmpty()) {
+                        logger.warn("cannot get douban url for {}", pageUrl);
                         continue;
                     }
 
@@ -92,11 +94,14 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 if (count == 0) {
 //                    break;
                 }
+                total += count;
                 page++;
             } catch (IOException e) {
                 logger.error("Get HTML failed!", e);
             }
         }
+
+        logger.info("get {} movies", total);
     }
 
 }

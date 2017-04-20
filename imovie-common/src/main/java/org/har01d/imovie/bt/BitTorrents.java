@@ -130,7 +130,7 @@ public class BitTorrents {
     public static void main(String[] args) throws Exception {
         FilenameFilter filter = (dir, name) -> name.endsWith(".torrent");
         File dir = new File("/media/harold/Download/TDDOWNLOAD/bt/");
-        File output = new File("/media/harold/Download/TDDOWNLOAD/bt/magnet.txt");
+        File output = new File("/media/harold/Download/TDDOWNLOAD/bt/magnet1.txt");
         output.createNewFile();
         try (FileWriter fileWriter = new FileWriter(output)) {
             for (File file : dir.listFiles(filter)) {

@@ -10,7 +10,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public final class BtUtils {
 
-    public static List<String> keyList;
+    private static List<String> keyList;
 
     static {
         String[] keys = {"announce", "announce-list", "creation date", "comment", "created by",
@@ -20,7 +20,7 @@ public final class BtUtils {
 
     public static String torrent2Magnet(File file) throws IOException {
         int start = 0;
-        int end = 0;
+        int end;
         String name = "";
 
         try (InputStream is = new FileInputStream(file)) {
@@ -34,10 +34,8 @@ public final class BtUtils {
                 char temp = (char) tempByte;
                 switch (temp) {
                     case 'i':
-                        StringBuilder itempBuilder = new StringBuilder();
-                        char iTemp;
-                        while ((iTemp = (char) is.read()) != 'e') {
-                            itempBuilder.append(iTemp);
+                        while ((char) is.read() != 'e') {
+                            // do nothing
                         }
                         break;
                     case '0':
@@ -55,7 +53,7 @@ public final class BtUtils {
                     case ':':
                         if (strLengthBuilder.length() == 0) {
                             System.out.println("skip " + is.available());
-                            end = total - is.available();
+                            end = total - is.available();  // TODO: check this
                             is.skip(total);
                             break;
                         }
@@ -67,15 +65,16 @@ public final class BtUtils {
                         String tempStr = new String(tempBytes);
                         if ("nodes".equals(tempStr)) {
                             end = total - is.available() - 7;
+                            break;
                         }
 
                         if (key == null || !key.equals("pieces")) {
-                            if (keyList.contains(tempStr)) {
+                            if (keyList.contains(tempStr)) {  // key
                                 key = tempStr;
                                 if (tempStr.equals("info")) {
                                     start = total - is.available();
                                 }
-                            } else {
+                            } else {  // value
                                 if ("name".equals(key)) {
                                     name = tempStr;
                                 }

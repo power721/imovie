@@ -71,9 +71,9 @@ public class DouBanParserImpl implements DouBanParser {
             getMetadata(line, movie);
         }
         if (year != null) {
-            movie.setYear(Integer.valueOf(year));
+            getYear(movie, year);
         } else {
-            getYear(movie);
+            getYear(movie, movie.getReleaseDate());
         }
 
         return movie;
@@ -195,16 +195,18 @@ public class DouBanParserImpl implements DouBanParser {
         return values;
     }
 
-    private void getYear(Movie movie) {
-        if (movie.getReleaseDate() != null) {
-            Matcher matcher = DATE_PATTERN.matcher(movie.getReleaseDate());
-            if (matcher.find()) {
-                int year = Integer.valueOf(matcher.group(1));
-                movie.setYear(year);
-            } else if (movie.getReleaseDate().matches("\\d{4}")) {
-                int year = Integer.valueOf(movie.getReleaseDate());
-                movie.setYear(year);
-            }
+    private void getYear(Movie movie, String yearStr) {
+        if (yearStr == null) {
+            return;
+        }
+
+        Matcher matcher = DATE_PATTERN.matcher(yearStr);
+        if (matcher.find()) {
+            int year = Integer.valueOf(matcher.group(1));
+            movie.setYear(year);
+        } else if (yearStr.matches("\\d{4}")) {
+            int year = Integer.valueOf(yearStr);
+            movie.setYear(year);
         }
     }
 
