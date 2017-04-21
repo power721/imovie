@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.MovieRepository;
-import org.har01d.imovie.domain.SourceRepository;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,10 +33,7 @@ public class BttCrawlerImpl implements BttCrawler {
     private BttParser parser;
 
     @Autowired
-    private MovieRepository movieRepository;
-
-    @Autowired
-    private SourceRepository sourceRepository;
+    private MovieService service;
 
     @Override
     public void crawler() throws InterruptedException {
@@ -57,7 +53,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         logger.info(matcher.group(1));
                         String pageUrl = siteUrl + element.select("a").first().attr("href");
                         logger.info(pageUrl);
-                        if (sourceRepository.findFirstByUri(pageUrl) != null) {
+                        if (service.findSource(pageUrl) != null) {
                             continue;
                         }
 
@@ -65,6 +61,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         movie.setTitle(text);
                         movie.setName(getName(text));
                         parser.parse(pageUrl, movie);
+//                        service.save(new Source(pageUrl));
                         count++;
                     }
                 }

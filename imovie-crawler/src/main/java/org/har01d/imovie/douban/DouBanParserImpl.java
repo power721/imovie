@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -174,7 +175,7 @@ public class DouBanParserImpl implements DouBanParser {
     private String getValue(String text, String prefix, int maxLen) {
         String result = getValue(text, prefix);
         if (result != null) {
-            return result.substring(0, Math.min(result.length(), maxLen));
+            return StringUtils.truncate(result, maxLen);
         } else {
             return null;
         }

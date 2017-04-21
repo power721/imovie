@@ -10,10 +10,16 @@ public final class UrlUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(UrlUtils.class);
     private static final Pattern MAGNET_PATTERN = Pattern
-        .compile("(magnet:\\?xt=urn:btih:[0-9a-zA-Z]+(&dn=[^ &]*)?(&xl=[^ &]*)?(&tr=[^ &]*)*)");
-    private static final Pattern ED2K_PATTERN = Pattern.compile("(ed2k://|file|.+|\\d+|[0-9a-zA-Z]+|h=[0-9a-zA-Z]+|/)");
+        .compile(
+            "(magnet:\\?xt=urn:btih:[0-9a-zA-Z]+(&xt=[^ &]*)?(&dn=[^ &]*)?(&xl=[^ &]*)?(&tr=[^ &]*)*(&ws=[^ &]*)?)");
+    private static final Pattern ED2K_PATTERN = Pattern
+        .compile("(ed2k://\\|file\\|.+\\|\\d+\\|[0-9a-zA-Z]+\\|h=[0-9a-zA-Z]+\\|/)");
 
     public static String findMagnet(String text) {
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
+
         Matcher matcher = MAGNET_PATTERN.matcher(text);
         if (matcher.find()) {
             return matcher.group(1);
@@ -22,6 +28,10 @@ public final class UrlUtils {
     }
 
     public static String findED2K(String text) {
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
+
         Matcher matcher = ED2K_PATTERN.matcher(text);
         if (matcher.find()) {
             return matcher.group(1);

@@ -150,6 +150,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Resource save(Resource resource) {
+        return resourceRepository.save(resource);
+    }
+
+    @Override
     public Movie find(String url) {
         return movieRepository.findFirstByDbUrl(url);
     }

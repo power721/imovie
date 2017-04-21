@@ -11,6 +11,7 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -92,12 +93,12 @@ public class BttParserImpl implements BttParser {
     private void findResource(String text, Set<Resource> resources) {
         String magnet = UrlUtils.findMagnet(text);
         if (magnet != null) {
-            resources.add(service.saveResource(magnet, magnet));
+            resources.add(service.saveResource(magnet, StringUtils.truncate(magnet, 200)));
         }
 
         String ed2k = UrlUtils.findED2K(text);
         if (ed2k != null) {
-            resources.add(service.saveResource(ed2k, ed2k));
+            resources.add(service.saveResource(ed2k, StringUtils.truncate(ed2k, 200)));
         }
     }
 

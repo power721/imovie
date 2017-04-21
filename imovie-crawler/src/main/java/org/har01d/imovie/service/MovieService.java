@@ -28,6 +28,8 @@ public interface MovieService {
 
     Source save(Source source);
 
+    Resource save(Resource resource);
+
     Movie find(String url);
 
     Source findSource(String url);
