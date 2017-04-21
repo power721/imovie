@@ -12,6 +12,7 @@ import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.PersonRepository;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.RegionRepository;
+import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.domain.Tag;
 import org.har01d.imovie.domain.TagRepository;
@@ -120,6 +121,27 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         return tags;
+    }
+
+    @Override
+    public Resource saveResource(String uri, String title) {
+        return saveResource(null, uri, title);
+    }
+
+    @Override
+    public Resource saveResource(String uri, String original, String title) {
+        Resource resource = resourceRepository.findFirstByUri(uri);
+        if (resource != null) {
+            return resource;
+        }
+
+        if (uri == null) {
+            resource = new Resource(original, title);
+        } else {
+            resource = new Resource(uri, original, title);
+        }
+        resourceRepository.save(resource);
+        return resource;
     }
 
 }

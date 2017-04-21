@@ -1,12 +1,33 @@
 package org.har01d.imovie.util;
 
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class UrlUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(UrlUtils.class);
+    private static final Pattern MAGNET_PATTERN = Pattern
+        .compile("(magnet:\\?xt=urn:btih:[0-9a-zA-Z]+(&dn=[^ &]*)?(&xl=[^ &]*)?(&tr=[^ &]*)*)");
+    private static final Pattern ED2K_PATTERN = Pattern.compile("(ed2k://|file|.+|\\d+|[0-9a-zA-Z]+|h=[0-9a-zA-Z]+|/)");
+
+    public static String findMagnet(String text) {
+        Matcher matcher = MAGNET_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    public static String findED2K(String text) {
+        Matcher matcher = ED2K_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
 
     public static String convertUrl(String encodedUrl) {
         try {

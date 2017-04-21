@@ -36,7 +36,7 @@ public class Resource {
         this.title = title;
     }
 
-    public Resource(String uri, String title, String original) {
+    public Resource(String uri, String original, String title) {
         this.uri = uri;
         this.original = original;
         this.title = title;

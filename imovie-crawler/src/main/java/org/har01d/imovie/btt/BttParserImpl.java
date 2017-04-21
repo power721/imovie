@@ -13,7 +13,9 @@ import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.douban.DouBanParser;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -50,22 +52,25 @@ public class BttParserImpl implements BttParser {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private MovieService service;
+
     @Override
     public void parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
         String dbUrl = getDbUrl(html);
+        Set<Resource> resources = movie.getResources();
+
         if (dbUrl != null) {
             movie = douBanParser.parse(dbUrl);
         } else {
             Elements elements = doc.select("div.post p");
-
             for (Element element : elements) {
-                logger.debug(element.tagName());
+                findResource(element.text(), resources);
             }
         }
 
-        Set<Resource> resources = movie.getResources();
         findResource(doc, resources);
         findAttachments(doc, resources);
 
@@ -92,17 +97,20 @@ public class BttParserImpl implements BttParser {
             String uri = element.attr("href");
             if (isResource(uri)) {
                 String title = element.parent().text();
-                Resource resource = resourceRepository.findFirstByUri(uri);
-                if (resource != null) {
-                    resources.add(resource);
-                    continue;
-                }
-
-                resource = new Resource(uri, title);
-                resourceRepository.save(resource);
-                resources.add(resource);
-                logger.debug("find new resource {}", title);
+                resources.add(service.saveResource(uri, title));
             }
+        }
+    }
+
+    private void findResource(String text, Set<Resource> resources) {
+        String magnet = UrlUtils.findMagnet(text);
+        if (magnet != null) {
+            resources.add(service.saveResource(magnet, magnet));
+        }
+
+        String ed2k = UrlUtils.findED2K(text);
+        if (ed2k != null) {
+            resources.add(service.saveResource(ed2k, ed2k));
         }
     }
 
@@ -114,15 +122,7 @@ public class BttParserImpl implements BttParser {
                 String title = element.text();
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
                 String magnet = convertTorrent(uri, title);
-                Resource resource;
-                if (magnet == null) {
-                    resource = new Resource(uri, title);
-                } else {
-                    resource = new Resource(magnet, title, uri);
-                }
-                resourceRepository.save(resource);
-                resources.add(resource);
-                logger.debug("find new resource {}", title);
+                resources.add(service.saveResource(magnet, uri, title));
             }
         }
     }
