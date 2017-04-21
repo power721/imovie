@@ -47,7 +47,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
         for (int i = getTagIndex(); i < tags.length; ++i) {
             saveTagIndex(i);
             String tag = tags[i];
-            int start = getStart(tag);
+            int start = getStart();
             while (true) {
                 String url = String.format("%s/tag/%s?start=%d&type=T", baseUrl, tag, start);
                 try {
@@ -56,7 +56,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     Elements elements = doc.select(".article a.nbg");
                     logger.info("get {} movies", elements.size());
                     if (elements.isEmpty()) {
-                        saveStart(tag, 0);
+                        saveStart(0);
                         break;
                     }
 
@@ -79,7 +79,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     logger.error("Get HTML failed: " + url, e);
                 }
                 start += 20;
-                saveStart(tag, start);
+                saveStart(start);
             }
         }
 
@@ -104,8 +104,8 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
         configRepository.save(new Config("db_tag_index", String.valueOf(index)));
     }
 
-    private int getStart(String tag) {
-        String key = "db_tag_" + tag;
+    private int getStart() {
+        String key = "db_tag_start";
         Config config = configRepository.findOne(key);
         if (config == null) {
             return 0;
@@ -114,7 +114,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void saveStart(String tag, int start) {
-        configRepository.save(new Config("db_tag_" + tag, String.valueOf(start)));
+    private void saveStart(int start) {
+        configRepository.save(new Config("db_tag_start", String.valueOf(start)));
     }
 }
