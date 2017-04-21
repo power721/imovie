@@ -1,14 +1,10 @@
 package org.har01d.imovie.rs05;
 
 import org.har01d.imovie.domain.Config;
-import org.har01d.imovie.domain.ConfigRepository;
-import org.har01d.imovie.domain.Event;
-import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.domain.SourceRepository;
 import org.har01d.imovie.douban.DouBanParser;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,16 +31,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     private DouBanParser douBanParser;
 
     @Autowired
-    private MovieRepository movieRepository;
-
-    @Autowired
-    private SourceRepository sourceRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private ConfigRepository configRepository;
+    private MovieService service;
 
     @Override
     public void crawler() throws InterruptedException {
@@ -67,25 +54,25 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     Element header = element.select(".intro h2 a").first();
                     String title = header.attr("title");
                     String pageUrl = header.attr("href");
-                    if (sourceRepository.findFirstByUri(pageUrl) != null) {
+                    if (service.findSource(pageUrl) != null) {
                         continue;
                     }
 
                     String dbUrl = element.select(".intro .dou a").attr("href");
 
                     if (dbUrl.isEmpty()) {
-                        eventRepository.save(new Event(pageUrl, "cannot get DouBan url"));
+                        service.publishEvent(pageUrl, "cannot get DouBan url");
                         logger.warn("cannot get douban url for {}", pageUrl);
                         continue;
                     }
 
-                    Movie movie = movieRepository.findFirstByDbUrl(dbUrl);
+                    Movie movie = service.find(dbUrl);
                     if (movie == null) {
                         try {
                             movie = douBanParser.parse(dbUrl);
-                            movieRepository.save(movie);
+                            service.save(movie);
                         } catch (Exception e) {
-                            eventRepository.save(new Event(dbUrl, e.getMessage()));
+                            service.publishEvent(dbUrl, e.getMessage());
                             logger.error("Parse page failed: " + title, e);
                         }
                     }
@@ -93,11 +80,11 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     if (movie != null) {
                         try {
                             parser.parse(pageUrl, movie);
-                            sourceRepository.save(new Source(pageUrl));
+                            service.save(new Source(pageUrl));
                             count++;
                             total++;
                         } catch (Exception e) {
-                            eventRepository.save(new Event(pageUrl, e.getMessage()));
+                            service.publishEvent(pageUrl, e.getMessage());
                             logger.error("Parse page failed: " + title, e);
                         }
                     }
@@ -107,7 +94,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 //                    break;
                 }
             } catch (Exception e) {
-                eventRepository.save(new Event(url, e.getMessage()));
+                service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }
             page++;
@@ -119,7 +106,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     private int getPage() {
         String key = "rs05_page";
-        Config config = configRepository.findOne(key);
+        Config config = service.getConfig(key);
         if (config == null) {
             return 0;
         }
@@ -128,7 +115,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     }
 
     private void savePage(int page) {
-        configRepository.save(new Config("rs05_page", String.valueOf(page)));
+        service.saveConfig("rs05_page", String.valueOf(page));
     }
 
 }

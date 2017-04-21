@@ -19,6 +19,8 @@ import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.RegionRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
+import org.har01d.imovie.domain.Source;
+import org.har01d.imovie.domain.SourceRepository;
 import org.har01d.imovie.domain.Tag;
 import org.har01d.imovie.domain.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private SourceRepository sourceRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -140,8 +145,18 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Source save(Source source) {
+        return sourceRepository.save(source);
+    }
+
+    @Override
     public Movie find(String url) {
         return movieRepository.findFirstByDbUrl(url);
+    }
+
+    @Override
+    public Source findSource(String url) {
+        return sourceRepository.findFirstByUri(url);
     }
 
     @Override

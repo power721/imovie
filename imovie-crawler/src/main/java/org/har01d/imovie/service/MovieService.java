@@ -9,6 +9,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.domain.Tag;
 
 public interface MovieService {
@@ -25,7 +26,11 @@ public interface MovieService {
 
     Movie save(Movie movie);
 
+    Source save(Source source);
+
     Movie find(String url);
+
+    Source findSource(String url);
 
     Config saveConfig(String name, String value);
 
