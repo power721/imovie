@@ -36,6 +36,12 @@ public class Resource {
         this.title = title;
     }
 
+    public Resource(String uri, String title, String original) {
+        this.uri = uri;
+        this.original = original;
+        this.title = title;
+    }
+
     public Integer getId() {
         return id;
     }

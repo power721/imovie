@@ -1,9 +1,13 @@
 package org.har01d.imovie.btt;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.bt.BtUtils;
+import org.har01d.imovie.domain.Event;
+import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
@@ -29,11 +33,19 @@ public class BttParserImpl implements BttParser {
     @Value("${url.btt.site}")
     private String siteUrl;
 
+    @Value("${file.download}")
+    private String downloadDir;
+
+    private int id;
+
     @Autowired
     private DouBanParser douBanParser;
 
     @Autowired
     private ResourceRepository resourceRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private MovieRepository movieRepository;
@@ -101,12 +113,34 @@ public class BttParserImpl implements BttParser {
             if (href.startsWith("attach-dialog-fid-")) {
                 String title = element.text();
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
-                Resource resource = new Resource(uri, title);
+                String magnet = convertTorrent(uri, title);
+                Resource resource;
+                if (magnet == null) {
+                    resource = new Resource(uri, title);
+                } else {
+                    resource = new Resource(magnet, title, uri);
+                }
                 resourceRepository.save(resource);
                 resources.add(resource);
                 logger.debug("find new resource {}", title);
             }
         }
+    }
+
+    private String convertTorrent(String uri, String title) {
+        String name = (id++ / 20) + ".torrent";
+        File file = new File(downloadDir, name);
+        try {
+            file.createNewFile();
+            HttpUtils.downloadFile(uri, file);
+            String magnet = BtUtils.torrent2Magnet(file);
+            logger.info("convert {} to {}", title, magnet);
+            return magnet;
+        } catch (Exception e) {
+            logger.error("convert torrent to magnet failed: " + title, e);
+            eventRepository.save(new Event(uri, "convert torrent to magnet failed: " + title));
+        }
+        return null;
     }
 
     private boolean isResource(String uri) {
