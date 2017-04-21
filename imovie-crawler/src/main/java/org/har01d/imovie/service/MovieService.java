@@ -2,7 +2,9 @@ package org.har01d.imovie.service;
 
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
+import org.har01d.imovie.domain.Event;
 import org.har01d.imovie.domain.Language;
+import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
@@ -20,7 +22,12 @@ public interface MovieService {
 
     Set<Tag> getTags(Set<String> names);
 
+    Movie save(Movie movie);
+
     Resource saveResource(String uri, String title);
 
     Resource saveResource(String uri, String original, String title);
+
+    Event publishEvent(String source, String message);
+
 }

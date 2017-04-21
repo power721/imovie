@@ -5,8 +5,11 @@ import java.util.Optional;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.CategoryRepository;
+import org.har01d.imovie.domain.Event;
+import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.LanguageRepository;
+import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.PersonRepository;
@@ -42,6 +45,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Override
     public Set<Person> getPersons(Set<String> names) {
@@ -124,6 +130,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie save(Movie movie) {
+        return movieRepository.save(movie);
+    }
+
+    @Override
     public Resource saveResource(String uri, String title) {
         return saveResource(null, uri, title);
     }
@@ -142,6 +153,11 @@ public class MovieServiceImpl implements MovieService {
         }
         resourceRepository.save(resource);
         return resource;
+    }
+
+    @Override
+    public Event publishEvent(String source, String message) {
+        return eventRepository.save(new Event(source, message));
     }
 
 }

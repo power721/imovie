@@ -6,12 +6,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.bt.BtUtils;
-import org.har01d.imovie.domain.Event;
-import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -44,15 +40,6 @@ public class BttParserImpl implements BttParser {
     private DouBanParser douBanParser;
 
     @Autowired
-    private ResourceRepository resourceRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private MovieRepository movieRepository;
-
-    @Autowired
     private MovieService service;
 
     @Override
@@ -75,7 +62,7 @@ public class BttParserImpl implements BttParser {
         findAttachments(doc, resources);
 
         logger.info("get {} resources for movie {}", resources.size(), movie.getName());
-        movieRepository.save(movie);
+        service.save(movie);
     }
 
     private String getDbUrl(String html) {
@@ -138,7 +125,7 @@ public class BttParserImpl implements BttParser {
             return magnet;
         } catch (Exception e) {
             logger.error("convert torrent to magnet failed: " + title, e);
-            eventRepository.save(new Event(uri, "convert torrent to magnet failed: " + title));
+            service.publishEvent(uri, "convert torrent to magnet failed: " + title);
         }
         return null;
     }
