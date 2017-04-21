@@ -33,6 +33,7 @@ public class DouBanParserImpl implements DouBanParser {
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
         Element header = content.select("h1").first();
+        logger.info("parse {} {}", url, header.text());
         String name = header.child(0).text();
         String year = null;
         if (header.children().size() > 1) {
