@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.CategoryRepository;
+import org.har01d.imovie.domain.Config;
+import org.har01d.imovie.domain.ConfigRepository;
 import org.har01d.imovie.domain.Event;
 import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Language;
@@ -48,6 +50,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private ConfigRepository configRepository;
 
     @Override
     public Set<Person> getPersons(Set<String> names) {
@@ -132,6 +137,21 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie save(Movie movie) {
         return movieRepository.save(movie);
+    }
+
+    @Override
+    public Movie find(String url) {
+        return movieRepository.findFirstByDbUrl(url);
+    }
+
+    @Override
+    public Config saveConfig(String name, String value) {
+        return configRepository.save(new Config(name, value));
+    }
+
+    @Override
+    public Config getConfig(String name) {
+        return configRepository.findOne(name);
     }
 
     @Override

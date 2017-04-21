@@ -2,6 +2,7 @@ package org.har01d.imovie.service;
 
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
+import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Event;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
@@ -23,6 +24,12 @@ public interface MovieService {
     Set<Tag> getTags(Set<String> names);
 
     Movie save(Movie movie);
+
+    Movie find(String url);
+
+    Config saveConfig(String name, String value);
+
+    Config getConfig(String name);
 
     Resource saveResource(String uri, String title);
 

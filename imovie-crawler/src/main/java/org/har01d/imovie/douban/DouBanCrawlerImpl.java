@@ -1,11 +1,8 @@
 package org.har01d.imovie.douban;
 
 import org.har01d.imovie.domain.Config;
-import org.har01d.imovie.domain.ConfigRepository;
-import org.har01d.imovie.domain.Event;
-import org.har01d.imovie.domain.EventRepository;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.MovieRepository;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,13 +26,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     private DouBanParser parser;
 
     @Autowired
-    private MovieRepository movieRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private ConfigRepository configRepository;
+    private MovieService service;
 
     private static final String[] tags = new String[]{"爱情", "喜剧", "剧情", "动画", "科幻", "动作", "经典", "悬疑", "青春",
         "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记",
@@ -62,20 +53,20 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
 
                     for (Element element : elements) {
                         String pageUrl = element.attr("href");
-                        Movie movie = movieRepository.findFirstByDbUrl(pageUrl);
+                        Movie movie = service.find(pageUrl);
                         if (movie == null) {
                             try {
                                 movie = parser.parse(pageUrl);
-                                movieRepository.save(movie);
+                                service.save(movie);
                                 total++;
                             } catch (Exception e) {
-                                eventRepository.save(new Event(pageUrl, e.getMessage()));
+                                service.publishEvent(pageUrl, e.getMessage());
                                 logger.error("Parse page failed: " + pageUrl, e);
                             }
                         }
                     }
                 } catch (Exception e) {
-                    eventRepository.save(new Event(url, e.getMessage()));
+                    service.publishEvent(url, e.getMessage());
                     logger.error("Get HTML failed: " + url, e);
                 }
                 start += 20;
@@ -88,7 +79,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
 
     private int getTagIndex() {
         String key = "db_tag_index";
-        Config config = configRepository.findOne(key);
+        Config config = service.getConfig(key);
         if (config == null) {
             return 0;
         }
@@ -101,12 +92,12 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     }
 
     private void saveTagIndex(int index) {
-        configRepository.save(new Config("db_tag_index", String.valueOf(index)));
+        service.saveConfig("db_tag_index", String.valueOf(index));
     }
 
     private int getStart() {
         String key = "db_tag_start";
-        Config config = configRepository.findOne(key);
+        Config config = service.getConfig(key);
         if (config == null) {
             return 0;
         }
@@ -115,6 +106,6 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     }
 
     private void saveStart(int start) {
-        configRepository.save(new Config("db_tag_start", String.valueOf(start)));
+        service.saveConfig("db_tag_start", String.valueOf(start));
     }
 }
