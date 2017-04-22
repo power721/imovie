@@ -4,6 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
@@ -34,6 +35,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     @Override
     public void crawler() throws InterruptedException {
+        int total = 0;
         queue.add(baseUrl);
         while (!queue.isEmpty()) {
             String url = queue.poll(10, TimeUnit.SECONDS);
@@ -64,12 +66,16 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                     }
 
                     explore(pageUrl, title);
+                    service.save(new Source(pageUrl));
+                    total++;
                 }
             } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }
         }
+
+        logger.info("===== get {} movies =====", total);
     }
 
     private void explore(String url, String title) throws InterruptedException {
