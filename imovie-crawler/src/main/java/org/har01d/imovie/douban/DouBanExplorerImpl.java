@@ -94,6 +94,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
             String pageUrl = explorer.getUri();
             if (service.findSource(pageUrl) != null) {
+                service.delete(explorer);
                 continue;
             }
 
@@ -135,7 +136,9 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {
                 String pageUrl = getDbUrl(element.attr("href"));
-                queue.put(service.save(new Explorer(TYPE, pageUrl)));
+                if (service.findSource(pageUrl) == null) {
+                    queue.put(service.save(new Explorer(TYPE, pageUrl)));
+                }
             }
         } catch (InterruptedException e) {
             throw e;
