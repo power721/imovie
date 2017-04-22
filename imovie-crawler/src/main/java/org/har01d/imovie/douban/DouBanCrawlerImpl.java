@@ -29,8 +29,8 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     private MovieService service;
 
     private static final String[] tags = new String[]{"爱情", "喜剧", "剧情", "动画", "科幻", "动作", "经典", "悬疑", "青春",
-        "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记",
-        "情色", "暴力", "家庭", "音乐", "童年", "浪漫", "女性", "黑帮", "史诗", "童话", "西部",};
+        "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记", "情色", "暴力", "家庭",
+        "音乐", "童年", "浪漫", "女性", "黑帮", "史诗", "童话", "西部", "电视剧", "人性", "奇幻"};
 
     @Override
     public void crawler() throws InterruptedException {
@@ -40,13 +40,12 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
             String tag = tags[i];
             int start = getStart();
             while (true) {
-                String url = String.format("%s/tag/%s?start=%d&type=T", baseUrl, tag, start);
-//                String url = String.format("%s/tag/%s?start=%d&type=R", baseUrl, tag, start);
+                String url = String.format("%s/tag/%s?start=%d&type=R", baseUrl, tag, start);
                 try {
                     String html = HttpUtils.getHtml(url);
                     Document doc = Jsoup.parse(html);
                     Elements elements = doc.select(".article a.nbg");
-                    logger.info("{}: get {} movies", tag, elements.size());
+                    logger.info("({}/{}){}:{} get {} movies", i, tags.length, tag, start, elements.size());
                     if (elements.isEmpty()) {
                         saveStart(0);
                         break;
@@ -81,6 +80,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                 saveStart(start);
             }
         }
+        saveTagIndex(0);
 
         logger.info("===== get {} movies =====", total);
     }

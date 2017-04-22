@@ -10,6 +10,9 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 public class DouBanExplorerImpl implements DouBanExplorer {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanExplorer.class);
+    private static final String TYPE = "db";
 
     @Value("${url.douban}")
     private String baseUrl;
@@ -44,27 +48,6 @@ public class DouBanExplorerImpl implements DouBanExplorer {
         executorService = Executors.newSingleThreadExecutor();
         exploreService = Executors.newSingleThreadExecutor();
 
-        for (Explorer explorer : service.findExplorers("db")) {
-            queue.put(explorer);
-        }
-
-        if (queue.isEmpty()) {
-            try {
-                String html = HttpUtils.getHtml(baseUrl);
-                Document doc = Jsoup.parse(html);
-                Elements elements = doc.select(".article a[href^=" + baseUrl + "/subject/]");
-                for (Element element : elements) {
-                    String pageUrl = element.attr("href");
-                    if (service.findSource(pageUrl) == null) {
-                        queue.put(service.save(new Explorer("db", pageUrl)));
-                    }
-                }
-            } catch (Exception e) {
-                service.publishEvent(baseUrl, e.getMessage());
-                logger.error("Get HTML failed: " + baseUrl, e);
-            }
-        }
-
         executorService.submit(() -> {
             try {
                 explore();
@@ -73,6 +56,29 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             }
         });
 
+        for (Explorer explorer : service.findExplorers(TYPE)) {
+            queue.put(explorer);
+        }
+
+        JSONParser jsonParser = new JSONParser();
+        if (queue.isEmpty()) {
+            try {
+                String json = HttpUtils.getJson(baseUrl
+                    + "/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=recommend&page_limit=500&page_start=0");
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+                JSONArray items = (JSONArray) jsonObject.get("subjects");
+                for (Object item1 : items) {
+                    JSONObject item = (JSONObject) item1;
+                    String pageUrl = (String) item.get("url");
+                    if (service.findSource(pageUrl) == null) {
+                        queue.put(service.save(new Explorer(TYPE, pageUrl)));
+                    }
+                }
+            } catch (Exception e) {
+                service.publishEvent(baseUrl, e.getMessage());
+                logger.error("Parse page failed: " + baseUrl, e);
+            }
+        }
     }
 
     private void explore() throws InterruptedException {
@@ -120,7 +126,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {
-                queue.put(service.save(new Explorer("db", element.attr("href"))));
+                queue.put(service.save(new Explorer(TYPE, element.attr("href"))));
             }
         } catch (InterruptedException e) {
             throw e;

@@ -45,7 +45,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 Elements elements = doc.select("#movielist li");
                 logger.info("get {} movies", elements.size());
                 if (elements.isEmpty()) {
-                    savePage(0);
+                    savePage(1);
                     break;
                 }
 
@@ -101,6 +101,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
             savePage(page);
         }
 
+        savePage(1);
         logger.info("===== get {} movies =====", total);
     }
 
@@ -108,7 +109,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
         String key = "rs05_page";
         Config config = service.getConfig(key);
         if (config == null) {
-            return 0;
+            return 1;
         }
 
         return Integer.valueOf(config.getValue());

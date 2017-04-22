@@ -13,7 +13,7 @@ public final class UrlUtils {
         .compile(
             "(magnet:\\?xt=urn:btih:[0-9a-zA-Z]+(&xt=[^ &]*)?(&dn=[^ &]*)?(&xl=[^ &]*)?(&tr=[^ &]*)*(&ws=[^ &]*)?)");
     private static final Pattern ED2K_PATTERN = Pattern
-        .compile("(ed2k://\\|file\\|.+\\|\\d+\\|[0-9a-zA-Z]+\\|h=[0-9a-zA-Z]+\\|/)");
+        .compile("(ed2k://\\|file\\|.+\\|\\d+\\|[0-9a-zA-Z]+\\|(h=[0-9a-zA-Z]+\\|)?/)");
 
     public static String findMagnet(String text) {
         if (text == null || text.isEmpty()) {
