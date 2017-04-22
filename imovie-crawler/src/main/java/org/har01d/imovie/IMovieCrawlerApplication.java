@@ -2,6 +2,8 @@ package org.har01d.imovie;
 
 import java.util.Arrays;
 import java.util.List;
+import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.douban.DouBanCrawler;
@@ -30,6 +32,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private DouBanExplorer explorer;
 
     @Autowired
+    private MovieRepository repository;
+
+    @Autowired
     private ResourceRepository resourceRepository;
 
     public static void main(String[] args) {
@@ -38,12 +43,13 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        testFindMagnet();
-        testFindEd2k();
+        for (Movie movie : repository.findByDbUrlContaining("from")) {
+            repository.delete(movie);
+        }
 
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
-            rs05Crawler.crawler();
-            douBanCrawler.crawler();
+//            rs05Crawler.crawler();
+//            douBanCrawler.crawler();
             explorer.crawler();
         }
     }

@@ -1,5 +1,6 @@
 package org.har01d.imovie.rs05;
 
+import java.net.SocketTimeoutException;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -93,6 +94,10 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 if (count == 0) {
                     break;
                 }
+            } catch (SocketTimeoutException e) {
+                service.publishEvent(url, e.getMessage());
+                logger.error("Get HTML failed: " + url, e);
+                break;
             } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);

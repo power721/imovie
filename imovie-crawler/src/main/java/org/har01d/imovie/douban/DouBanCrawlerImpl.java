@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class DouBanCrawlerImpl implements DouBanCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanCrawler.class);
-    private static final int LIMIT = 50;
+    private static final int LIMIT = 20;
 
     @Value("${url.douban}")
     private String baseUrl;
@@ -41,9 +41,8 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
             String tag = tags[i];
             int start = getStart();
             while (true) {
-                String url = String
-                    .format("%s/j/search_subjects?type=movie&tag=%s&sort=time&page_limit=%d&page_start=%d", baseUrl,
-                        tag, LIMIT, start);
+                String url = String.format("%s/j/search_subjects?tag=%s&sort=time&page_limit=%d&page_start=%d",
+                    baseUrl, tag, LIMIT, start);
                 try {
                     String json = HttpUtils.getJson(url);
                     JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
@@ -52,7 +51,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     if (items == null || items.isEmpty()) {
                         break;
                     }
-                    logger.info("({}/{}){}:{} get {} movies", i, tags.length, tag, start, items.size());
+                    logger.info("({}/{}){}:{} get {} movies", i, tags.length - 1, tag, start, items.size());
 
                     int count = 0;
                     for (Object item1 : items) {

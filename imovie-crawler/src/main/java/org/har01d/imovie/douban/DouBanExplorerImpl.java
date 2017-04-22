@@ -5,6 +5,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class DouBanExplorerImpl implements DouBanExplorer {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanExplorer.class);
+    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie.douban.com/subject/\\d+/)");
     private static final String TYPE = "db";
 
     @Value("${url.douban}")
@@ -62,14 +65,14 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
         JSONParser jsonParser = new JSONParser();
         if (queue.isEmpty()) {
-            String url = baseUrl + "/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=time&page_limit=500";
+            String url = baseUrl + "/j/search_subjects?tag=%E7%83%AD%E9%97%A8&sort=time&page_limit=500";
             try {
                 String json = HttpUtils.getJson(url);
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
                 JSONArray items = (JSONArray) jsonObject.get("subjects");
                 for (Object item1 : items) {
                     JSONObject item = (JSONObject) item1;
-                    String pageUrl = (String) item.get("url");
+                    String pageUrl = getDbUrl((String) item.get("url"));
                     if (service.findSource(pageUrl) == null) {
                         queue.put(service.save(new Explorer(TYPE, pageUrl)));
                     }
@@ -83,8 +86,8 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     private void explore() throws InterruptedException {
         int total = 0;
-        while (!queue.isEmpty()) {
-            Explorer explorer = queue.poll(10, TimeUnit.SECONDS);
+        while (true) {
+            Explorer explorer = queue.poll(30, TimeUnit.SECONDS);
             if (explorer == null) {
                 break;
             }
@@ -99,6 +102,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                 try {
                     movie = parser.parse(pageUrl);
                     service.save(movie);
+                    service.save(new Source(pageUrl));
                 } catch (Exception e) {
                     service.publishEvent(pageUrl, e.getMessage());
                     logger.error("Parse page failed: " + pageUrl, e);
@@ -118,6 +122,10 @@ public class DouBanExplorerImpl implements DouBanExplorer {
         }
 
         logger.info("===== get {} movies =====", total);
+        exploreService.shutdown();
+        executorService.shutdown();
+        exploreService.shutdownNow();
+        executorService.shutdownNow();
     }
 
     private void explore(String url) throws InterruptedException {
@@ -126,7 +134,8 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {
-                queue.put(service.save(new Explorer(TYPE, element.attr("href"))));
+                String pageUrl = getDbUrl(element.attr("href"));
+                queue.put(service.save(new Explorer(TYPE, pageUrl)));
             }
         } catch (InterruptedException e) {
             throw e;
@@ -134,6 +143,14 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             service.publishEvent(url, e.getMessage());
             logger.error("Parse page failed: " + url, e);
         }
+    }
+
+    private String getDbUrl(String text) {
+        Matcher matcher = DB_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return text;
     }
 
 }

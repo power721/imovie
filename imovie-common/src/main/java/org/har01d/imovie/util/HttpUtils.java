@@ -137,6 +137,7 @@ public final class HttpUtils {
         headers.add(new BasicHeader("X-Requested-With", "XMLHttpRequest"));
         CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
+            .setDefaultCookieStore(cookieStore)
             .setDefaultHeaders(headers)
             .setUserAgent(userAgent)
             .build();
