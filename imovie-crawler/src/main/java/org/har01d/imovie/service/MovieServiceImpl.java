@@ -1,6 +1,7 @@
 package org.har01d.imovie.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
@@ -9,6 +10,8 @@ import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.ConfigRepository;
 import org.har01d.imovie.domain.Event;
 import org.har01d.imovie.domain.EventRepository;
+import org.har01d.imovie.domain.Explorer;
+import org.har01d.imovie.domain.ExplorerRepository;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.LanguageRepository;
 import org.har01d.imovie.domain.Movie;
@@ -58,6 +61,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private ConfigRepository configRepository;
+
+    @Autowired
+    private ExplorerRepository explorerRepository;
 
     @Override
     public Set<Person> getPersons(Set<String> names) {
@@ -152,6 +158,21 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Resource save(Resource resource) {
         return resourceRepository.save(resource);
+    }
+
+    @Override
+    public Explorer save(Explorer explorer) {
+        return explorerRepository.save(explorer);
+    }
+
+    @Override
+    public void delete(Explorer explorer) {
+        explorerRepository.delete(explorer);
+    }
+
+    @Override
+    public List<Explorer> findExplorers(String type) {
+        return explorerRepository.findByType(type);
     }
 
     @Override

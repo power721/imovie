@@ -2,7 +2,10 @@ package org.har01d.imovie.douban;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
@@ -31,66 +34,99 @@ public class DouBanExplorerImpl implements DouBanExplorer {
     @Autowired
     private MovieService service;
 
-    private BlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
+    private BlockingQueue<Explorer> queue = new ArrayBlockingQueue<>(10);
+
+    private ExecutorService executorService;
+    private ExecutorService exploreService;
 
     @Override
     public void crawler() throws InterruptedException {
-        int total = 0;
-        queue.add(baseUrl);
-        while (!queue.isEmpty()) {
-            String url = queue.poll(10, TimeUnit.SECONDS);
-            if (url == null) {
-                break;
-            }
+        executorService = Executors.newSingleThreadExecutor();
+        exploreService = Executors.newSingleThreadExecutor();
 
+        for (Explorer explorer : service.findExplorers("db")) {
+            queue.put(explorer);
+        }
+
+        if (queue.isEmpty()) {
             try {
-                String html = HttpUtils.getHtml(url);
+                String html = HttpUtils.getHtml(baseUrl);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select(".article a[href^=" + baseUrl + "/subject/]");
                 for (Element element : elements) {
                     String pageUrl = element.attr("href");
-                    String title = element.text();
-                    if (service.findSource(pageUrl) != null) {
-                        continue;
+                    if (service.findSource(pageUrl) == null) {
+                        queue.put(service.save(new Explorer("db", pageUrl)));
                     }
-
-                    Movie movie = service.find(pageUrl);
-                    if (movie == null) {
-                        try {
-                            movie = parser.parse(pageUrl);
-                            service.save(movie);
-                        } catch (Exception e) {
-                            service.publishEvent(pageUrl, e.getMessage());
-                            logger.error("Parse page failed: " + title, e);
-                        }
-                    }
-
-                    explore(pageUrl, title);
-                    service.save(new Source(pageUrl));
-                    total++;
                 }
             } catch (Exception e) {
-                service.publishEvent(url, e.getMessage());
-                logger.error("Get HTML failed: " + url, e);
+                service.publishEvent(baseUrl, e.getMessage());
+                logger.error("Get HTML failed: " + baseUrl, e);
             }
+        }
+
+        executorService.submit(() -> {
+            try {
+                explore();
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        });
+
+    }
+
+    private void explore() throws InterruptedException {
+        int total = 0;
+        while (!queue.isEmpty()) {
+            Explorer explorer = queue.poll(10, TimeUnit.SECONDS);
+            if (explorer == null) {
+                break;
+            }
+
+            String pageUrl = explorer.getUri();
+            if (service.findSource(pageUrl) != null) {
+                continue;
+            }
+
+            Movie movie = service.find(pageUrl);
+            if (movie == null) {
+                try {
+                    movie = parser.parse(pageUrl);
+                    service.save(movie);
+                } catch (Exception e) {
+                    service.publishEvent(pageUrl, e.getMessage());
+                    logger.error("Parse page failed: " + pageUrl, e);
+                }
+            }
+
+            exploreService.submit(() -> {
+                try {
+                    explore(pageUrl);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+                service.delete(explorer);
+                service.save(new Source(pageUrl));
+            });
+            total++;
         }
 
         logger.info("===== get {} movies =====", total);
     }
 
-    private void explore(String url, String title) throws InterruptedException {
+    private void explore(String url) throws InterruptedException {
         try {
             String html = HttpUtils.getHtml(url);
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {
-                queue.put(element.attr("href"));
+                queue.put(service.save(new Explorer("db", element.attr("href"))));
             }
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());
-            logger.error("Parse page failed: " + title, e);
+            logger.error("Parse page failed: " + url, e);
         }
     }
 

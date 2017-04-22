@@ -1,9 +1,11 @@
 package org.har01d.imovie.service;
 
+import java.util.List;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Event;
+import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
@@ -29,6 +31,12 @@ public interface MovieService {
     Source save(Source source);
 
     Resource save(Resource resource);
+
+    Explorer save(Explorer explorer);
+
+    void delete(Explorer explorer);
+
+    List<Explorer> findExplorers(String type);
 
     Movie find(String url);
 
