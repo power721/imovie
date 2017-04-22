@@ -4,10 +4,9 @@ import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class DouBanCrawlerImpl implements DouBanCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanCrawler.class);
+    private static final int LIMIT = 50;
 
     @Value("${url.douban}")
     private String baseUrl;
@@ -35,25 +35,29 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
+        JSONParser jsonParser = new JSONParser();
         for (int i = getTagIndex(); i < tags.length; ++i) {
             saveTagIndex(i);
             String tag = tags[i];
             int start = getStart();
             while (true) {
-                String url = String.format("%s/tag/%s?start=%d&type=R", baseUrl, tag, start);
+                String url = String
+                    .format("%s/j/search_subjects?type=movie&tag=%s&sort=time&page_limit=%d&page_start=%d", baseUrl,
+                        tag, LIMIT, start);
                 try {
-                    String html = HttpUtils.getHtml(url);
-                    Document doc = Jsoup.parse(html);
-                    Elements elements = doc.select(".article a.nbg");
-                    logger.info("({}/{}){}:{} get {} movies", i, tags.length, tag, start, elements.size());
-                    if (elements.isEmpty()) {
-                        saveStart(0);
+                    String json = HttpUtils.getJson(url);
+                    JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+                    JSONArray items = (JSONArray) jsonObject.get("subjects");
+
+                    if (items == null || items.isEmpty()) {
                         break;
                     }
+                    logger.info("({}/{}){}:{} get {} movies", i, tags.length, tag, start, items.size());
 
                     int count = 0;
-                    for (Element element : elements) {
-                        String pageUrl = element.attr("href");
+                    for (Object item1 : items) {
+                        JSONObject item = (JSONObject) item1;
+                        String pageUrl = (String) item.get("url");
                         Movie movie = service.find(pageUrl);
                         if (movie == null) {
                             try {
@@ -69,16 +73,16 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     }
 
                     if (count == 0) {
-//                        saveStart(0);
-//                        break;
+                        break;
                     }
                 } catch (Exception e) {
                     service.publishEvent(url, e.getMessage());
                     logger.error("Get HTML failed: " + url, e);
                 }
-                start += 20;
+                start += LIMIT;
                 saveStart(start);
             }
+            saveStart(0);
         }
         saveTagIndex(0);
 

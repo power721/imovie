@@ -62,9 +62,9 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
         JSONParser jsonParser = new JSONParser();
         if (queue.isEmpty()) {
+            String url = baseUrl + "/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=time&page_limit=500";
             try {
-                String json = HttpUtils.getJson(baseUrl
-                    + "/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=recommend&page_limit=500&page_start=0");
+                String json = HttpUtils.getJson(url);
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
                 JSONArray items = (JSONArray) jsonObject.get("subjects");
                 for (Object item1 : items) {
@@ -75,8 +75,8 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                     }
                 }
             } catch (Exception e) {
-                service.publishEvent(baseUrl, e.getMessage());
-                logger.error("Parse page failed: " + baseUrl, e);
+                service.publishEvent(url, e.getMessage());
+                logger.error("Parse page failed: " + url, e);
             }
         }
     }
