@@ -91,7 +91,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 }
 
                 if (count == 0) {
-//                    break;
+                    break;
                 }
             } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
@@ -101,7 +101,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
             savePage(page);
         }
 
-        logger.info("=== get {} movies ===", total);
+        logger.info("===== get {} movies =====", total);
     }
 
     private int getPage() {

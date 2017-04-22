@@ -41,16 +41,18 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
             int start = getStart();
             while (true) {
                 String url = String.format("%s/tag/%s?start=%d&type=T", baseUrl, tag, start);
+//                String url = String.format("%s/tag/%s?start=%d&type=R", baseUrl, tag, start);
                 try {
                     String html = HttpUtils.getHtml(url);
                     Document doc = Jsoup.parse(html);
                     Elements elements = doc.select(".article a.nbg");
-                    logger.info("get {} movies", elements.size());
+                    logger.info("{}: get {} movies", tag, elements.size());
                     if (elements.isEmpty()) {
                         saveStart(0);
                         break;
                     }
 
+                    int count = 0;
                     for (Element element : elements) {
                         String pageUrl = element.attr("href");
                         Movie movie = service.find(pageUrl);
@@ -58,12 +60,18 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                             try {
                                 movie = parser.parse(pageUrl);
                                 service.save(movie);
+                                count++;
                                 total++;
                             } catch (Exception e) {
                                 service.publishEvent(pageUrl, e.getMessage());
                                 logger.error("Parse page failed: " + pageUrl, e);
                             }
                         }
+                    }
+
+                    if (count == 0) {
+//                        saveStart(0);
+//                        break;
                     }
                 } catch (Exception e) {
                     service.publishEvent(url, e.getMessage());
@@ -74,7 +82,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
             }
         }
 
-        logger.info("=== get {} movies ===", total);
+        logger.info("===== get {} movies =====", total);
     }
 
     private int getTagIndex() {
