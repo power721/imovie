@@ -57,7 +57,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     for (Object item1 : items) {
                         JSONObject item = (JSONObject) item1;
                         String pageUrl = (String) item.get("url");
-                        Movie movie = service.find(pageUrl);
+                        Movie movie = service.findByDbUrl(pageUrl);
                         if (movie == null) {
                             try {
                                 movie = parser.parse(pageUrl);

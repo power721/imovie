@@ -71,7 +71,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             }
 
             if (explorers.hasNext()) {
-                page++;
+                page = 1 - page;
             } else {
                 break;
             }
@@ -112,7 +112,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                 continue;
             }
 
-            Movie movie = service.find(pageUrl);
+            Movie movie = service.findByDbUrl(pageUrl);
             if (movie == null) {
                 try {
                     movie = parser.parse(pageUrl);

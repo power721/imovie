@@ -177,7 +177,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie find(String url) {
+    public Movie findByDbUrl(String url) {
         return movieRepository.findFirstByDbUrl(url);
     }
 

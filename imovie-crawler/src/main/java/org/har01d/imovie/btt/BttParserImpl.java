@@ -75,7 +75,7 @@ public class BttParserImpl implements BttParser {
         Movie movie;
         String dbUrl = getDbUrl(text);
         if (dbUrl != null) {
-            movie = service.find(dbUrl);
+            movie = service.findByDbUrl(dbUrl);
             if (movie == null) {
                 movie = douBanParser.parse(dbUrl);
             }

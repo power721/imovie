@@ -67,7 +67,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                         continue;
                     }
 
-                    Movie movie = service.find(dbUrl);
+                    Movie movie = service.findByDbUrl(dbUrl);
                     if (movie == null) {
                         try {
                             movie = douBanParser.parse(dbUrl);

@@ -39,7 +39,7 @@ public interface MovieService {
 
     Page<Explorer> findExplorers(String type, Pageable pageable);
 
-    Movie find(String url);
+    Movie findByDbUrl(String url);
 
     Movie findByImdb(String url);
 
