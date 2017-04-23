@@ -7,6 +7,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface MyRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
-
     Optional<T> findFirstByName(String name);
 }

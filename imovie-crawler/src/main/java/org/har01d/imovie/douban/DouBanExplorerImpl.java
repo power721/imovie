@@ -23,6 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,8 +62,19 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             }
         });
 
-        for (Explorer explorer : service.findExplorers(TYPE)) {
-            queue.put(explorer);
+        int page = 0;
+        while (true) {
+            Pageable pageable = new PageRequest(page, 20);
+            Page<Explorer> explorers = service.findExplorers(TYPE, pageable);
+            for (Explorer explorer : explorers) {
+                queue.put(explorer);
+            }
+
+            if (explorers.hasNext()) {
+                page++;
+            } else {
+                break;
+            }
         }
 
         JSONParser jsonParser = new JSONParser();

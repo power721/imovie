@@ -1,7 +1,6 @@
 package org.har01d.imovie.service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
@@ -27,6 +26,8 @@ import org.har01d.imovie.domain.SourceRepository;
 import org.har01d.imovie.domain.Tag;
 import org.har01d.imovie.domain.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -171,8 +172,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Explorer> findExplorers(String type) {
-        return explorerRepository.findByType(type);
+    public Page<Explorer> findExplorers(String type, Pageable pageable) {
+        return explorerRepository.findByType(type, pageable);
     }
 
     @Override

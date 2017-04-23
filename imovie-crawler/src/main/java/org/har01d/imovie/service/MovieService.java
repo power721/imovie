@@ -1,6 +1,5 @@
 package org.har01d.imovie.service;
 
-import java.util.List;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Config;
@@ -13,6 +12,8 @@ import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.domain.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MovieService {
 
@@ -36,7 +37,7 @@ public interface MovieService {
 
     void delete(Explorer explorer);
 
-    List<Explorer> findExplorers(String type);
+    Page<Explorer> findExplorers(String type, Pageable pageable);
 
     Movie find(String url);
 
