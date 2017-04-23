@@ -158,7 +158,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("又名:") + 3;
             end = getNextToken(text, start);
             if (start > 10 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues2(text.substring(start, end))));
+                movie.setAliases(getValues2(text.substring(start, end)));
             }
         }
     }
@@ -187,10 +187,10 @@ public class BttParserImpl implements BttParser {
 
     private Set<String> getValues2(String text) {
         Set<String> values = new HashSet<>();
-        String regex = " / ";
+        String regex = " / ";
         String[] vals = text.split(regex);
         for (String val : vals) {
-            values.add(val.trim());
+            values.add(val.replaceAll(" ", "").trim());
         }
 
         return values;
@@ -207,6 +207,10 @@ public class BttParserImpl implements BttParser {
         int maxMatch = 0;
         for (Movie m : movies) {
             int match = 0;
+            if (name.equals(m.getName())) {
+                match++;
+            }
+
             if (movie.getYear() != null) {
                 if (movie.getYear().equals(m.getYear())) {
                     match++;
