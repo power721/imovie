@@ -2,6 +2,8 @@ package org.har01d.imovie.btt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +31,7 @@ public class BttParserImpl implements BttParser {
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
     private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
     private static final Pattern IMDB_PATTERN = Pattern.compile("(https?://www\\.imdb\\.com/title/tt\\d+)");
+    private static final Pattern IMDB = Pattern.compile("(tt\\d+)");
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -50,7 +53,7 @@ public class BttParserImpl implements BttParser {
         Document doc = Jsoup.parse(html);
         String text = doc.select("div.post").text();
 
-        movie = getMovie(text);
+        movie = getMovie(text, movie);
         if (movie == null) {
             logger.warn("Cannot find movie for " + url);
             service.publishEvent(url, "Cannot find movie");
@@ -71,8 +74,7 @@ public class BttParserImpl implements BttParser {
         return movie;
     }
 
-    private Movie getMovie(String text) throws IOException {
-        Movie movie;
+    private Movie getMovie(String text, Movie movie) throws IOException {
         String dbUrl = getDbUrl(text);
         if (dbUrl != null) {
             movie = service.findByDbUrl(dbUrl);
@@ -83,11 +85,113 @@ public class BttParserImpl implements BttParser {
         }
 
         String imdb = getImdbUrl(text);
-        if (imdb != null && (movie = service.findByImdb(imdb)) != null) {
-            return movie;
+        if (imdb != null) {
+            Movie m = service.findByImdb(imdb);
+            if (m != null) {
+                return m;
+            }
         }
 
-        return null;
+        getMetadata(text, movie);
+        return findMovie(movie);
+    }
+
+    private void getMetadata(String text, Movie movie) {
+        int start = text.indexOf("◎国　　家　") + 6;
+        int end = text.indexOf("◎", start);
+        if (start > 10 && end > start) {
+            movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+        }
+
+        start = text.indexOf("◎类　　别　") + 6;
+        end = text.indexOf("◎", start);
+        if (start > 10 && end > start) {
+            movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+        }
+
+        start = text.indexOf("◎语　　言　") + 6;
+        end = text.indexOf("◎", start);
+        if (start > 10 && end > start) {
+            movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+        }
+
+        start = text.indexOf("◎上映日期　") + 6;
+        end = text.indexOf("◎", start);
+        if (start > 10 && end > start) {
+            movie.setReleaseDate(StringUtils.truncate(text.substring(start, end), 120));
+        }
+
+        start = text.indexOf("◎译　　名　") + 6;
+        end = text.indexOf("◎", start);
+        if (start > 10 && end > start) {
+            movie.setAliases(getValues(text.substring(start, end)));
+        }
+    }
+
+    private Set<String> getValues(String text) {
+        Set<String> values = new HashSet<>();
+        String regex = "/";
+        String[] vals = text.split(regex);
+        for (String val : vals) {
+            values.add(val.replaceAll("　", "").trim());
+        }
+
+        return values;
+    }
+
+    private Movie findMovie(Movie movie) {
+        String name = movie.getName();
+        if (name == null) {
+            return null;
+        }
+
+        List<Movie> movies = service.findByName(name);
+        Movie best = null;
+        int maxMatch = 0;
+        for (Movie m : movies) {
+            int match = 0;
+            if (movie.getYear() != null) {
+                if (movie.getYear().equals(m.getYear())) {
+                    match++;
+                }
+            }
+
+            if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null) {
+                if (m.getCategories().containsAll(movie.getCategories())) {
+                    match++;
+                }
+            }
+
+            if (movie.getRegions() != null && !movie.getRegions().isEmpty() && m.getRegions() != null) {
+                if (m.getRegions().containsAll(movie.getRegions())) {
+                    match++;
+                }
+            }
+
+            if (movie.getLanguages() != null && !movie.getLanguages().isEmpty() && m.getLanguages() != null) {
+                if (m.getLanguages().containsAll(movie.getLanguages())) {
+                    match++;
+                }
+            }
+
+            if (movie.getAliases() != null && !movie.getAliases().isEmpty() && m.getAliases() != null) {
+                if (m.getAliases().containsAll(movie.getAliases())) {
+                    match++;
+                }
+            }
+
+            if (movie.getReleaseDate() != null && m.getReleaseDate() != null) {
+                if (m.getReleaseDate().contains(movie.getReleaseDate())) {
+                    match++;
+                }
+            }
+
+            if (match > maxMatch) {
+                maxMatch = match;
+                best = m;
+            }
+        }
+        return best;
     }
 
     private String getDbUrl(String html) {
@@ -105,14 +209,23 @@ public class BttParserImpl implements BttParser {
 
     private String getImdbUrl(String html) {
         int index = html.indexOf("www.imdb.com/title/");
-        if (index < 0) {
-            return null;
+        if (index > 0) {
+            String text = html.substring(index - "http://".length(), index + 40);
+            Matcher matcher = IMDB_PATTERN.matcher(text);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
         }
-        String text = html.substring(index - "http://".length(), index + 40);
-        Matcher matcher = IMDB_PATTERN.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1);
+
+        index = html.indexOf("IMDb链接");
+        if (index > 0) {
+            String text = html.substring(index + 5, index + 25);
+            Matcher matcher = IMDB.matcher(text);
+            if (matcher.find()) {
+                return "http://www.imdb.com/title/" + matcher.group(1);
+            }
         }
+
         return null;
     }
 

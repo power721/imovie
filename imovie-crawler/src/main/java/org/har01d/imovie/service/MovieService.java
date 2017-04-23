@@ -1,5 +1,6 @@
 package org.har01d.imovie.service;
 
+import java.util.List;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Config;
@@ -38,6 +39,8 @@ public interface MovieService {
     void delete(Explorer explorer);
 
     Page<Explorer> findExplorers(String type, Pageable pageable);
+
+    List<Movie> findByName(String name);
 
     Movie findByDbUrl(String url);
 

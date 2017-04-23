@@ -1,6 +1,7 @@
 package org.har01d.imovie.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.har01d.imovie.domain.Category;
@@ -174,6 +175,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Page<Explorer> findExplorers(String type, Pageable pageable) {
         return explorerRepository.findByType(type, pageable);
+    }
+
+    @Override
+    public List<Movie> findByName(String name) {
+        return movieRepository.findByNameStartsWith(name);
     }
 
     @Override

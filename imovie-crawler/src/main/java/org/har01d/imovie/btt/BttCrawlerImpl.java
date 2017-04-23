@@ -1,9 +1,11 @@
 package org.har01d.imovie.btt;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
@@ -21,7 +23,7 @@ public class BttCrawlerImpl implements BttCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BttCrawler.class);
     private static final Pattern SUBJECT_PATTERN = Pattern
-        .compile("^\\[\\d+] \\[[^]]+] \\[[^]]+] \\[[^]]+]\\[([^]]+)]\\[[^]]+]\\[[^]]+]\\[[^]]+].*$");
+        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[[^]]+]\\[([^]]+)]\\[[^]]+]\\[[^]]+]\\[[^]]+].*$");
 
     @Value("${url.btt.page}")
     private String baseUrl;
@@ -50,19 +52,27 @@ public class BttCrawlerImpl implements BttCrawler {
                     String text = element.text();
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
-                        logger.info(matcher.group(1));
+                        logger.info(matcher.group(3));
                         String pageUrl = siteUrl + element.select("a").first().attr("href");
                         logger.info(pageUrl);
                         if (service.findSource(pageUrl) != null) {
                             continue;
                         }
 
+                        String y = matcher.group(1);
                         Movie movie = new Movie();
                         movie.setTitle(text);
-                        movie.setName(getName(text));
-                        parser.parse(pageUrl, movie);
-//                        service.save(new Source(pageUrl));
-                        count++;
+                        movie.setName(getName(matcher.group(3)));
+                        if (y.matches("\\d{4}")) {
+                            movie.setYear(Integer.valueOf(y));
+                        }
+                        movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
+
+                        movie = parser.parse(pageUrl, movie);
+                        if (movie != null) {
+                            service.save(new Source(pageUrl));
+                            count++;
+                        }
                     }
                 }
 

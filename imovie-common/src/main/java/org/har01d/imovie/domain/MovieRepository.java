@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(excerptProjection = MovieProjection.class)
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
-    List<Movie> findByName(String name);
+    List<Movie> findByNameStartsWith(String name);
     Movie findFirstByDbUrl(String dbUrl);
     Movie findFirstByImdbUrl(String imdbUrl);
 }
