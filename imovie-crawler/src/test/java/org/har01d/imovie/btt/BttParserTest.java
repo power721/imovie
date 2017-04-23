@@ -26,7 +26,7 @@ public class BttParserTest {
 
     @Test
     public void testParseDbStyle() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4351471.htm";
+        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4351465.htm";
         Movie movie = new Movie();
         movie.setTitle("test");
         parser.parse(pageUrl, movie);
