@@ -29,7 +29,7 @@ public class Rs05ParserImpl implements Rs05Parser {
     private ResourceRepository resourceRepository;
 
     @Override
-    public void parse(String url, Movie movie) throws IOException {
+    public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
         Set<Resource> resources = movie.getResources();
@@ -51,6 +51,7 @@ public class Rs05ParserImpl implements Rs05Parser {
         logger.info("get {} resources for movie {}", resources.size(), movie.getName());
 
         movieRepository.save(movie);
+        return movie;
     }
 
     private Resource findResource(Element element) {

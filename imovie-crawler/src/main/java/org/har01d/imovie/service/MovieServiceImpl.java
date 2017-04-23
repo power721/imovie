@@ -182,6 +182,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie findByImdb(String url) {
+        return movieRepository.findFirstByImdbUrl(url);
+    }
+
+    @Override
     public Source findSource(String url) {
         return sourceRepository.findFirstByUri(url);
     }

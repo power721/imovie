@@ -27,13 +27,14 @@ import org.springframework.stereotype.Service;
 public class BttParserImpl implements BttParser {
 
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
-    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie.douban.com/subject/\\d+)");
+    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
+    private static final Pattern IMDB_PATTERN = Pattern.compile("(https?://www\\.imdb\\.com/title/tt\\d+)");
 
     @Value("${url.btt.site}")
     private String siteUrl;
 
     @Value("${file.download}")
-    private String downloadDir;
+    private File downloadDir;
 
     private int id;
 
@@ -44,19 +45,22 @@ public class BttParserImpl implements BttParser {
     private MovieService service;
 
     @Override
-    public void parse(String url, Movie movie) throws IOException {
+    public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
-        String dbUrl = getDbUrl(html);
-        Set<Resource> resources = movie.getResources();
+        String text = doc.select("div.post").text();
 
-        if (dbUrl != null) {
-            movie = douBanParser.parse(dbUrl);
-        } else {
-            Elements elements = doc.select("div.post p");
-            for (Element element : elements) {
-                findResource(element.text(), resources);
-            }
+        movie = getMovie(text);
+        if (movie == null) {
+            logger.warn("Cannot find movie for " + url);
+            service.publishEvent(url, "Cannot find movie");
+            return null;
+        }
+
+        Set<Resource> resources = movie.getResources();
+        Elements elements = doc.select("div.post p");
+        for (Element element : elements) {
+            findResource(element.text(), resources);
         }
 
         findResource(doc, resources);
@@ -64,6 +68,26 @@ public class BttParserImpl implements BttParser {
 
         logger.info("get {} resources for movie {}", resources.size(), movie.getName());
         service.save(movie);
+        return movie;
+    }
+
+    private Movie getMovie(String text) throws IOException {
+        Movie movie;
+        String dbUrl = getDbUrl(text);
+        if (dbUrl != null) {
+            movie = service.find(dbUrl);
+            if (movie == null) {
+                movie = douBanParser.parse(dbUrl);
+            }
+            return movie;
+        }
+
+        String imdb = getImdbUrl(text);
+        if (imdb != null && (movie = service.findByImdb(imdb)) != null) {
+            return movie;
+        }
+
+        return null;
     }
 
     private String getDbUrl(String html) {
@@ -71,8 +95,21 @@ public class BttParserImpl implements BttParser {
         if (index < 0) {
             return null;
         }
-        String text = html.substring(index - "https://".length(), index + 35);
+        String text = html.substring(index - "https://".length(), index + 45);
         Matcher matcher = DB_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private String getImdbUrl(String html) {
+        int index = html.indexOf("www.imdb.com/title/");
+        if (index < 0) {
+            return null;
+        }
+        String text = html.substring(index - "http://".length(), index + 40);
+        Matcher matcher = IMDB_PATTERN.matcher(text);
         if (matcher.find()) {
             return matcher.group(1);
         }
@@ -119,6 +156,7 @@ public class BttParserImpl implements BttParser {
         String name = (id++ / 20) + ".torrent";
         File file = new File(downloadDir, name);
         try {
+            downloadDir.mkdirs();
             file.createNewFile();
             HttpUtils.downloadFile(uri, file);
             String magnet = BtUtils.torrent2Magnet(file);

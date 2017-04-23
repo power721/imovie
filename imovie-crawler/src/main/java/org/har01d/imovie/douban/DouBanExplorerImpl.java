@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 public class DouBanExplorerImpl implements DouBanExplorer {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanExplorer.class);
-    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie.douban.com/subject/\\d+/)");
+    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
     private static final String TYPE = "db";
 
     @Value("${url.douban}")
