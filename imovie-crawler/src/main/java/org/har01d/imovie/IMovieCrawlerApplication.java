@@ -2,6 +2,7 @@ package org.har01d.imovie;
 
 import java.util.Arrays;
 import java.util.List;
+import org.har01d.imovie.btt.BttCrawler;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.douban.DouBanCrawler;
@@ -27,6 +28,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private DouBanCrawler douBanCrawler;
 
     @Autowired
+    private BttCrawler bttCrawler;
+
+    @Autowired
     private DouBanExplorer explorer;
 
     @Autowired
@@ -40,6 +44,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             rs05Crawler.crawler();
+            bttCrawler.crawler();
 //            douBanCrawler.crawler();
             explorer.crawler();
         }

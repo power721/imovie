@@ -83,10 +83,8 @@ public class BttCrawlerImpl implements BttCrawler {
             } catch (IOException e) {
                 logger.error("Get HTML failed!", e);
             }
-
         }
     }
-
 
     private String getName(String title) {
         String[] comps = title.split("/");

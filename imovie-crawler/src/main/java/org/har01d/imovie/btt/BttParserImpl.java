@@ -50,16 +50,17 @@ public class BttParserImpl implements BttParser {
     public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
+        html = doc.select("div.post").html();
         String text = doc.select("div.post").text();
 
-        movie = getMovie(text, movie);
-        if (movie == null) {
-            logger.warn("Cannot find movie for " + url);
+        Movie m = getMovie(html, text, movie);
+        if (m == null) {
+            logger.warn("Cannot find movie for " + movie.getName());
             service.publishEvent(url, "Cannot find movie");
             return null;
         }
 
-        Set<Resource> resources = movie.getResources();
+        Set<Resource> resources = m.getResources();
         Elements elements = doc.select("div.post p");
         for (Element element : elements) {
             findResource(element.text(), resources);
@@ -68,22 +69,22 @@ public class BttParserImpl implements BttParser {
         findResource(doc, resources);
         findAttachments(doc, resources);
 
-        logger.info("get {} resources for movie {}", resources.size(), movie.getName());
-        service.save(movie);
-        return movie;
+        logger.info("get {} resources for movie {}", resources.size(), m.getName());
+        service.save(m);
+        return m;
     }
 
-    private Movie getMovie(String text, Movie movie) throws IOException {
-        String dbUrl = getDbUrl(text);
+    private Movie getMovie(String html, String text, Movie movie) throws IOException {
+        String dbUrl = getDbUrl(html);
         if (dbUrl != null) {
-            movie = service.findByDbUrl(dbUrl);
-            if (movie == null) {
-                movie = douBanParser.parse(dbUrl);
+            Movie m = service.findByDbUrl(dbUrl);
+            if (m == null) {
+                m = douBanParser.parse(dbUrl);
             }
-            return movie;
+            return m;
         }
 
-        String imdb = getImdbUrl(text);
+        String imdb = getImdbUrl(html);
         if (imdb != null) {
             Movie m = service.findByImdb(imdb);
             if (m != null) {
@@ -163,7 +164,7 @@ public class BttParserImpl implements BttParser {
         int index = text.indexOf(" / ", start);
         for (String token : TOKENS) {
             int i = text.indexOf(token, start);
-            if (i > 0 && i < index) {
+            if (i > 0 && (i < index || index == -1)) {
                 index = i;
             }
         }
@@ -256,6 +257,7 @@ public class BttParserImpl implements BttParser {
         if (index < 0) {
             return null;
         }
+
         String text = html.substring(index - "https://".length(), index + 45);
         Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
@@ -267,7 +269,7 @@ public class BttParserImpl implements BttParser {
     private String getImdbUrl(String html) {
         int index = html.indexOf("www.imdb.com/title/");
         if (index > 0) {
-            String text = html.substring(index - "http://".length(), index + 40);
+            String text = html.substring(index - "https://".length(), index + 40);
             Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(text);
             if (matcher.find()) {
                 return matcher.group(1);
@@ -276,7 +278,7 @@ public class BttParserImpl implements BttParser {
 
         index = html.indexOf("IMDb链接");
         if (index > 0) {
-            String text = html.substring(index + 5, index + 25);
+            String text = html.substring(index + 6, index + 20);
             Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
                 return "http://www.imdb.com/title/" + matcher.group(1);
