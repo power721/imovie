@@ -9,6 +9,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,7 +24,7 @@ public class DouBanParserImpl implements DouBanParser {
     private static final Logger logger = LoggerFactory.getLogger(DouBanParser.class);
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
     private static final String[] tokens = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
-        "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"};
+        "片长:", "又名:", "IMDb链接:", "官方网站:", "官方小站:", "首播:", "季数:", "集数:", "单集片长:"};
 
     @Autowired
     private MovieService service;
@@ -214,9 +215,17 @@ public class DouBanParserImpl implements DouBanParser {
 
     private String getImdbUrl(String imdb) {
         if (imdb.contains("http://www.imdb.com/title/")) {
-            return imdb;
+            Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(imdb);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
         }
-        return "http://www.imdb.com/title/" + imdb;
+
+        Matcher matcher = UrlUtils.IMDB.matcher(imdb);
+        if (matcher.find()) {
+            return "http://www.imdb.com/title/" + matcher.group(1);
+        }
+        return null;
     }
 
 }

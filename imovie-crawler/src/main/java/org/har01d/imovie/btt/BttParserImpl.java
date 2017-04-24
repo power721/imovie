@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -29,9 +28,6 @@ import org.springframework.stereotype.Service;
 public class BttParserImpl implements BttParser {
 
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
-    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
-    private static final Pattern IMDB_PATTERN = Pattern.compile("(https?://www\\.imdb\\.com/title/tt\\d+)");
-    private static final Pattern IMDB = Pattern.compile("(tt\\d+)");
 
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
         "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"};
@@ -261,7 +257,7 @@ public class BttParserImpl implements BttParser {
             return null;
         }
         String text = html.substring(index - "https://".length(), index + 45);
-        Matcher matcher = DB_PATTERN.matcher(text);
+        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
             return matcher.group(1);
         }
@@ -272,7 +268,7 @@ public class BttParserImpl implements BttParser {
         int index = html.indexOf("www.imdb.com/title/");
         if (index > 0) {
             String text = html.substring(index - "http://".length(), index + 40);
-            Matcher matcher = IMDB_PATTERN.matcher(text);
+            Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(text);
             if (matcher.find()) {
                 return matcher.group(1);
             }
@@ -281,7 +277,7 @@ public class BttParserImpl implements BttParser {
         index = html.indexOf("IMDb链接");
         if (index > 0) {
             String text = html.substring(index + 5, index + 25);
-            Matcher matcher = IMDB.matcher(text);
+            Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
                 return "http://www.imdb.com/title/" + matcher.group(1);
             }

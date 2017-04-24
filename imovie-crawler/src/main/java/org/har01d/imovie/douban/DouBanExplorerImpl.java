@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Explorer;
@@ -46,6 +47,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     private BlockingQueue<Explorer> queue = new ArrayBlockingQueue<>(10);
 
+    private AtomicInteger count = new AtomicInteger();
     private ExecutorService executorService;
     private ExecutorService exploreService;
 
@@ -54,6 +56,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
         executorService = Executors.newSingleThreadExecutor();
         exploreService = Executors.newSingleThreadExecutor();
 
+        logger.info("explore");
         executorService.submit(() -> {
             try {
                 explore();
@@ -99,7 +102,6 @@ public class DouBanExplorerImpl implements DouBanExplorer {
     }
 
     private void explore() throws InterruptedException {
-        int total = 0;
         while (true) {
             Explorer explorer = queue.poll(30, TimeUnit.SECONDS);
             if (explorer == null) {
@@ -118,6 +120,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                     movie = parser.parse(pageUrl);
                     service.save(movie);
                     service.save(new Source(pageUrl));
+                    logger.info("{}: find movie {}", count.incrementAndGet(), movie.getTitle());
                 } catch (Exception e) {
                     service.publishEvent(pageUrl, e.getMessage());
                     logger.error("Parse page failed: " + pageUrl, e);
@@ -133,10 +136,9 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                 service.delete(explorer);
                 service.save(new Source(pageUrl));
             });
-            total++;
         }
 
-        logger.info("===== get {} movies =====", total);
+        logger.info("===== get {} movies =====", count.get());
         exploreService.shutdown();
         executorService.shutdown();
         exploreService.shutdownNow();

@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 
 public final class UrlUtils {
 
+    public static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
+    public static final Pattern IMDB_PATTERN = Pattern.compile("(https?://www\\.imdb\\.com/title/tt\\d+)");
+    public static final Pattern IMDB = Pattern.compile("(tt\\d+)");
+
     private static final Logger logger = LoggerFactory.getLogger(UrlUtils.class);
     private static final Pattern MAGNET_PATTERN = Pattern
         .compile(
