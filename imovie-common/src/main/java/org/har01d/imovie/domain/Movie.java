@@ -57,7 +57,7 @@ public class Movie {
     @JsonView(JsonViews.Detail.class)
     private Set<Category> categories;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
     private Set<String> aliases;
 
@@ -81,7 +81,7 @@ public class Movie {
     @JsonView(JsonViews.Detail.class)
     private Set<Language> languages;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(columnDefinition = "TEXT")
     @JsonView(JsonViews.Detail.class)
     private Set<String> snapshots;

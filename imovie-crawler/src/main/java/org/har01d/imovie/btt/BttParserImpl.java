@@ -294,7 +294,13 @@ public class BttParserImpl implements BttParser {
             String uri = element.attr("href");
             if (isResource(uri)) {
                 String title = element.parent().text();
-                resources.add(service.saveResource(uri, title));
+                if (title.length() > 200) {
+                    int index = title.indexOf(element.text());
+                    if (index > 0) {
+                        title = title.substring(index);
+                    }
+                }
+                resources.add(service.saveResource(uri, StringUtils.truncate(title, 100)));
             }
         }
     }

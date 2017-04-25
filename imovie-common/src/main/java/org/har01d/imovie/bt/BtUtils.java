@@ -52,10 +52,11 @@ public final class BtUtils {
                         break;
                     case ':':
                         if (strLengthBuilder.length() == 0) {
-                            System.out.println("skip " + is.available());
-                            end = total - is.available();  // TODO: check this
-                            is.skip(total);
-                            break;
+                            System.err.println("skip " + is.available());
+//                            end = total - is.available();  // TODO: check this
+//                            is.skip(total);
+//                            break;
+                            return null;
                         }
 
                         int strLen = Integer.parseInt(strLengthBuilder.toString());
