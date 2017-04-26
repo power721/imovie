@@ -93,7 +93,6 @@ public final class BtUtils {
             String sha1 = DigestUtils.sha1Hex(bytes).toUpperCase();
             return "magnet:?xt=urn:btih:" + sha1 + "&dn=" + name;
         }
-
     }
 
 }

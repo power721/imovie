@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
@@ -39,7 +40,8 @@ public class BttCrawlerImpl implements BttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int page = 1;
+        int total = 0;
+        int page = getPage();
         while (page < 1000) {
             String url = String.format(baseUrl, page);
             try {
@@ -53,7 +55,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
                         String pageUrl = siteUrl + element.select("a").attr("href");
-                        logger.info(matcher.group(3) + ": " + pageUrl);
+                        logger.info(page + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
                         if (service.findSource(pageUrl) != null) {
                             continue;
                         }
@@ -67,10 +69,16 @@ public class BttCrawlerImpl implements BttCrawler {
                         }
                         movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
 
-                        movie = parser.parse(pageUrl, movie);
-                        if (movie != null) {
-                            service.save(new Source(pageUrl));
-                            count++;
+                        try {
+                            movie = parser.parse(pageUrl, movie);
+                            if (movie != null) {
+                                service.save(new Source(pageUrl));
+                                count++;
+                                total++;
+                            }
+                        } catch (Exception e) {
+                            service.publishEvent(pageUrl, e.getMessage());
+                            logger.error("Parse page failed: " + pageUrl, e);
                         }
                     }
                 }
@@ -79,15 +87,34 @@ public class BttCrawlerImpl implements BttCrawler {
 //                    break;
                 }
                 page++;
+                savePage(page);
             } catch (IOException e) {
-                logger.error("Get HTML failed!", e);
+                service.publishEvent(url, e.getMessage());
+                logger.error("Get HTML failed: " + url, e);
             }
         }
+
+        savePage(1);
+        logger.info("===== get {} movies =====", total);
     }
 
     private String getName(String title) {
         String[] comps = title.split("/");
         return comps[0];
+    }
+
+    private int getPage() {
+        String key = "btt_page";
+        Config config = service.getConfig(key);
+        if (config == null) {
+            return 1;
+        }
+
+        return Integer.valueOf(config.getValue());
+    }
+
+    private void savePage(int page) {
+        service.saveConfig("btt_page", String.valueOf(page));
     }
 
 }
