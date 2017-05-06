@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.CategoryRepository;
 import org.har01d.imovie.domain.Config;
@@ -33,6 +35,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MovieServiceImpl implements MovieService {
+
+    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
+    private static final Pattern YEAR_PATTERN = Pattern.compile("^\\s*(\\d{4})\\D*");
 
     @Autowired
     private MovieRepository movieRepository;
@@ -66,6 +71,27 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private ExplorerRepository explorerRepository;
+
+    @Override
+    public void getYear(Movie movie, String yearStr) {
+        if (yearStr == null) {
+            return;
+        }
+
+        Matcher matcher = DATE_PATTERN.matcher(yearStr);
+        if (matcher.find()) {
+            int year = Integer.valueOf(matcher.group(1));
+            movie.setYear(year);
+            return;
+        }
+
+        matcher = YEAR_PATTERN.matcher(yearStr);
+        if (matcher.find()) {
+            int year = Integer.valueOf(matcher.group(1));
+            movie.setYear(year);
+            return;
+        }
+    }
 
     @Override
     public Set<Person> getPersons(Set<String> names) {

@@ -60,6 +60,10 @@ public final class BtUtils {
                         }
 
                         int strLen = Integer.parseInt(strLengthBuilder.toString());
+                        if (strLen > 8 * 1024 * 1024) {
+                            throw new IOException("The torrent file is invalid: " + strLen);
+                        }
+
                         strLengthBuilder = new StringBuilder();
                         byte[] tempBytes = new byte[strLen];
                         is.read(tempBytes);

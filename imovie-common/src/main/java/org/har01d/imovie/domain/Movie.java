@@ -59,7 +59,7 @@ public class Movie {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
-    private Set<String> aliases;
+    private Set<String> aliases = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)

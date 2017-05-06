@@ -26,8 +26,8 @@ url:
   douban: https://movie.douban.com
   btt:
     site: http://btbtt.co/
-    page: http://btbtt.co/forum-index-fid-951-page-%d.htm
-    thread: http://btbtt.co/thread-index-fid-951-tid-%d.htm
+    page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
+    thread: http://btbtt.co/thread-index-fid-%d-tid-%d.htm
 file:
   download: /tmp/bt/
 

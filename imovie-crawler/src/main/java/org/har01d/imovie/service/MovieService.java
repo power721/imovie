@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface MovieService {
 
+    void getYear(Movie movie, String yearStr);
+
     Set<Person> getPersons(Set<String> names);
 
     Set<Category> getCategories(Set<String> names);

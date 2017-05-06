@@ -7,12 +7,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.UrlUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Service;
 public class DouBanExplorerImpl implements DouBanExplorer {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanExplorer.class);
-    private static final Pattern DB_PATTERN = Pattern.compile("(https?://movie\\.douban\\.com/subject/\\d+/)");
     private static final String TYPE = "db";
 
     @Value("${url.douban}")
@@ -53,8 +53,8 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     @Override
     public void crawler() throws InterruptedException {
-        executorService = Executors.newSingleThreadExecutor();
-        exploreService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newSingleThreadExecutor(new MyThreadFactory("Explorer-C"));
+        exploreService = Executors.newSingleThreadExecutor(new MyThreadFactory("Explorer-P"));
 
         logger.info("explore");
         executorService.submit(() -> {
@@ -165,9 +165,9 @@ public class DouBanExplorerImpl implements DouBanExplorer {
     }
 
     private String getDbUrl(String text) {
-        Matcher matcher = DB_PATTERN.matcher(text);
+        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
-            return matcher.group(1);
+            return matcher.group(1).replace("http://", "https://");
         }
         return text;
     }

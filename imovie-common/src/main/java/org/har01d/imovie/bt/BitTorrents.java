@@ -137,7 +137,7 @@ public class BitTorrents {
                 System.out.println(file);
                 fileWriter.write(file.getName());
                 fileWriter.write(": ");
-                fileWriter.write(BtUtils.torrent2Magnet(file));
+                fileWriter.write(String.valueOf(BtUtils.torrent2Magnet(file)));
                 fileWriter.write("\n");
             }
         }

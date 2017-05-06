@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class DouBanParserImpl implements DouBanParser {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanParser.class);
-    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
     private static final String[] tokens = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
         "片长:", "又名:", "IMDb链接:", "官方网站:", "官方小站:", "首播:", "季数:", "集数:", "单集片长:"};
 
@@ -55,7 +53,7 @@ public class DouBanParserImpl implements DouBanParser {
         movie.setCover(getCover(thumb));
         movie.setDbScore(dbScore);
         movie.setDbUrl(url);
-        movie.setSynopsis(findSynopsis(synopsis));
+        movie.setSynopsis(StringUtils.truncate(findSynopsis(synopsis), 65530));
 
         Set<String> snapshots = new HashSet<>();
         for (Element element : content.select("#related-pic img")) {
@@ -74,9 +72,9 @@ public class DouBanParserImpl implements DouBanParser {
             getMetadata(line, movie);
         }
         if (year != null) {
-            getYear(movie, year);
+            service.getYear(movie, year);
         } else {
-            getYear(movie, movie.getReleaseDate());
+            service.getYear(movie, movie.getReleaseDate());
         }
 
         return movie;
@@ -196,21 +194,6 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return values;
-    }
-
-    private void getYear(Movie movie, String yearStr) {
-        if (yearStr == null) {
-            return;
-        }
-
-        Matcher matcher = DATE_PATTERN.matcher(yearStr);
-        if (matcher.find()) {
-            int year = Integer.valueOf(matcher.group(1));
-            movie.setYear(year);
-        } else if (yearStr.matches("\\d{4}")) {
-            int year = Integer.valueOf(yearStr);
-            movie.setYear(year);
-        }
     }
 
     private String getImdbUrl(String imdb) {

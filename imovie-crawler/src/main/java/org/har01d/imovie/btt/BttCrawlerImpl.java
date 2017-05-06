@@ -2,8 +2,11 @@ package org.har01d.imovie.btt;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -24,7 +27,10 @@ public class BttCrawlerImpl implements BttCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BttCrawler.class);
     private static final Pattern SUBJECT_PATTERN = Pattern
-        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[[^]]+]\\[([^]]+)]\\[[^]]+]\\[[^]]+]\\[[^]]+].*$");
+        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[([^]]+)]\\[([^]]+)]\\[[^]]+]\\[[^]]+].*$");
+
+    private static final Pattern SUBJECT_PATTERN2 = Pattern
+        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[[^]]+](.*)$");
 
     @Value("${url.btt.page}")
     private String baseUrl;
@@ -40,10 +46,17 @@ public class BttCrawlerImpl implements BttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BttCrawler"));
+        executorService.submit(() -> work(951));
+        executorService.submit(() -> work(1183));
+        executorService.shutdown();
+    }
+
+    private void work(int fid) {
         int total = 0;
-        int page = getPage();
-        while (page < 1000) {
-            String url = String.format(baseUrl, page);
+        int page = getPage(fid);
+        while (page < 919) {
+            String url = String.format(baseUrl, fid, page);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
@@ -52,34 +65,61 @@ public class BttCrawlerImpl implements BttCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String text = element.text();
+                    Movie movie = null;
+                    String pageUrl = null;
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
-                        String pageUrl = siteUrl + element.select("a").attr("href");
-                        logger.info(page + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
+                        String str = matcher.group(3);
+                        String name = str;
+                        if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
+                            name = matcher.group(4);
+                        }
+                        pageUrl = siteUrl + element.select("a").attr("href");
+                        logger.info(fid + "-" + page + "-" + count + " " + name + ": " + pageUrl);
                         if (service.findSource(pageUrl) != null) {
                             continue;
                         }
 
                         String y = matcher.group(1);
-                        Movie movie = new Movie();
+                        movie = new Movie();
                         movie.setTitle(text);
-                        movie.setName(getName(matcher.group(3)));
+                        movie.setName(getName(name));
                         if (y.matches("\\d{4}")) {
                             movie.setYear(Integer.valueOf(y));
                         }
                         movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
-
-                        try {
-                            movie = parser.parse(pageUrl, movie);
-                            if (movie != null) {
-                                service.save(new Source(pageUrl));
-                                count++;
-                                total++;
+                    } else {
+                        matcher = SUBJECT_PATTERN2.matcher(text);
+                        if (matcher.find()) {
+                            pageUrl = siteUrl + element.select("a").attr("href");
+                            logger.info(fid + "-" + page + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
+                            if (service.findSource(pageUrl) != null) {
+                                continue;
                             }
-                        } catch (Exception e) {
-                            service.publishEvent(pageUrl, e.getMessage());
-                            logger.error("Parse page failed: " + pageUrl, e);
+
+                            String y = matcher.group(1);
+                            movie = new Movie();
+                            if (y.matches("\\d{4}")) {
+                                movie.setYear(Integer.valueOf(y));
+                            }
+                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
                         }
+                    }
+
+                    if (movie == null) {
+                        continue;
+                    }
+
+                    try {
+                        movie = parser.parse(pageUrl, movie);
+                        if (movie != null) {
+                            service.save(new Source(pageUrl));
+                            count++;
+                            total++;
+                        }
+                    } catch (Exception e) {
+                        service.publishEvent(pageUrl, e.getMessage());
+                        logger.error("Parse page failed: " + pageUrl, e);
                     }
                 }
 
@@ -87,14 +127,14 @@ public class BttCrawlerImpl implements BttCrawler {
 //                    break;
                 }
                 page++;
-                savePage(page);
+                savePage(fid, page);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }
         }
 
-        savePage(1);
+        savePage(fid, 1);
         logger.info("===== get {} movies =====", total);
     }
 
@@ -103,8 +143,8 @@ public class BttCrawlerImpl implements BttCrawler {
         return comps[0];
     }
 
-    private int getPage() {
-        String key = "btt_page";
+    private int getPage(int fid) {
+        String key = "btt_page_" + fid;
         Config config = service.getConfig(key);
         if (config == null) {
             return 1;
@@ -113,8 +153,8 @@ public class BttCrawlerImpl implements BttCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void savePage(int page) {
-        service.saveConfig("btt_page", String.valueOf(page));
+    private void savePage(int fid, int page) {
+        service.saveConfig("btt_page_" + fid, String.valueOf(page));
     }
 
 }

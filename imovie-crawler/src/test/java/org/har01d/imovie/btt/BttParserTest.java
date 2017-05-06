@@ -25,6 +25,38 @@ public class BttParserTest {
     }
 
     @Test
+    public void test2() throws Exception {
+        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4172428.htm";
+        Movie movie = new Movie();
+        movie.setTitle("test");
+        parser.parse(pageUrl, movie);
+    }
+
+    @Test
+    public void test3() throws Exception {
+        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4172432.htm";
+        Movie movie = new Movie();
+        movie.setTitle("test");
+        parser.parse(pageUrl, movie);
+    }
+
+    @Test
+    public void test4() throws Exception {
+        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4172508.htm";
+        Movie movie = new Movie();
+        movie.setTitle("test");
+        parser.parse(pageUrl, movie);
+    }
+
+    @Test
+    public void test5() throws Exception {
+        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4237076.htm";
+        Movie movie = new Movie();
+        movie.setTitle("test");
+        parser.parse(pageUrl, movie);
+    }
+
+    @Test
     public void testParseDbStyle() throws Exception {
         String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4351465.htm";
         Movie movie = new Movie();

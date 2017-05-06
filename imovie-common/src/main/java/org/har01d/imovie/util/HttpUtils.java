@@ -32,7 +32,7 @@ public final class HttpUtils {
     private static BasicCookieStore cookieStore = new BasicCookieStore();
 
     static {
-        BasicClientCookie cookie = new BasicClientCookie("dbcl2", "62974743:3RISASkQbzs");
+        BasicClientCookie cookie = new BasicClientCookie("dbcl2", "62974743:pc6WLag6Vww");
         cookie.setDomain(".movie.douban.com");
         cookie.setPath("/");
         cookieStore.addCookie(cookie);
@@ -105,7 +105,7 @@ public final class HttpUtils {
             if (status >= 200 && status < 300) {
                 HttpEntity entity = response.getEntity();
                 FileUtils.copyInputStreamToFile(entity.getContent(), file);
-                LOGGER.info("download {} completed.", uri);
+                LOGGER.info("download {} completed. {}", uri, file);
                 return null;
             } else if (status >= 500 && status <= 599) {
                 throw new IOException("Unexpected response status: " + status);
