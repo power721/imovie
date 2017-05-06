@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
+import org.apache.http.client.HttpResponseException;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
@@ -121,6 +122,14 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                     service.save(movie);
                     service.save(new Source(pageUrl));
                     logger.info("{}: find movie {}", count.incrementAndGet(), movie.getTitle());
+                } catch (HttpResponseException e) {
+                    service.publishEvent(pageUrl, e.getMessage());
+                    logger.error("Parse page failed: " + pageUrl, e);
+                    if (e.getStatusCode() == 404) {
+                        service.delete(explorer);
+                        service.save(new Source(pageUrl));
+                        continue;
+                    }
                 } catch (Exception e) {
                     service.publishEvent(pageUrl, e.getMessage());
                     logger.error("Parse page failed: " + pageUrl, e);

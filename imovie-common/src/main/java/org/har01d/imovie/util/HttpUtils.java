@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -68,7 +68,7 @@ public final class HttpUtils {
             } else if (status >= 500 && status <= 599) {
                 throw new IOException("Unexpected response status: " + status);
             } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
+                throw new HttpResponseException(status, "Unexpected response status: " + status);
             }
         };
 
@@ -110,7 +110,7 @@ public final class HttpUtils {
             } else if (status >= 500 && status <= 599) {
                 throw new IOException("Unexpected response status: " + status);
             } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
+                throw new HttpResponseException(status, "Unexpected response status: " + status);
             }
         };
 
@@ -154,7 +154,7 @@ public final class HttpUtils {
             } else if (status >= 500 && status <= 599) {
                 throw new IOException("Unexpected response status: " + status);
             } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
+                throw new HttpResponseException(status, "Unexpected response status: " + status);
             }
         };
 

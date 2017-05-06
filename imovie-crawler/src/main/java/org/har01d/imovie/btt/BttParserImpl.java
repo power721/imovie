@@ -59,7 +59,7 @@ public class BttParserImpl implements BttParser {
 
         Movie m = getMovie(html, text, movie);
         if (m == null) {
-            logger.warn("Cannot find movie for " + movie.getName());
+            logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName());
             return null;
         }
@@ -433,7 +433,8 @@ public class BttParserImpl implements BttParser {
     }
 
     private String getValue(String text, int len) {
-        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("  ", "").replace("–", "").replace("-", "")
+        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll("  ", "").replace("–", "")
+            .replace("-", "")
             .trim();
         return StringUtils.truncate(text, len);
     }
@@ -444,7 +445,8 @@ public class BttParserImpl implements BttParser {
         String[] vals = text.split(regex);
         for (String val : vals) {
             values.add(
-                val.replaceAll("　", "").replaceAll(" ", "").replaceAll("  ", "").replace("–", "").replace("-", "")
+                val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll("  ", "").replace("–", "")
+                    .replace("-", "")
                     .trim());
         }
 
