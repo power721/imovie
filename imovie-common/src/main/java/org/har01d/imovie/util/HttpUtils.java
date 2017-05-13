@@ -117,7 +117,7 @@ public final class HttpUtils {
         try {
             httpClient.execute(httpget, responseHandler);
         } catch (IOException e) {
-            LOGGER.warn("Parse {} failed: {}, retrying...", uri, e.getMessage());
+            LOGGER.warn("Download {} failed: {}, retrying...", uri, e.getMessage());
             httpClient.execute(httpget, responseHandler);
         } finally {
             IOUtils.closeQuietly(httpClient);

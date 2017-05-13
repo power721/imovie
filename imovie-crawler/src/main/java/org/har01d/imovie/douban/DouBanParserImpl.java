@@ -72,9 +72,9 @@ public class DouBanParserImpl implements DouBanParser {
             getMetadata(line, movie);
         }
         if (year != null) {
-            service.getYear(movie, year);
+            movie.setYear(service.getYear(year));
         } else {
-            service.getYear(movie, movie.getReleaseDate());
+            movie.setYear(service.getYear(movie.getReleaseDate()));
         }
 
         return movie;

@@ -47,7 +47,7 @@ public class BttCrawlerImpl implements BttCrawler {
     @Override
     public void crawler() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BttCrawler"));
-        executorService.submit(() -> work(951));
+//        executorService.submit(() -> work(951));
         executorService.submit(() -> work(1183));
         executorService.shutdown();
     }
@@ -55,11 +55,16 @@ public class BttCrawlerImpl implements BttCrawler {
     private void work(int fid) {
         int total = 0;
         int page = getPage(fid);
-        while (page < 919) {
+        while (true) {
             String url = String.format(baseUrl, fid, page);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
+                String date = doc.select("td.username .small").last().text();
+                Integer year = service.getYear(date);
+                if (year != null && year <= 2012) {
+                    break;
+                }
                 Elements elements = doc.select("td.subject");
 
                 int count = 0;

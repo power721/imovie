@@ -13,4 +13,8 @@ public final class StringUtils {
         return text;
     }
 
+    public static boolean isSpace(char c) {
+        return c == ' ' || c == '\t' || c == '\n';
+    }
+
 }

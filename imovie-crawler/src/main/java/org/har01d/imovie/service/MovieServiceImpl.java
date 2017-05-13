@@ -73,24 +73,21 @@ public class MovieServiceImpl implements MovieService {
     private ExplorerRepository explorerRepository;
 
     @Override
-    public void getYear(Movie movie, String yearStr) {
+    public Integer getYear(String yearStr) {
         if (yearStr == null) {
-            return;
+            return null;
         }
 
         Matcher matcher = DATE_PATTERN.matcher(yearStr);
         if (matcher.find()) {
-            int year = Integer.valueOf(matcher.group(1));
-            movie.setYear(year);
-            return;
+            return Integer.valueOf(matcher.group(1));
         }
 
         matcher = YEAR_PATTERN.matcher(yearStr);
         if (matcher.find()) {
-            int year = Integer.valueOf(matcher.group(1));
-            movie.setYear(year);
-            return;
+            return Integer.valueOf(matcher.group(1));
         }
+        return null;
     }
 
     @Override

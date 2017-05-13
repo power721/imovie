@@ -2,9 +2,10 @@ package org.har01d.imovie.btt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.bt.BtUtils;
@@ -30,11 +31,14 @@ public class BttParserImpl implements BttParser {
 
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
 
-    private Pattern CHINEASE = Pattern.compile("[\\u4e00-\\u9fa5]");
-    private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:", "上映日期:",
-        "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:", "剧情简介"};
-    private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别："
-        , "发行：", "国家：", "片长：", "上映日期：", "官方网站："};
+    private Pattern CHINESE = Pattern.compile("[\\u4e00-\\u9fa5]");
+    private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
+    private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
+        "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
+        "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "简介:", "剧情简介", "影片介绍:",
+        " 简 "};
+    private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别：", "发行：", "国家：",
+        "片长：", "上映日期：", "字幕：", "年代：", "播出时间：", "语言：", "官方网站："};
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -42,7 +46,7 @@ public class BttParserImpl implements BttParser {
     @Value("${file.download}")
     private File downloadDir;
 
-    private int id;
+    private AtomicInteger id = new AtomicInteger();
 
     @Autowired
     private DouBanParser douBanParser;
@@ -65,6 +69,7 @@ public class BttParserImpl implements BttParser {
         }
 
         Set<Resource> resources = m.getResources();
+        int size = resources.size();
         Elements elements = doc.select("div.post p");
         for (Element element : elements) {
             findResource(element.text(), resources);
@@ -73,7 +78,7 @@ public class BttParserImpl implements BttParser {
         findResource(doc, resources);
         findAttachments(doc, resources);
 
-        logger.info("get {} resources for movie {}", resources.size(), m.getName());
+        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);
         return m;
     }
@@ -99,12 +104,33 @@ public class BttParserImpl implements BttParser {
 
         getMetadata(text, movie);
         if (movie.getName() == null) {
-            movie.setName(getOne(movie.getAliases()));
+            movie.setName(fixName(getOne(movie.getAliases())));
+        }
+        if (movie.getName() == null) {
+            getName(text, movie);
         }
         if (movie.getYear() == null) {
-            service.getYear(movie, movie.getReleaseDate());
+            movie.setYear(service.getYear(movie.getReleaseDate()));
         }
         return findMovie(movie);
+    }
+
+    private void getName(String text, Movie movie) {
+        Matcher m = DB_NAME.matcher(text);
+        if (m.find()) {
+            movie.setName(fixName(m.group(1)));
+        }
+    }
+
+    private String fixName(String name) {
+        if (name.endsWith(")")) {
+            int len = name.length();
+            int index = name.lastIndexOf('(');
+            if (index > -1 && len - index >= 4) {
+                return name.substring(0, index);
+            }
+        }
+        return name;
     }
 
     private void getMetadata(String text, Movie movie) {
@@ -403,7 +429,7 @@ public class BttParserImpl implements BttParser {
             if (result == null) {
                 result = element;
             }
-            if (CHINEASE.matcher(element).find()) {
+            if (CHINESE.matcher(element).find()) {
                 return element;
             }
         }
@@ -413,6 +439,12 @@ public class BttParserImpl implements BttParser {
     private int getNextToken(String text, int start) {
         int index = text.indexOf(" / ", start);
         for (String token : TOKENS) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
+        for (String token : TOKENS2) {
             int i = text.indexOf(token, start);
             if (i > 0 && (i < index || index == -1)) {
                 index = i;
@@ -429,23 +461,29 @@ public class BttParserImpl implements BttParser {
                 index = i;
             }
         }
+        for (String token : TOKENS) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
         return index;
     }
 
     private String getValue(String text, int len) {
-        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll("  ", "").replace("–", "")
+        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
             .trim();
         return StringUtils.truncate(text, len);
     }
 
     private Set<String> getValues(String text) {
-        Set<String> values = new HashSet<>();
+        Set<String> values = new LinkedHashSet<>();
         String regex = "/";
         String[] vals = text.split(regex);
         for (String val : vals) {
             values.add(
-                val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll("  ", "").replace("–", "")
+                val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
                     .replace("-", "")
                     .trim());
         }
@@ -454,7 +492,7 @@ public class BttParserImpl implements BttParser {
     }
 
     private Set<String> getValues2(String text) {
-        Set<String> values = new HashSet<>();
+        Set<String> values = new LinkedHashSet<>();
         String regex = " / ";
         String[] vals = text.split(regex);
         for (String val : vals) {
@@ -471,9 +509,9 @@ public class BttParserImpl implements BttParser {
         }
 
         List<Movie> movies = service.findByName(name);
-        for (String alias : movie.getAliases()) {
-            movies.addAll(service.findByName(alias));
-        }
+//        for (String alias : movie.getAliases()) {
+//            movies.addAll(service.findByName(alias));
+//        }
         Movie best = null;
         int maxMatch = 0;
         for (Movie m : movies) {
@@ -618,7 +656,7 @@ public class BttParserImpl implements BttParser {
             return null;
         }
 
-        String name = (id++ % 20) + ".torrent";
+        String name = (id.getAndIncrement() % 20) + ".torrent";
         File file = new File(downloadDir, name);
         try {
             downloadDir.mkdirs();

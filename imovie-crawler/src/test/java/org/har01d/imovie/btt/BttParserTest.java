@@ -50,7 +50,7 @@ public class BttParserTest {
 
     @Test
     public void test5() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4233771.htm";
+        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4172769.htm";
         Movie movie = new Movie();
         movie.setTitle("test");
         parser.parse(pageUrl, movie);
@@ -58,7 +58,7 @@ public class BttParserTest {
 
     @Test
     public void testParseDbStyle() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4351465.htm";
+        String pageUrl = "http://btbtt.co/thread-index-fid-951-tid-4353025.htm";
         Movie movie = new Movie();
         movie.setTitle("test");
         parser.parse(pageUrl, movie);

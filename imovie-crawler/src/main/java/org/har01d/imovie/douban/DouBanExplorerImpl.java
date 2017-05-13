@@ -54,8 +54,8 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     @Override
     public void crawler() throws InterruptedException {
-        executorService = Executors.newSingleThreadExecutor(new MyThreadFactory("Explorer-C"));
-        exploreService = Executors.newSingleThreadExecutor(new MyThreadFactory("Explorer-P"));
+        executorService = Executors.newSingleThreadExecutor(new MyThreadFactory("DBExplorer-C"));
+        exploreService = Executors.newSingleThreadExecutor(new MyThreadFactory("DBExplorer-P"));
 
         logger.info("explore");
         executorService.submit(() -> {
