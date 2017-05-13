@@ -123,6 +123,10 @@ public class BttParserImpl implements BttParser {
     }
 
     private String fixName(String name) {
+        if (name == null) {
+            return null;
+        }
+
         if (name.endsWith(")")) {
             int len = name.length();
             int index = name.lastIndexOf('(');
