@@ -36,9 +36,11 @@ public class BttParserImpl implements BttParser {
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
         "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "简介:", "剧情简介", "影片介绍:",
-        " 简 "};
+        " 简 ", " 简  "};
     private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别：", "发行：", "国家：",
         "片长：", "上映日期：", "字幕：", "年代：", "播出时间：", "语言：", "官方网站："};
+    private static final String[] TOKENS3 = new String[]{"年代：", "类    型：", "地区：", "地区：", "制作公司：", "语言：",
+        "上映日期：", "英文：", "别名：", "编剧：", "导演：", "主演：", "简介："};
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -99,6 +101,8 @@ public class BttParserImpl implements BttParser {
             if (m != null) {
                 return m;
             }
+            logger.warn("[IMDB] cannot find movie for {}: {}", movie.getName(), imdb);
+            service.publishEvent(imdb, "[IMDB] cannot find movie " + movie.getName());
             movie.setImdbUrl(imdb);
         }
 
@@ -127,6 +131,7 @@ public class BttParserImpl implements BttParser {
             return null;
         }
 
+        name = name.replace("(台)", "").replace("(港)", "");
         if (name.endsWith(")")) {
             int len = name.length();
             int index = name.lastIndexOf('(');
@@ -138,286 +143,532 @@ public class BttParserImpl implements BttParser {
     }
 
     private void getMetadata(String text, Movie movie) {
-        if (text.contains("◎类　　别") || text.contains("◎片　　名")) {
+        if (text.contains("◎类　　别") || text.contains("◎片　　名") || text.contains("◎中 文 名")) {
             int start = text.indexOf("◎国　　家") + 6;
             int end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类　　别") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　　言") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年　　代") + 5;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎上映日期") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎译　　名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
 
             start = text.indexOf("◎片　　名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
 
             start = text.indexOf("◎中文片名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎中 文 名") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
 
             start = text.indexOf("◎英文片名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
         } else if (text.contains("◎片　 　名")) {
             int start = text.indexOf("◎国　 　家") + 6;
             int end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类　 　别") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　 　言") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年　 　代") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎上映日 期") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎译　 　名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
 
             start = text.indexOf("◎片　 　名") + 6;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("◎译 名")) { // http://btbtt.co/thread-index-fid-1183-tid-4092435.htm
+            int start = text.indexOf("◎国 家") + 4;
+            int end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类 别") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎语 言") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎年 代") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎译 名") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎片 名") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("◎译     名")) { // http://btbtt.co/thread-index-fid-1183-tid-4093225.htm
+            int start = text.indexOf("◎ 国   家") + 7;
+            int end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类     别") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎语     言") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎年     代") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎译     名") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎片     名") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("◎中文片名")) { // http://btbtt.co/thread-index-fid-1183-tid-4354378.htm
+            int start = text.indexOf("◎地　　区") + 5;
+            int end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类　　型") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎语　　言") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎年　　代") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎中文片名") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎英文片名") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
         } else if (text.contains("◎中    文    名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4172428.htm
             int start = text.indexOf("◎类          型：") + 14;
             int end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎对 白 语 言：") + 9;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年          代：") + 14;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎中    文    名：") + 13;
             end = text.indexOf("◎", start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("@ 译.........名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4139697.htm
+            int start = text.indexOf("@ 类.........别：") + 14;
+            int end = text.indexOf("@", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("@ 语.........言：") + 14;
+            end = text.indexOf("@", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("@ 发行时间：") + 7;
+            end = text.indexOf("@", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("@ 译.........名：") + 14;
+            end = text.indexOf("@", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
         } else if (text.contains("【译 名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4172432.htm
             int start = text.indexOf("【国 家】：") + 6;
             int end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【影片类型】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【语 言】：") + 6;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【上映时间】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("【译 名】：") + 6;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
-        } else if (text.contains("【中文译名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4172508.htm
-            int start = text.indexOf("【国　　家】") + 6;
+        } else if (text.contains("【译名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4140337.htm
+            int start = text.indexOf("【国家】：") + 5;
             int end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
-            }
-
-            start = text.indexOf("【类　　别】") + 6;
-            end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
-            }
-
-            start = text.indexOf("【对白语言】") + 6;
-            end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
-            }
-
-            start = text.indexOf("【出品年代】") + 6;
-            end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
-            }
-
-            start = text.indexOf("【中文译名】") + 6;
-            end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
-            }
-        } else if (text.contains("【中文片名】：")) { // http://btbtt.co/thread-index-fid-951-tid-4237007.htm
-            int start = text.indexOf("【国家地区】：") + 7;
-            int end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【影片类型】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【语言】：") + 5;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【上映时间】：") + 7;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【译名】：") + 5;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("【中文译名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4172508.htm
+            int start = text.indexOf("【国　　家】") + 6;
+            int end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【类　　别】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【对白语言】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【出品年代】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【中文译名】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("【译  名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4141657.htm
+            int start = text.indexOf("【國  家】") + 6;
+            int end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【類  別】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【语  言】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【年  代】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【译  名】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("【片  名】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("【中文片名】：")) { // http://btbtt.co/thread-index-fid-951-tid-4237007.htm
+            int start = text.indexOf("【国家地区】：") + 7;
+            int end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【影片类型】：") + 7;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【对白语言】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【出品年代】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("【中文片名】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
 
             start = text.indexOf("【英文片名】：") + 7;
             end = text.indexOf("【", start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
         } else if (text.contains("中文片名：")) { // http://btbtt.co/thread-index-fid-951-tid-4236792.htm
             int start = text.indexOf("国家：") + 3;
             int end = getNextToken2(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("类型：") + 3;
             end = getNextToken2(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
             }
 
 //            start = text.indexOf("【对白语言】") + 6;
 //            end = text.indexOf("：", start);
-//            if (start > 10 && end > start) {
+//            if (start > 20 && end > start) {
 //                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
 //            }
 
             start = text.indexOf("上映日期：") + 5;
             end = getNextToken2(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("中文片名：") + 5;
             end = getNextToken2(text, start);
-            if (start > 10 && end > start) {
-                movie.setAliases(getValues(text.substring(start, end)));
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("别名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4140915.htm
+            int start = text.indexOf("地区：") + 3;
+            int end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("类    型：") + 7;
+            end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("语言：") + 3;
+            end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("上映日期：") + 5;
+            end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("别名：") + 3;
+            end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("英文：") + 3;
+            end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
         } else {
             int start = text.indexOf("制片国家/地区:") + 8;
             int end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setRegions(service.getRegions(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("类型:") + 3;
             end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setCategories(service.getCategories(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("语言:") + 3;
             end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setLanguages(service.getLanguages(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("上映日期:") + 5;
             end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("片名:") + 3;
             end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues2(text.substring(start, end)));
+            }
+
+            start = text.indexOf("剧名:") + 3;
+            end = getNextToken(text, start);
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues2(text.substring(start, end)));
             }
 
             start = text.indexOf("又名:") + 3;
             end = getNextToken(text, start);
-            if (start > 10 && end > start) {
+            if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues2(text.substring(start, end)));
             }
         }
@@ -474,6 +725,17 @@ public class BttParserImpl implements BttParser {
         return index;
     }
 
+    private int getNextToken3(String text, int start) {
+        int index = text.indexOf(" / ", start);
+        for (String token : TOKENS3) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
     private String getValue(String text, int len) {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
@@ -486,10 +748,12 @@ public class BttParserImpl implements BttParser {
         String regex = "/";
         String[] vals = text.split(regex);
         for (String val : vals) {
-            values.add(
-                val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
-                    .replace("-", "")
-                    .trim());
+            val = val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
+                .replace("-", "")
+                .trim();
+            if (!val.isEmpty()) {
+                values.add(val);
+            }
         }
 
         return values;
@@ -500,7 +764,10 @@ public class BttParserImpl implements BttParser {
         String regex = " / ";
         String[] vals = text.split(regex);
         for (String val : vals) {
-            values.add(val.replaceAll(" ", "").trim());
+            val = val.replaceAll(" ", "").trim();
+            if (!val.isEmpty()) {
+                values.add(val);
+            }
         }
 
         return values;
@@ -516,6 +783,14 @@ public class BttParserImpl implements BttParser {
 //        for (String alias : movie.getAliases()) {
 //            movies.addAll(service.findByName(alias));
 //        }
+        if (movies.isEmpty()) {
+            name = getOne(movie.getAliases());
+            if (name == null) {
+                return null;
+            }
+            movies = service.findByName(name);
+        }
+
         Movie best = null;
         int maxMatch = 0;
         for (Movie m : movies) {
@@ -604,6 +879,15 @@ public class BttParserImpl implements BttParser {
         index = html.indexOf("IMDB 链 接");
         if (index > 0) {
             String text = html.substring(index + 8, index + 23);
+            Matcher matcher = UrlUtils.IMDB.matcher(text);
+            if (matcher.find()) {
+                return "http://www.imdb.com/title/" + matcher.group(1);
+            }
+        }
+
+        index = html.indexOf("@ I..M..D..B：");
+        if (index > 0) {
+            String text = html.substring(index + 13, index + 28);
             Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
                 return "http://www.imdb.com/title/" + matcher.group(1);

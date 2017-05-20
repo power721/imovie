@@ -47,7 +47,7 @@ public class BttCrawlerImpl implements BttCrawler {
     @Override
     public void crawler() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BttCrawler"));
-//        executorService.submit(() -> work(951));
+        executorService.submit(() -> work(951));
         executorService.submit(() -> work(1183));
         executorService.shutdown();
     }

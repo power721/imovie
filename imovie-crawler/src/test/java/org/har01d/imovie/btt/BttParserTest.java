@@ -50,7 +50,7 @@ public class BttParserTest {
 
     @Test
     public void test5() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4172769.htm";
+        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4354378.htm";
         Movie movie = new Movie();
         movie.setTitle("test");
         parser.parse(pageUrl, movie);

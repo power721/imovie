@@ -3,6 +3,7 @@ package org.har01d.imovie.domain;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -59,7 +60,7 @@ public class Movie {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
-    private Set<String> aliases = new HashSet<>();
+    private Set<String> aliases = new LinkedHashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonView(JsonViews.Detail.class)
