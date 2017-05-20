@@ -2,6 +2,8 @@ package org.har01d.imovie.btt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +67,14 @@ public class BttParserImpl implements BttParser {
 
         Movie m = getMovie(html, text, movie);
         if (m == null) {
+            m = searchByImdb(movie);
+        }
+
+        if (m == null) {
+            m = searchByName(movie);
+        }
+
+        if (m == null) {
             logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName());
             return null;
@@ -96,13 +106,14 @@ public class BttParserImpl implements BttParser {
         }
 
         String imdb = getImdbUrl(html);
+        if (imdb == null) {
+            imdb = getImdbUrl(text);
+        }
         if (imdb != null) {
             Movie m = service.findByImdb(imdb);
             if (m != null) {
                 return m;
             }
-            logger.warn("[IMDB] cannot find movie for {}: {}", movie.getName(), imdb);
-            service.publishEvent(imdb, "[IMDB] cannot find movie " + movie.getName());
             movie.setImdbUrl(imdb);
         }
 
@@ -894,6 +905,54 @@ public class BttParserImpl implements BttParser {
             }
         }
 
+        return null;
+    }
+
+    private Movie searchByImdb(Movie movie) {
+        if (movie.getImdbUrl() == null) {
+            return null;
+        }
+
+        String imdb = movie.getImdbUrl().replace("http://www.imdb.com/title/", "");
+        Movie m = searchMovie(imdb);
+        if (m != null) {
+            return m;
+        }
+
+        logger.warn("[IMDB] cannot find movie for {}: {}", movie.getName(), imdb);
+        service.publishEvent(imdb, "[IMDB] cannot find movie " + movie.getName());
+        return null;
+    }
+
+    private Movie searchByName(Movie movie) {
+        if (movie.getName() == null) {
+            return null;
+        }
+
+        return searchMovie(movie.getName());
+    }
+
+    private Movie searchMovie(String text) {
+        String url;
+        try {
+            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("search movie failed: " + text, e);
+            return null;
+        }
+
+        try {
+            String html = HttpUtils.getHtml(url);
+            Document doc = Jsoup.parse(html);
+            Elements elements = doc.select("div.article a.nbg");
+            if (elements.size() == 1) {
+                String dbUrl = elements.attr("href");
+                return douBanParser.parse(dbUrl);
+            }
+        } catch (Exception e) {
+            service.publishEvent(url, e.getMessage());
+            logger.error("Parse page failed: " + url, e);
+        }
         return null;
     }
 
