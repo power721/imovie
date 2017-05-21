@@ -176,7 +176,12 @@ public class DouBanExplorerImpl implements DouBanExplorer {
     private String getDbUrl(String text) {
         Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
-            return matcher.group(1).replace("http://", "https://");
+            String url = matcher.group(1).replace("http://", "https://");
+            if (url.endsWith("/")) {
+                return url;
+            } else {
+                return url + "/";
+            }
         }
         return text;
     }

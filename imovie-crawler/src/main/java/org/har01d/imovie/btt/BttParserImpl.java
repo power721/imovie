@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -37,10 +38,10 @@ public class BttParserImpl implements BttParser {
     private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
-        "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "简介:", "剧情简介", "影片介绍:",
-        " 简 ", " 简  "};
+        "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "媒介:",
+        "IMDB评分:", "简介:", "剧情简介", "影片介绍:", " 简 ", " 简  "};
     private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别：", "发行：", "国家：",
-        "片长：", "上映日期：", "字幕：", "年代：", "播出时间：", "语言：", "官方网站："};
+        "片长：", "上映日期：", "字幕：", "年代：", "发布：", "播出时间：", "语言：", "官方网站："};
     private static final String[] TOKENS3 = new String[]{"年代：", "类    型：", "地区：", "地区：", "制作公司：", "语言：",
         "上映日期：", "英文：", "别名：", "编剧：", "导演：", "主演：", "简介："};
 
@@ -324,6 +325,42 @@ public class BttParserImpl implements BttParser {
             }
 
             start = text.indexOf("◎片     名") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("◎译 　　名")) { // http://btbtt.co/thread-index-fid-1183-tid-4285832.htm
+            int start = text.indexOf("◎国 　　家") + 6;
+            int end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类 　　别") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎语 　　言") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎年 　　代") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎译 　　名") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎片 　　名") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
@@ -863,7 +900,12 @@ public class BttParserImpl implements BttParser {
         String text = html.substring(index - "https://".length(), index + 45);
         Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
-            return matcher.group(1).replace("http://", "https://");
+            String url = matcher.group(1).replace("http://", "https://");
+            if (url.endsWith("/")) {
+                return url;
+            } else {
+                return url + "/";
+            }
         }
         return null;
     }
@@ -948,6 +990,17 @@ public class BttParserImpl implements BttParser {
             if (elements.size() == 1) {
                 String dbUrl = elements.attr("href");
                 return douBanParser.parse(dbUrl);
+            } else {
+                for (Element element : elements) {
+                    String dbUrl = element.attr("href");
+                    if (service.findByDbUrl(dbUrl) == null) {
+                        Movie movie = douBanParser.parse(dbUrl);
+                        service.save(new Source(dbUrl));
+                        if (movie != null) {
+                            service.save(movie);
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());
