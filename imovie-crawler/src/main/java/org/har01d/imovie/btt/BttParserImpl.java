@@ -883,7 +883,7 @@ public class BttParserImpl implements BttParser {
                 }
             }
 
-            if (match > maxMatch) {
+            if (match > 1 && match > maxMatch) {
                 maxMatch = match;
                 best = m;
             }
@@ -911,12 +911,21 @@ public class BttParserImpl implements BttParser {
     }
 
     private String getImdbUrl(String html) {
-        int index = html.indexOf("www.imdb.com/title/");
+        int index = html.indexOf("imdb.com/title/");
+        if (index > 0) {
+            String text = html.substring(index - "https://www.".length(), index + 40);
+            Matcher matcher = UrlUtils.IMDB.matcher(text);
+            if (matcher.find()) {
+                return "http://www.imdb.com/title/" + matcher.group(1);
+            }
+        }
+
+        index = html.indexOf("www.imdb.cn/title/");
         if (index > 0) {
             String text = html.substring(index - "https://".length(), index + 40);
-            Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(text);
+            Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
-                return matcher.group(1);
+                return "http://www.imdb.com/title/" + matcher.group(1);
             }
         }
 
@@ -993,11 +1002,16 @@ public class BttParserImpl implements BttParser {
             } else {
                 for (Element element : elements) {
                     String dbUrl = element.attr("href");
-                    if (service.findByDbUrl(dbUrl) == null) {
-                        Movie movie = douBanParser.parse(dbUrl);
-                        service.save(new Source(dbUrl));
-                        if (movie != null) {
-                            service.save(movie);
+                    if (dbUrl.contains("movie.douban.com/subject/") && service.findByDbUrl(dbUrl) == null) {
+                        try {
+                            Movie movie = douBanParser.parse(dbUrl);
+                            service.save(new Source(dbUrl));
+                            if (movie != null) {
+                                service.save(movie);
+                            }
+                        } catch (Exception e) {
+                            service.publishEvent(dbUrl, e.getMessage());
+                            logger.error("Parse page failed: " + dbUrl, e);
                         }
                     }
                 }

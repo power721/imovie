@@ -80,7 +80,7 @@ public class BttCrawlerImpl implements BttCrawler {
                             name = matcher.group(4);
                         }
                         pageUrl = siteUrl + element.select("a").attr("href");
-                        logger.info(fid + "-" + page + "-" + count + " " + name + ": " + pageUrl);
+                        logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
                         if (service.findSource(pageUrl) != null) {
                             continue;
                         }
@@ -97,7 +97,8 @@ public class BttCrawlerImpl implements BttCrawler {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
                             pageUrl = siteUrl + element.select("a").attr("href");
-                            logger.info(fid + "-" + page + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
+                            logger.info(
+                                fid + "-" + page + "-" + total + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
                             if (service.findSource(pageUrl) != null) {
                                 continue;
                             }
