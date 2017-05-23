@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.bt.BtUtils;
+import org.har01d.imovie.domain.Category;
+import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.douban.DouBanParser;
@@ -159,19 +163,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎国　　家") + 6;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类　　别") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　　言") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年　　代") + 5;
@@ -219,19 +223,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎国　 　家") + 6;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类　 　别") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　 　言") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年　 　代") + 6;
@@ -261,19 +265,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎国 家") + 4;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类 别") + 4;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语 言") + 4;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年 代") + 4;
@@ -297,19 +301,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎ 国   家") + 7;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类     别") + 8;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语     言") + 8;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年     代") + 8;
@@ -333,19 +337,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎国 　　家") + 6;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类 　　别") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语 　　言") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年 　　代") + 6;
@@ -369,19 +373,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎地　　区") + 5;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎类　　型") + 5;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　　言") + 5;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年　　代") + 5;
@@ -405,13 +409,13 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("◎类          型：") + 14;
             int end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎对 白 语 言：") + 9;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎年          代：") + 14;
@@ -429,13 +433,13 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("@ 类.........别：") + 14;
             int end = text.indexOf("@", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("@ 语.........言：") + 14;
             end = text.indexOf("@", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("@ 发行时间：") + 7;
@@ -453,19 +457,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("【国 家】：") + 6;
             int end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【影片类型】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【语 言】：") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【上映时间】：") + 7;
@@ -483,19 +487,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("【国家】：") + 5;
             int end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【影片类型】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【语言】：") + 5;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【上映时间】：") + 7;
@@ -513,19 +517,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("【国　　家】") + 6;
             int end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【类　　别】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【对白语言】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【出品年代】") + 6;
@@ -543,19 +547,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("【國  家】") + 6;
             int end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【類  別】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【语  言】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【年  代】") + 6;
@@ -579,19 +583,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("【国家地区】：") + 7;
             int end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【影片类型】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【对白语言】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【出品年代】：") + 7;
@@ -615,19 +619,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("国家：") + 3;
             int end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("类型：") + 3;
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
 //            start = text.indexOf("【对白语言】") + 6;
 //            end = text.indexOf("：", start);
 //            if (start > 20 && end > start) {
-//                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+//                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
 //            }
 
             start = text.indexOf("上映日期：") + 5;
@@ -645,19 +649,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("地区：") + 3;
             int end = getNextToken3(text, start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("类    型：") + 7;
             end = getNextToken3(text, start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("语言：") + 3;
             end = getNextToken3(text, start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("上映日期：") + 5;
@@ -681,19 +685,19 @@ public class BttParserImpl implements BttParser {
             int start = text.indexOf("制片国家/地区:") + 8;
             int end = getNextToken(text, start);
             if (start > 20 && end > start) {
-                movie.setRegions(service.getRegions(getValues2(text.substring(start, end))));
+                movie.setRegions(getRegions(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("类型:") + 3;
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
-                movie.setCategories(service.getCategories(getValues2(text.substring(start, end))));
+                movie.setCategories(getCategories(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("语言:") + 3;
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
-                movie.setLanguages(service.getLanguages(getValues2(text.substring(start, end))));
+                movie.setLanguages(getLanguages(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("上映日期:") + 5;
@@ -1089,6 +1093,33 @@ public class BttParserImpl implements BttParser {
     private boolean isResource(String uri) {
         return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
             || uri.startsWith("ftp://") || uri.contains("pan.baidu.com");
+    }
+
+    private Set<Category> getCategories(Set<String> names) {
+        Set<Category> categories = new HashSet<>();
+        for (String name : names) {
+            Category c = new Category(name);
+            categories.add(c);
+        }
+        return categories;
+    }
+
+    private Set<Language> getLanguages(Set<String> names) {
+        Set<Language> languages = new HashSet<>();
+        for (String name : names) {
+            Language l = new Language(name);
+            languages.add(l);
+        }
+        return languages;
+    }
+
+    private Set<Region> getRegions(Set<String> names) {
+        Set<Region> regions = new HashSet<>();
+        for (String name : names) {
+            Region r = new Region(name);
+            regions.add(r);
+        }
+        return regions;
     }
 
 }
