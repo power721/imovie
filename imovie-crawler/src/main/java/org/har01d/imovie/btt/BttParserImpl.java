@@ -579,6 +579,42 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("【译　　名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4069795.htm
+            int start = text.indexOf("【国　　家】") + 6;
+            int end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【类　　别】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【语　　言】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【年　　代】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【译　　名】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("【片　　名】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
         } else if (text.contains("【中文片名】：")) { // http://btbtt.co/thread-index-fid-951-tid-4237007.htm
             int start = text.indexOf("【国家地区】：") + 7;
             int end = text.indexOf("【", start);
@@ -969,7 +1005,7 @@ public class BttParserImpl implements BttParser {
         }
 
         String imdb = movie.getImdbUrl().replace("http://www.imdb.com/title/", "");
-        Movie m = searchMovie(imdb);
+        Movie m = searchMovie(movie, imdb);
         if (m != null) {
             return m;
         }
@@ -984,10 +1020,10 @@ public class BttParserImpl implements BttParser {
             return null;
         }
 
-        return searchMovie(movie.getName());
+        return searchMovie(movie, movie.getName());
     }
 
-    private Movie searchMovie(String text) {
+    private Movie searchMovie(Movie movie, String text) {
         String url;
         try {
             url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
@@ -1002,16 +1038,18 @@ public class BttParserImpl implements BttParser {
             Elements elements = doc.select("div.article a.nbg");
             if (elements.size() == 1) {
                 String dbUrl = elements.attr("href");
-                return douBanParser.parse(dbUrl);
+                if (dbUrl.contains("movie.douban.com/subject/")) {
+                    return douBanParser.parse(dbUrl);
+                }
             } else {
                 for (Element element : elements) {
                     String dbUrl = element.attr("href");
                     if (dbUrl.contains("movie.douban.com/subject/") && service.findByDbUrl(dbUrl) == null) {
                         try {
-                            Movie movie = douBanParser.parse(dbUrl);
+                            Movie m = douBanParser.parse(dbUrl);
                             service.save(new Source(dbUrl));
-                            if (movie != null) {
-                                service.save(movie);
+                            if (m != null) {
+                                service.save(m);
                             }
                         } catch (Exception e) {
                             service.publishEvent(dbUrl, e.getMessage());
@@ -1019,6 +1057,7 @@ public class BttParserImpl implements BttParser {
                         }
                     }
                 }
+                return findMovie(movie);
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());

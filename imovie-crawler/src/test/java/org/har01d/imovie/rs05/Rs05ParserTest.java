@@ -24,6 +24,13 @@ public class Rs05ParserTest {
     }
 
     @Test
+    public void testBaidu() throws Exception {
+        String pageUrl = "http://www.rs05.com/movie118349.html";
+        Movie movie = new Movie();
+        parser.parse(pageUrl, movie);
+    }
+
+    @Test
     public void testChina() throws Exception {
         String pageUrl = "http://www.rs05.com/movie6867.html";
         Movie movie = new Movie();

@@ -61,6 +61,13 @@ public class Rs05ParserImpl implements Rs05Parser {
         }
 
         String title = element.text();
+        if (uri.contains("pan.baidu.com") && !title.contains("密码") && !title.contains("提取码")) {
+            String temp = element.parent().text();
+            if (temp.contains("密码") || title.contains("提取码")) {
+                title = temp;
+            }
+        }
+
         String newUri = UrlUtils.convertUrl(uri);
         Resource resource = resourceRepository.findFirstByUri(newUri);
         if (resource != null) {

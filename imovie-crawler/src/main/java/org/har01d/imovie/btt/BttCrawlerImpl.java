@@ -130,7 +130,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 }
 
                 if (count == 0) {
-//                    break;
+                    break;
                 }
                 page++;
                 savePage(fid, page);
