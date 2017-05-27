@@ -45,7 +45,7 @@ public class BttParserImpl implements BttParser {
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
         "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "媒介:",
-        "IMDB评分:", "简介:", "剧情简介", "影片介绍:", " 简 ", " 简  "};
+        "IMDB评分:", "简介:", "剧情简介", "影片介绍:", " 简 ", " 简  ", "简　　介"};
     private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别：", "发行：", "国家：",
         "片长：", "上映日期：", "字幕：", "年代：", "发布：", "播出时间：", "语言：", "官方网站："};
     private static final String[] TOKENS3 = new String[]{"年代：", "类    型：", "地区：", "地区：", "制作公司：", "语言：",
@@ -1151,14 +1151,15 @@ public class BttParserImpl implements BttParser {
             if (href.startsWith("attach-dialog-fid-")) {
                 String title = element.text();
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
-                String magnet = convertTorrent(uri, title);
+                boolean isTorrent = element.html().contains("torrent.gif") || title.endsWith(".torrent");
+                String magnet = convertTorrent(uri, title, isTorrent);
                 resources.add(service.saveResource(magnet, uri, title));
             }
         }
     }
 
-    private String convertTorrent(String uri, String title) {
-        if (!title.endsWith(".torrent")) {
+    private String convertTorrent(String uri, String title, boolean isTorrent) {
+        if (!isTorrent) {
             return null;
         }
 
