@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
@@ -88,9 +90,7 @@ public class BttParserImpl implements BttParser {
         Set<Resource> resources = m.getResources();
         int size = resources.size();
         Elements elements = doc.select("div.post p");
-        for (Element element : elements) {
-            findResource(element.text(), resources);
-        }
+        findResource(elements.text(), resources);
 
         findResource(doc, resources);
         findAttachments(doc, resources);
@@ -166,10 +166,28 @@ public class BttParserImpl implements BttParser {
                 movie.setRegions(getRegions(getValues(text.substring(start, end))));
             }
 
+            start = text.indexOf("◎产　　地") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
             start = text.indexOf("◎类　　别") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类　　型") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎导　　演") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　　言") + 6;
@@ -188,6 +206,12 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片　　长") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎译　　名") + 6;
@@ -230,6 +254,12 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎导　 　演") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　 　言") + 6;
@@ -879,11 +909,17 @@ public class BttParserImpl implements BttParser {
             movies = service.findByName(name);
         }
 
+        return findBestMatchedMovie(movies, movie);
+    }
+
+    private Movie findBestMatchedMovie(List<Movie> movies, Movie movie) {
         Movie best = null;
         int maxMatch = 0;
         for (Movie m : movies) {
             int match = 0;
-            if (name.equals(m.getName())) {
+            if (movie.getName().equals(m.getName())) {
+                match += 2;
+            } else if (m.getName().startsWith(movie.getName())) {
                 match++;
             }
 
@@ -917,13 +953,25 @@ public class BttParserImpl implements BttParser {
                 }
             }
 
+            if (movie.getDirectors() != null && !movie.getDirectors().isEmpty() && m.getDirectors() != null) {
+                if (m.getDirectors().containsAll(movie.getDirectors())) {
+                    match++;
+                }
+            }
+
             if (movie.getReleaseDate() != null && m.getReleaseDate() != null) {
                 if (m.getReleaseDate().contains(movie.getReleaseDate())) {
                     match++;
                 }
             }
 
-            if (match > 1 && match > maxMatch) {
+            if (movie.getRunningTime() != null && m.getRunningTime() != null) {
+                if (m.getRunningTime().equals(movie.getRunningTime())) {
+                    match++;
+                }
+            }
+
+            if (match > 2 && match > maxMatch) {
                 maxMatch = match;
                 best = m;
             }
@@ -971,7 +1019,7 @@ public class BttParserImpl implements BttParser {
 
         index = html.indexOf("IMDb链接");
         if (index > 0) {
-            String text = html.substring(index + 6, index + 20);
+            String text = html.substring(index + 6, index + 24);
             Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
                 return "http://www.imdb.com/title/" + matcher.group(1);
@@ -980,7 +1028,7 @@ public class BttParserImpl implements BttParser {
 
         index = html.indexOf("IMDB 链 接");
         if (index > 0) {
-            String text = html.substring(index + 8, index + 23);
+            String text = html.substring(index + 8, index + 25);
             Matcher matcher = UrlUtils.IMDB.matcher(text);
             if (matcher.find()) {
                 return "http://www.imdb.com/title/" + matcher.group(1);
@@ -1042,6 +1090,7 @@ public class BttParserImpl implements BttParser {
                     return douBanParser.parse(dbUrl);
                 }
             } else {
+                List<Movie> movies = new ArrayList<>();
                 for (Element element : elements) {
                     String dbUrl = element.attr("href");
                     if (dbUrl.contains("movie.douban.com/subject/") && service.findByDbUrl(dbUrl) == null) {
@@ -1049,7 +1098,7 @@ public class BttParserImpl implements BttParser {
                             Movie m = douBanParser.parse(dbUrl);
                             service.save(new Source(dbUrl));
                             if (m != null) {
-                                service.save(m);
+                                movies.add(service.save(m));
                             }
                         } catch (Exception e) {
                             service.publishEvent(dbUrl, e.getMessage());
@@ -1057,7 +1106,7 @@ public class BttParserImpl implements BttParser {
                         }
                     }
                 }
-                return findMovie(movie);
+                return findBestMatchedMovie(movies, movie);
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());
@@ -1159,6 +1208,15 @@ public class BttParserImpl implements BttParser {
             regions.add(r);
         }
         return regions;
+    }
+
+    private Set<Person> getPersons(Set<String> names) {
+        Set<Person> people = new HashSet<>();
+        for (String name : names) {
+            Person p = new Person(name);
+            people.add(p);
+        }
+        return people;
     }
 
 }

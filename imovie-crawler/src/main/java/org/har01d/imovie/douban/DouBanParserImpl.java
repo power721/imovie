@@ -61,11 +61,11 @@ public class DouBanParserImpl implements DouBanParser {
         }
         movie.setSnapshots(snapshots);
 
-        Set<String> tags = new HashSet<>();
-        for (Element element : content.select(".tags-body a")) {
-            tags.add(element.text());
-        }
-        movie.setTags(service.getTags(tags));
+//        Set<String> tags = new HashSet<>();
+//        for (Element element : content.select(".tags-body a")) {
+//            tags.add(element.text());
+//        }
+//        movie.setTags(service.getTags(tags));
 
         String[] lines = handleTokens(info.text());
         for (String line : lines) {
@@ -189,6 +189,10 @@ public class DouBanParserImpl implements DouBanParser {
         String value = text.substring(prefix.length(), text.length());
         String regex = " / ";
         String[] vals = value.split(regex);
+        if (vals.length == 1 && value.contains("/")) {
+            vals = value.split("/");
+        }
+
         for (String val : vals) {
             values.add(val.trim());
         }
