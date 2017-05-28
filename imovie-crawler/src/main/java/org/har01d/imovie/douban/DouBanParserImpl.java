@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -27,9 +28,12 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private MovieService service;
 
+    @Autowired
+    private BasicCookieStore cookieStore;
+
     @Override
     public Movie parse(String url) throws IOException {
-        String html = HttpUtils.getHtml(url);
+        String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
         Element header = content.select("h1").first();

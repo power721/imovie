@@ -1,5 +1,6 @@
 package org.har01d.imovie.douban;
 
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
@@ -28,6 +29,9 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
     @Autowired
     private MovieService service;
 
+    @Autowired
+    private BasicCookieStore cookieStore;
+
     private static final String[] tags = new String[]{"爱情", "喜剧", "剧情", "动画", "科幻", "动作", "经典", "悬疑", "青春",
         "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记", "情色", "暴力", "家庭",
         "音乐", "童年", "浪漫", "女性", "黑帮", "史诗", "童话", "西部", "电视剧", "人性", "奇幻"};
@@ -44,7 +48,7 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                 String url = String.format("%s/j/search_subjects?tag=%s&sort=time&page_limit=%d&page_start=%d",
                     baseUrl, tag, LIMIT, start);
                 try {
-                    String json = HttpUtils.getJson(url);
+                    String json = HttpUtils.getJson(url, cookieStore);
                     JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
                     JSONArray items = (JSONArray) jsonObject.get("subjects");
 

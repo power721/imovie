@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
@@ -45,6 +46,9 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     @Autowired
     private MovieService service;
+
+    @Autowired
+    private BasicCookieStore cookieStore;
 
     private BlockingQueue<Explorer> queue = new ArrayBlockingQueue<>(10);
 
@@ -85,7 +89,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
         if (queue.isEmpty()) {
             String url = baseUrl + "/j/search_subjects?tag=%E7%83%AD%E9%97%A8&sort=time&page_limit=500";
             try {
-                String json = HttpUtils.getJson(url);
+                String json = HttpUtils.getJson(url, cookieStore);
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
                 JSONArray items = (JSONArray) jsonObject.get("subjects");
                 for (Object item1 : items) {
@@ -156,7 +160,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
 
     private void explore(String url) throws InterruptedException {
         try {
-            String html = HttpUtils.getHtml(url);
+            String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {

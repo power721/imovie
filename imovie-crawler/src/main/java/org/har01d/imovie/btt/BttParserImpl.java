@@ -46,8 +46,9 @@ public class BttParserImpl implements BttParser {
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
         "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "媒介:",
         "IMDB评分:", "简介:", "剧情简介", "影片介绍:", " 简 ", " 简  ", "简　　介"};
-    private static final String[] TOKENS2 = new String[]{"中文片名：", "导演：", "编剧：", "主演：", "类型：", "级别：", "发行：", "国家：",
-        "片长：", "上映日期：", "字幕：", "年代：", "发布：", "播出时间：", "语言：", "官方网站："};
+    private static final String[] TOKENS2 = new String[]{"中文片名：", "片名：", "导演：", "编剧：", "主演：", "类型：",
+        "级别：", "发行：", "国家：", "豆瓣评分 ：",
+        "片长：", "上映日期：", "字幕：", "年代：", "发布：", "播出时间：", "语言：", "官方网站：", "分级：", "制片国家/地区："};
     private static final String[] TOKENS3 = new String[]{"年代：", "类    型：", "地区：", "地区：", "制作公司：", "语言：",
         "上映日期：", "英文：", "别名：", "编剧：", "导演：", "主演：", "简介："};
 
@@ -74,7 +75,7 @@ public class BttParserImpl implements BttParser {
 
         Movie m = getMovie(html, text, movie);
         if (m == null) {
-            m = searchByImdb(movie);
+            m = searchByImdb(movie, url);
         }
 
         if (m == null) {
@@ -82,8 +83,8 @@ public class BttParserImpl implements BttParser {
         }
 
         if (m == null) {
-            logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
-            service.publishEvent(url, "Cannot find movie for " + movie.getName());
+            logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
+            service.publishEvent(url, "Cannot find movie for " + movie.getName() + "-" + movie.getTitle());
             return null;
         }
 
@@ -129,7 +130,7 @@ public class BttParserImpl implements BttParser {
         if (movie.getName() == null) {
             getName(text, movie);
         }
-        if (movie.getYear() == null) {
+        if (movie.getReleaseDate() != null) {
             movie.setYear(service.getYear(movie.getReleaseDate()));
         }
         return findMovie(movie);
@@ -278,6 +279,12 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片　 　长") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎译　 　名") + 6;
@@ -711,6 +718,48 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("片名：")) { // http://btbtt.co/thread-index-fid-951-tid-4356775.htm
+            int start = text.indexOf("制片国家/地区：") + 8;
+            int end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("类型：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("导演：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("片长：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("语言：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("上映日期：") + 5;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("片名：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
         } else if (text.contains("别名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4140915.htm
             int start = text.indexOf("地区：") + 3;
             int end = getNextToken3(text, start);
@@ -766,10 +815,22 @@ public class BttParserImpl implements BttParser {
                 movie.setLanguages(getLanguages(getValues2(text.substring(start, end))));
             }
 
+            start = text.indexOf("导演:") + 3;
+            end = getNextToken(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues2(text.substring(start, end))));
+            }
+
             start = text.indexOf("上映日期:") + 5;
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
                 movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("片长:") + 3;
+            end = getNextToken(text, start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
             }
 
             start = text.indexOf("片名:") + 3;
@@ -1047,7 +1108,7 @@ public class BttParserImpl implements BttParser {
         return null;
     }
 
-    private Movie searchByImdb(Movie movie) {
+    private Movie searchByImdb(Movie movie, String url) {
         if (movie.getImdbUrl() == null) {
             return null;
         }
@@ -1058,8 +1119,8 @@ public class BttParserImpl implements BttParser {
             return m;
         }
 
-        logger.warn("[IMDB] cannot find movie for {}: {}", movie.getName(), imdb);
-        service.publishEvent(imdb, "[IMDB] cannot find movie " + movie.getName());
+        logger.warn("[IMDB] cannot find movie for {}: {} {}", movie.getName(), imdb, url);
+        service.publishEvent(url, "[IMDB] cannot find movie " + movie.getName() + " IMDB: " + imdb);
         return null;
     }
 
@@ -1093,9 +1154,14 @@ public class BttParserImpl implements BttParser {
                 List<Movie> movies = new ArrayList<>();
                 for (Element element : elements) {
                     String dbUrl = element.attr("href");
-                    if (dbUrl.contains("movie.douban.com/subject/") && service.findByDbUrl(dbUrl) == null) {
+                    Movie m = service.findByDbUrl(dbUrl);
+                    if (m != null) {
+                        movies.add(m);
+                    }
+
+                    if (dbUrl.contains("movie.douban.com/subject/") && m == null) {
                         try {
-                            Movie m = douBanParser.parse(dbUrl);
+                            m = douBanParser.parse(dbUrl);
                             service.save(new Source(dbUrl));
                             if (m != null) {
                                 movies.add(service.save(m));

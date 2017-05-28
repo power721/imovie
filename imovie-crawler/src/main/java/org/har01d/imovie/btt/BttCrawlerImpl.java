@@ -105,6 +105,7 @@ public class BttCrawlerImpl implements BttCrawler {
 
                             String y = matcher.group(1);
                             movie = new Movie();
+                            movie.setTitle(text);
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
@@ -130,7 +131,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 }
 
                 if (count == 0) {
-                    break;
+//                    break;
                 }
                 page++;
                 savePage(fid, page);
