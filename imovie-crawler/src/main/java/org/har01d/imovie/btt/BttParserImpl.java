@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
@@ -66,6 +67,9 @@ public class BttParserImpl implements BttParser {
     @Autowired
     private MovieService service;
 
+    @Autowired
+    private BasicCookieStore cookieStore;
+
     @Override
     public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
@@ -84,7 +88,7 @@ public class BttParserImpl implements BttParser {
 
         if (m == null) {
             logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
-            service.publishEvent(url, "Cannot find movie for " + movie.getName() + "-" + movie.getTitle());
+            service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
             return null;
         }
 
@@ -1142,7 +1146,7 @@ public class BttParserImpl implements BttParser {
         }
 
         try {
-            String html = HttpUtils.getHtml(url);
+            String html = HttpUtils.getHtml(url, null, cookieStore);
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("div.article a.nbg");
             if (elements.size() == 1) {

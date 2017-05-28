@@ -178,7 +178,6 @@ public final class HttpUtils {
     }
 
     public static String get(String url, Map<String, String> params, BasicCookieStore cookieStore) throws IOException {
-        LOGGER.debug("Get from {}", url);
         HttpClientBuilder builder = HttpClients.custom().setUserAgent(USER_AGENT);
         if (cookieStore != null) {
             builder.setDefaultCookieStore(cookieStore);
@@ -193,6 +192,7 @@ public final class HttpUtils {
             }
 
             HttpUriRequest request = requestBuilder.build();
+            LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
 
@@ -210,7 +210,6 @@ public final class HttpUtils {
     }
 
     public static String post(String url, Map<String, String> params, BasicCookieStore cookieStore) throws IOException {
-        LOGGER.debug("Post to {}", url);
         HttpClientBuilder builder = HttpClients.custom().setUserAgent(USER_AGENT);
         if (cookieStore != null) {
             builder.setDefaultCookieStore(cookieStore);
@@ -225,6 +224,7 @@ public final class HttpUtils {
             }
 
             HttpUriRequest request = requestBuilder.build();
+            LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
 
@@ -245,6 +245,7 @@ public final class HttpUtils {
             }
 
             HttpUriRequest request = requestBuilder.build();
+            LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
                 EntityUtils.consume(entity);

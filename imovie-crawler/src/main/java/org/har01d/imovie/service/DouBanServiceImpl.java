@@ -49,6 +49,7 @@ public class DouBanServiceImpl implements DouBanService {
                     String html = HttpUtils.get("https://movie.douban.com/subject/1307528/", null, cookieStore);
                     if (html.contains("盲井")) {
                         isLogin = true;
+                        logger.info("DouBan is logged in.");
                         return;
                     }
                 } catch (IOException e) {
