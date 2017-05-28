@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
@@ -19,8 +20,10 @@ public class DouBanServiceImpl implements DouBanService {
 
     private static final String TOKEN_KEY = "dbcl2";
     private static final Logger logger = LoggerFactory.getLogger(DouBanService.class);
+    private static final char[] CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
     private boolean isLogin;
+    private Random random = new Random();
 
     @Autowired
     private MovieService service;
@@ -37,17 +40,10 @@ public class DouBanServiceImpl implements DouBanService {
     public void tryLogin() {
         try {
             Config dbcl2 = service.getConfig(TOKEN_KEY);
-            Config bid = service.getConfig("bid");
-
-            if (dbcl2 == null || bid == null) {
+            if (dbcl2 == null) {
                 login();
             } else {
                 BasicClientCookie cookie = new BasicClientCookie(TOKEN_KEY, dbcl2.getValue());
-                cookie.setDomain(".movie.douban.com");
-                cookie.setPath("/");
-                cookieStore.addCookie(cookie);
-
-                cookie = new BasicClientCookie("bid", bid.getValue());
                 cookie.setDomain(".movie.douban.com");
                 cookie.setPath("/");
                 cookieStore.addCookie(cookie);
@@ -69,6 +65,11 @@ public class DouBanServiceImpl implements DouBanService {
             logger.warn("login to DouBan failed.", e);
             service.publishEvent("DB login", "login to DouBan failed: " + e.getMessage());
         }
+
+        BasicClientCookie cookie = new BasicClientCookie("bid", genBid(12));
+        cookie.setDomain(".movie.douban.com");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
     }
 
     @Override
@@ -112,6 +113,31 @@ public class DouBanServiceImpl implements DouBanService {
             }
         }
         logger.warn("Login to DouBan failed, user: " + user.getValue());
+    }
+
+    @Override
+    public void updateCookie() {
+        List<Cookie> cookies = cookieStore.getCookies();
+        for (Cookie cookie : cookies) {
+            if ("bid".equals(cookie.getName())) {
+                if (cookie instanceof BasicClientCookie) {
+                    String bid = genBid(11);
+                    BasicClientCookie basicClientCookie = (BasicClientCookie) cookie;
+                    basicClientCookie.setValue(bid);
+                    logger.info("change bid to {}", basicClientCookie.getValue());
+                    service.saveConfig("bid", bid);
+                }
+            }
+        }
+    }
+
+    private String genBid(int len) {
+        char[] bids = new char[len];
+        for (int i = 0; i < len; ++i) {
+            bids[i] = CHARS[random.nextInt(CHARS.length)];
+        }
+
+        return new String(bids);
     }
 
 }

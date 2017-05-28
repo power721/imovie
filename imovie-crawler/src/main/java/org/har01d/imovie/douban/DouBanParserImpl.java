@@ -3,7 +3,6 @@ package org.har01d.imovie.douban;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -37,19 +36,24 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private DouBanService douBanService;
 
-    private AtomicInteger count = new AtomicInteger();
+    private int errorCount;
+    private int count;
 
     @Override
     public synchronized Movie parse(String url) throws IOException {
+        if (count++ % 100 == 0) {
+            douBanService.updateCookie();
+        }
+
         String html;
         try {
             html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
-            count.set(0);
+            errorCount = 0;
         } catch (HttpResponseException e) {
-            if (count.get() == 0) {
+            if (errorCount == 0) {
                 douBanService.reLogin();
             }
-            if (e.getStatusCode() == 403 && count.incrementAndGet() > 3) {
+            if (e.getStatusCode() == 403 && errorCount++ >= 3) {
                 throw new Error("403 Forbidden", e);
             }
             throw e;

@@ -7,4 +7,6 @@ public interface DouBanService {
     void tryLogin();
 
     void reLogin();
+
+    void updateCookie();
 }
