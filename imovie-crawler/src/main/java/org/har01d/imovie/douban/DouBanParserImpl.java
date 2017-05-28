@@ -41,7 +41,7 @@ public class DouBanParserImpl implements DouBanParser {
 
     @Override
     public synchronized Movie parse(String url) throws IOException {
-        if (count++ % 100 == 0) {
+        if (count++ > 0 && count % 100 == 0) {
             douBanService.updateCookie();
         }
 

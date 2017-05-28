@@ -48,6 +48,11 @@ public class DouBanServiceImpl implements DouBanService {
                 cookie.setPath("/");
                 cookieStore.addCookie(cookie);
 
+                cookie = new BasicClientCookie("bid", genBid(12));
+                cookie.setDomain(".movie.douban.com");
+                cookie.setPath("/");
+                cookieStore.addCookie(cookie);
+
                 try {
                     String html = HttpUtils.get("https://movie.douban.com/subject/1307528/", null, cookieStore);
                     if (html != null && html.contains("盲井")) {
@@ -65,11 +70,6 @@ public class DouBanServiceImpl implements DouBanService {
             logger.warn("login to DouBan failed.", e);
             service.publishEvent("DB login", "login to DouBan failed: " + e.getMessage());
         }
-
-        BasicClientCookie cookie = new BasicClientCookie("bid", genBid(12));
-        cookie.setDomain(".movie.douban.com");
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
     }
 
     @Override
