@@ -48,16 +48,24 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
-//            rs05Crawler.crawler();
+
             new Thread(() -> {
                 try {
-                    explorer.crawler();
+                    rs05Crawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }).start();
 
-//            bttCrawler.crawler();
+//            new Thread(() -> {
+//                try {
+//                    explorer.crawler();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
+//
+            bttCrawler.crawler();
 //            douBanCrawler.crawler();
         }
     }

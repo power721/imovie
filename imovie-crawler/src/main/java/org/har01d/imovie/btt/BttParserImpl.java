@@ -52,6 +52,8 @@ public class BttParserImpl implements BttParser {
         "片长：", "上映日期：", "字幕：", "年代：", "发布：", "播出时间：", "语言：", "官方网站：", "分级：", "制片国家/地区："};
     private static final String[] TOKENS3 = new String[]{"年代：", "类    型：", "地区：", "地区：", "制作公司：", "语言：",
         "上映日期：", "英文：", "别名：", "编剧：", "导演：", "主演：", "简介："};
+    private static final String[] TOKENS4 = new String[]{"译　　名", "片　　名", "年　　代", "产　　地", "类　　别", "语　　言",
+        "字　　幕", "上映日期", "IMDb评分", "豆瓣评分", "文件格式", "视频尺寸", "文件大小", "片　　长", "导　　演", "主　　演", "简　　介"};
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -928,7 +930,7 @@ public class BttParserImpl implements BttParser {
             }
 
             start = text.indexOf("导演：") + 3;
-            end = getNextToken2(text, start);
+            end = getNextToken3(text, start);
             if (start > 20 && end > start) {
                 movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
@@ -941,6 +943,48 @@ public class BttParserImpl implements BttParser {
 
             start = text.indexOf("英文：") + 3;
             end = getNextToken3(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+        } else if (text.contains("片　　名")) { // http://btbtt.co/thread-index-fid-951-tid-4355706.htm
+            int start = text.indexOf("产　　地") + 4;
+            int end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("类　　别") + 4;
+            end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("语　　言") + 4;
+            end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("上映日期") + 4;
+            end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("导　　演") + 4;
+            end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("译　　名") + 4;
+            end = getNextToken4(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("片　　名") + 4;
+            end = getNextToken4(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
@@ -1055,6 +1099,17 @@ public class BttParserImpl implements BttParser {
     private int getNextToken3(String text, int start) {
         int index = text.indexOf(" / ", start);
         for (String token : TOKENS3) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    private int getNextToken4(String text, int start) {
+        int index = text.indexOf("/", start);
+        for (String token : TOKENS4) {
             int i = text.indexOf(token, start);
             if (i > 0 && (i < index || index == -1)) {
                 index = i;

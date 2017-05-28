@@ -53,12 +53,14 @@ public class DouBanServiceImpl implements DouBanService {
                         return;
                     }
                 } catch (IOException e) {
-                    logger.warn("get DouBan account failed.", e);
+                    logger.warn("check DouBan login failed.", e);
+                    service.publishEvent("DB login", "check DouBan login failed: " + e.getMessage());
                 }
                 login();
             }
         } catch (Exception e) {
             logger.warn("login to DouBan failed.", e);
+            service.publishEvent("DB login", "login to DouBan failed: " + e.getMessage());
         }
     }
 
