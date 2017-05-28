@@ -1,6 +1,7 @@
 package org.har01d.imovie.rs05;
 
 import java.net.SocketTimeoutException;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -34,6 +35,9 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     @Autowired
     private MovieService service;
 
+    @Autowired
+    private BasicCookieStore cookieStore;
+
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
@@ -41,7 +45,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
         while (true) {
             String url = baseUrl + page;
             try {
-                String html = HttpUtils.getHtml(url);
+                String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("#movielist li");
                 logger.info("{}: get {} movies", page, elements.size());

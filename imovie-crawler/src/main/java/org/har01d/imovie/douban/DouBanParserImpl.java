@@ -9,6 +9,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
+import org.har01d.imovie.service.ProxyService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -36,6 +37,9 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private DouBanService douBanService;
 
+    @Autowired
+    private ProxyService proxyService;
+
     private int errorCount;
     private int count;
 
@@ -47,7 +51,7 @@ public class DouBanParserImpl implements DouBanParser {
 
         String html;
         try {
-            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
+            html = HttpUtils.getHtml(url, "UTF-8", cookieStore, proxyService.getProxy());
             errorCount = 0;
         } catch (HttpResponseException e) {
             if (e.getStatusCode() == 403 && errorCount == 0) {

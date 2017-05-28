@@ -2,6 +2,7 @@ package org.har01d.imovie.rs05;
 
 import java.io.IOException;
 import java.util.Set;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
@@ -29,9 +30,12 @@ public class Rs05ParserImpl implements Rs05Parser {
     @Autowired
     private ResourceRepository resourceRepository;
 
+    @Autowired
+    private BasicCookieStore cookieStore;
+
     @Override
     public Movie parse(String url, Movie movie) throws IOException {
-        String html = HttpUtils.getHtml(url);
+        String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
         Set<Resource> resources = movie.getResources();
 

@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -86,14 +87,26 @@ public final class HttpUtils {
     }
 
     public static String getHtml(String url) throws IOException {
-        return getHtml(url, "UTF-8", cookieStore);
+        return getHtml(url, "UTF-8", cookieStore, null);
+    }
+
+    public static String getHtml(String url, HttpHost httpHost) throws IOException {
+        return getHtml(url, "UTF-8", cookieStore, httpHost);
     }
 
     public static String getHtml(String url, String encoding, BasicCookieStore cookieStore) throws IOException {
+        return getHtml(url, "UTF-8", cookieStore, null);
+    }
+
+    public static String getHtml(String url, String encoding, BasicCookieStore cookieStore, HttpHost httpHost)
+        throws IOException {
         RequestConfig.Builder builder = RequestConfig.custom()
             .setConnectTimeout(CONNECTION_TIMEOUT_MS)
             .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_MS)
             .setSocketTimeout(SOCKET_TIMEOUT_MS);
+        if (httpHost != null) {
+            builder.setProxy(httpHost);
+        }
         final RequestConfig requestConfig = builder.build();
 
         CloseableHttpClient httpClient = HttpClients.custom()
@@ -221,6 +234,30 @@ public final class HttpUtils {
 
     public static String get(String url) throws IOException {
         return get(url, null, null);
+    }
+
+    public static String get(String url, HttpHost proxy) throws IOException {
+        RequestConfig config = RequestConfig.custom()
+            .setConnectTimeout(5000)
+            .setConnectionRequestTimeout(5000)
+            .setSocketTimeout(5000).build();
+        HttpClientBuilder builder = HttpClients.custom()
+            .setDefaultRequestConfig(config)
+            .setUserAgent(getAgent())
+            .setDefaultHeaders(HEADERS)
+            .setProxy(proxy);
+
+        try (CloseableHttpClient httpClient = builder.build()) {
+            RequestBuilder requestBuilder = RequestBuilder.get().setUri(url);
+
+            HttpUriRequest request = requestBuilder.build();
+            LOGGER.info("[Proxy]Executing request {}", request.getRequestLine());
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                HttpEntity entity = response.getEntity();
+
+                return entity != null ? EntityUtils.toString(entity) : null;
+            }
+        }
     }
 
     public static String get(String url, Map<String, String> params) throws IOException {

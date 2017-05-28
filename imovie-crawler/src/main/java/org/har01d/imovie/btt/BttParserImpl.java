@@ -25,6 +25,7 @@ import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
+import org.har01d.imovie.service.ProxyService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -77,6 +78,9 @@ public class BttParserImpl implements BttParser {
 
     @Autowired
     private DouBanService douBanService;
+
+    @Autowired
+    private ProxyService proxyService;
 
     private AtomicInteger count = new AtomicInteger();
 
@@ -1373,7 +1377,7 @@ public class BttParserImpl implements BttParser {
         }
 
         try {
-            String html = HttpUtils.getHtml(url, null, cookieStore);
+            String html = HttpUtils.getHtml(url, null, cookieStore, proxyService.getProxy());
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("div.article a.nbg");
             if (elements.size() == 1) {
