@@ -44,7 +44,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("#movielist li");
-                logger.info("get {} movies", elements.size());
+                logger.info("{}: get {} movies", page, elements.size());
                 if (elements.isEmpty()) {
                     break;
                 }
@@ -94,7 +94,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 }
 
                 if (count == 0) {
-//                    break;
+                    break;
                 }
             } catch (SocketTimeoutException e) {
                 service.publishEvent(url, e.getMessage());
