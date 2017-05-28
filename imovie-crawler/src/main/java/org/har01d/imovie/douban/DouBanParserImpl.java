@@ -50,7 +50,7 @@ public class DouBanParserImpl implements DouBanParser {
             html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
             errorCount = 0;
         } catch (HttpResponseException e) {
-            if (errorCount == 0) {
+            if (e.getStatusCode() == 403 && errorCount == 0) {
                 douBanService.reLogin();
             }
             if (e.getStatusCode() == 403 && errorCount++ >= 3) {

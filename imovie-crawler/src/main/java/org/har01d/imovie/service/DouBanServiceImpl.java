@@ -48,6 +48,7 @@ public class DouBanServiceImpl implements DouBanService {
                 cookie.setPath("/");
                 cookieStore.addCookie(cookie);
 
+                // must set bid before get https://movie.douban.com/
                 cookie = new BasicClientCookie("bid", genBid(12));
                 cookie.setDomain(".movie.douban.com");
                 cookie.setPath("/");
@@ -57,7 +58,7 @@ public class DouBanServiceImpl implements DouBanService {
                     String html = HttpUtils.get("https://movie.douban.com/subject/1307528/", null, cookieStore);
                     if (html != null && html.contains("盲井")) {
                         isLogin = true;
-                        logger.info("DouBan is logged in.");
+                        logger.info("user is logged in DouBan.");
                         return;
                     }
                 } catch (IOException e) {
@@ -99,8 +100,8 @@ public class DouBanServiceImpl implements DouBanService {
         params.put("form_password", password.getValue());
         params.put("remember", "on");
         params.put("login", "登录");
-        BasicCookieStore cookieStore = HttpUtils.post4Cookie("https://accounts.douban.com/login?source=movie", params);
-        List<Cookie> cookies = cookieStore.getCookies();
+        BasicCookieStore cookieStore1 = HttpUtils.post4Cookie("https://accounts.douban.com/login?source=movie", params);
+        List<Cookie> cookies = cookieStore1.getCookies();
         for (Cookie cookie : cookies) {
             if (TOKEN_KEY.equals(cookie.getName())) {
                 service.saveConfig(TOKEN_KEY, cookie.getValue());
@@ -108,7 +109,6 @@ public class DouBanServiceImpl implements DouBanService {
                 isLogin = true;
                 logger.info("Login to DouBan successfully, user: " + user.getValue());
             } else if ("bid".equals(cookie.getName())) {
-                service.saveConfig("bid", cookie.getValue());
                 cookieStore.addCookie(cookie);
             }
         }
@@ -124,11 +124,17 @@ public class DouBanServiceImpl implements DouBanService {
                     String bid = genBid(11);
                     BasicClientCookie basicClientCookie = (BasicClientCookie) cookie;
                     basicClientCookie.setValue(bid);
-                    logger.info("change bid to {}", basicClientCookie.getValue());
-                    service.saveConfig("bid", bid);
+                    logger.info("[DB] change bid to {}", basicClientCookie.getValue());
+                    return;
                 }
             }
         }
+
+        BasicClientCookie cookie = new BasicClientCookie("bid", genBid(11));
+        cookie.setDomain(".movie.douban.com");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+        logger.info("[DB] generate new bid {}", cookie.getValue());
     }
 
     private String genBid(int len) {

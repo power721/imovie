@@ -44,6 +44,7 @@ public class BttParserImpl implements BttParser {
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
 
     private Pattern CHINESE = Pattern.compile("[\\u4e00-\\u9fa5]");
+    private Pattern PERSON_NAME = Pattern.compile("([\\u4e00-\\u9fa5·]+)\\s+[a-zA-Z. ]+");
     private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
@@ -201,7 +202,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导　　演") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　　言") + 6;
@@ -273,7 +274,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导　 　演") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎语　 　言") + 6;
@@ -345,7 +346,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导 演") + 4;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译 名") + 4;
@@ -393,7 +394,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导     演") + 8;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译     名") + 8;
@@ -447,7 +448,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导 　　演") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译 　　名") + 6;
@@ -495,7 +496,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导　　演") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎中文片名") + 5;
@@ -537,7 +538,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎导          演：") + 14;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("◎中    文    名：") + 13;
@@ -573,7 +574,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("@ 导.........演：") + 14;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("@ 译.........名：") + 14;
@@ -615,7 +616,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【导 演】：") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【译 名】：") + 6;
@@ -657,7 +658,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【导演】：") + 5;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【译名】：") + 5;
@@ -693,7 +694,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【导　　演】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【中文译名】") + 6;
@@ -729,7 +730,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【導  演】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【译  名】") + 6;
@@ -771,7 +772,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【导　　演】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【译　　名】") + 6;
@@ -813,7 +814,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【导　　演】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("【中文片名】：") + 7;
@@ -861,7 +862,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("导演：") + 3;
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("中文片名：") + 5;
@@ -885,7 +886,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("导演：") + 3;
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("片长：") + 3;
@@ -939,7 +940,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("导演：") + 3;
             end = getNextToken3(text, start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("别名：") + 3;
@@ -981,7 +982,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("导　　演") + 4;
             end = getNextToken4(text, start);
             if (start > 20 && end > start) {
-                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
             start = text.indexOf("译　　名") + 4;
@@ -1144,6 +1145,21 @@ public class BttParserImpl implements BttParser {
         for (String val : vals) {
             val = val.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
                 .replace("-", "")
+                .trim();
+            if (!val.isEmpty()) {
+                values.add(val);
+            }
+        }
+
+        return values;
+    }
+
+    private Set<String> getValues3(String text) {
+        Set<String> values = new LinkedHashSet<>();
+        String regex = "/";
+        String[] vals = text.split(regex);
+        for (String val : vals) {
+            val = val.replaceAll("：", "").replaceAll("　", " ").replaceAll(" ", " ").replace("–", "").replace("-", "")
                 .trim();
             if (!val.isEmpty()) {
                 values.add(val);
@@ -1392,7 +1408,7 @@ public class BttParserImpl implements BttParser {
                 return findBestMatchedMovie(movies, movie);
             }
         } catch (HttpResponseException e) {
-            if (count.get() == 0) {
+            if (e.getStatusCode() == 403 && count.get() == 0) {
                 douBanService.reLogin();
             }
             if (e.getStatusCode() == 403 && count.incrementAndGet() > 3) {
@@ -1504,6 +1520,11 @@ public class BttParserImpl implements BttParser {
     private Set<Person> getPersons(Set<String> names) {
         Set<Person> people = new HashSet<>();
         for (String name : names) {
+            Matcher m = PERSON_NAME.matcher(name);
+            if (m.matches()) {
+                name = m.group(1);
+            }
+
             Person p = new Person(name);
             people.add(p);
         }
