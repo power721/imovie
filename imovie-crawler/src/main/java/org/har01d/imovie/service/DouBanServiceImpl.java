@@ -36,18 +36,25 @@ public class DouBanServiceImpl implements DouBanService {
     @Override
     public void tryLogin() {
         try {
-            Config config = service.getConfig(TOKEN_KEY);
-            if (config == null) {
+            Config dbcl2 = service.getConfig(TOKEN_KEY);
+            Config bid = service.getConfig("bid");
+
+            if (dbcl2 == null || bid == null) {
                 login();
             } else {
-                BasicClientCookie cookie = new BasicClientCookie(TOKEN_KEY, config.getValue());
+                BasicClientCookie cookie = new BasicClientCookie(TOKEN_KEY, dbcl2.getValue());
+                cookie.setDomain(".movie.douban.com");
+                cookie.setPath("/");
+                cookieStore.addCookie(cookie);
+
+                cookie = new BasicClientCookie("bid", bid.getValue());
                 cookie.setDomain(".movie.douban.com");
                 cookie.setPath("/");
                 cookieStore.addCookie(cookie);
 
                 try {
                     String html = HttpUtils.get("https://movie.douban.com/subject/1307528/", null, cookieStore);
-                    if (html.contains("盲井")) {
+                    if (html != null && html.contains("盲井")) {
                         isLogin = true;
                         logger.info("DouBan is logged in.");
                         return;
@@ -64,7 +71,17 @@ public class DouBanServiceImpl implements DouBanService {
         }
     }
 
-    private Cookie login() throws IOException {
+    @Override
+    public void reLogin() {
+        Config config = service.getConfig(TOKEN_KEY);
+        if (config != null) {
+            service.deleteConfig(config);
+        }
+
+        tryLogin();
+    }
+
+    private void login() throws IOException {
         Config user = service.getConfig("db_user");
         if (user == null) {
             throw new IOException("Cannot get db_user from table config.");
@@ -89,11 +106,12 @@ public class DouBanServiceImpl implements DouBanService {
                 cookieStore.addCookie(cookie);
                 isLogin = true;
                 logger.info("Login to DouBan successfully, user: " + user.getValue());
-                return cookie;
+            } else if ("bid".equals(cookie.getName())) {
+                service.saveConfig("bid", cookie.getValue());
+                cookieStore.addCookie(cookie);
             }
         }
         logger.warn("Login to DouBan failed, user: " + user.getValue());
-        return null;
     }
 
 }

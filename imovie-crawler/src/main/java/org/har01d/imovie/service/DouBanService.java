@@ -5,4 +5,6 @@ public interface DouBanService {
     boolean isLogin();
 
     void tryLogin();
+
+    void reLogin();
 }

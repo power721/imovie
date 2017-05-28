@@ -36,8 +36,15 @@ public final class HttpUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
     private static final Random RANDOM = new Random();
     private static final List<String> USER_AGENTS = new ArrayList<>();
+    private static final List<Header> HEADERS = new ArrayList<>();
 
     static {
+        HEADERS.add(new BasicHeader("Referer", "https://movie.douban.com/"));
+        HEADERS.add(
+            new BasicHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"));
+        HEADERS.add(new BasicHeader("Accept-Language", "en-US,en;q=0.8,zh-CN;q=0.6,zh-TW;q=0.4"));
+        HEADERS.add(new BasicHeader("Accept-Encoding", "gzip, deflate, sdch, br"));
+
         // https://udger.com/resources/ua-list
         USER_AGENTS.add(
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36");
@@ -92,6 +99,7 @@ public final class HttpUtils {
         CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
             .setDefaultCookieStore(cookieStore)
+            .setDefaultHeaders(HEADERS)
             .setUserAgent(getAgent())
             .build();
         HttpGet httpget = new HttpGet(url);
@@ -131,6 +139,7 @@ public final class HttpUtils {
         CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
             .setDefaultCookieStore(cookieStore)
+            .setDefaultHeaders(HEADERS)
             .setUserAgent(getAgent())
             .build();
         HttpGet httpget = new HttpGet(uri);
@@ -278,8 +287,9 @@ public final class HttpUtils {
         BasicCookieStore cookieStore = new BasicCookieStore();
 
         try (CloseableHttpClient httpClient = HttpClients.custom()
-            .setUserAgent(getAgent())
             .setDefaultCookieStore(cookieStore)
+            .setUserAgent(getAgent())
+            .setDefaultHeaders(HEADERS)
             .build()) {
             RequestBuilder requestBuilder = RequestBuilder.post().setUri(url);
             for (Entry<String, String> entry : params.entrySet()) {
@@ -290,7 +300,8 @@ public final class HttpUtils {
             LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
-                EntityUtils.consume(entity);
+                String html = entity != null ? EntityUtils.toString(entity) : null;
+                LOGGER.debug(html);
             }
         }
         return cookieStore;

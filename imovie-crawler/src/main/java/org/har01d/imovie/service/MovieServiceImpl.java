@@ -231,6 +231,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public void deleteConfig(Config config) {
+        configRepository.delete(config);
+    }
+
+    @Override
     public Resource saveResource(String uri, String title) {
         return saveResource(null, uri, title);
     }

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Category;
@@ -22,6 +23,7 @@ import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.douban.DouBanParser;
+import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
@@ -71,6 +73,11 @@ public class BttParserImpl implements BttParser {
 
     @Autowired
     private BasicCookieStore cookieStore;
+
+    @Autowired
+    private DouBanService douBanService;
+
+    private AtomicInteger count = new AtomicInteger();
 
     @Override
     public Movie parse(String url, Movie movie) throws IOException {
@@ -1356,6 +1363,7 @@ public class BttParserImpl implements BttParser {
             if (elements.size() == 1) {
                 String dbUrl = elements.attr("href");
                 if (dbUrl.contains("movie.douban.com/subject/")) {
+                    count.set(0);
                     return douBanParser.parse(dbUrl);
                 }
             } else {
@@ -1380,7 +1388,15 @@ public class BttParserImpl implements BttParser {
                         }
                     }
                 }
+                count.set(0);
                 return findBestMatchedMovie(movies, movie);
+            }
+        } catch (HttpResponseException e) {
+            if (count.get() == 0) {
+                douBanService.reLogin();
+            }
+            if (e.getStatusCode() == 403 && count.incrementAndGet() > 3) {
+                throw new Error("403 Forbidden", e);
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());

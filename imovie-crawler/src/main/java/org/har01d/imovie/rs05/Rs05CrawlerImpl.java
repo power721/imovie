@@ -94,7 +94,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 }
 
                 if (count == 0) {
-                    break;
+//                    break;
                 }
             } catch (SocketTimeoutException e) {
                 service.publishEvent(url, e.getMessage());

@@ -3,9 +3,12 @@ package org.har01d.imovie.douban;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
@@ -31,9 +34,27 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private BasicCookieStore cookieStore;
 
+    @Autowired
+    private DouBanService douBanService;
+
+    private AtomicInteger count = new AtomicInteger();
+
     @Override
-    public Movie parse(String url) throws IOException {
-        String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
+    public synchronized Movie parse(String url) throws IOException {
+        String html;
+        try {
+            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
+            count.set(0);
+        } catch (HttpResponseException e) {
+            if (count.get() == 0) {
+                douBanService.reLogin();
+            }
+            if (e.getStatusCode() == 403 && count.incrementAndGet() > 3) {
+                throw new Error("403 Forbidden", e);
+            }
+            throw e;
+        }
+
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
         Element header = content.select("h1").first();
