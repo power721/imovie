@@ -204,13 +204,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年　　代") + 5;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎上映日期") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎片　　长") + 6;
@@ -276,13 +276,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年　 　代") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎上映日 期") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("◎片　 　长") + 6;
@@ -324,7 +324,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年 代") + 4;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片 长") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎导 演") + 4;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译 名") + 4;
@@ -360,7 +372,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年     代") + 8;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎ 片     长") + 9;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎导     演") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译     名") + 8;
@@ -396,7 +420,25 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年 　　代") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎上 　　映") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片 　　长") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎导 　　演") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎译 　　名") + 6;
@@ -432,7 +474,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年　　代") + 5;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片　　长") + 5;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎导　　演") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎中文片名") + 5;
@@ -462,7 +516,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("◎年          代：") + 14;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎片          长：") + 14;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎导          演：") + 14;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("◎中    文    名：") + 13;
@@ -486,7 +552,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("@ 发行时间：") + 7;
             end = text.indexOf("@", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("@ 时 ........长：") + 14;
+            end = text.indexOf("@", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("@ 导.........演：") + 14;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("@ 译.........名：") + 14;
@@ -516,7 +594,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【上映时间】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【时 长】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【导 演】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【译 名】：") + 6;
@@ -546,7 +636,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【上映时间】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【时长】：") + 5;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【导演】：") + 5;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【译名】：") + 5;
@@ -576,7 +678,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【出品年代】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【导　　演】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【中文译名】") + 6;
@@ -606,7 +714,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【年  代】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【導  演】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【译  名】") + 6;
@@ -642,7 +756,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【年　　代】") + 6;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【导　　演】") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【译　　名】") + 6;
@@ -678,7 +798,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("【出品年代】：") + 7;
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【导　　演】：") + 7;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("【中文片名】：") + 7;
@@ -714,7 +840,19 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("上映日期：") + 5;
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("片长：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("导演：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("中文片名：") + 5;
@@ -756,7 +894,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("上映日期：") + 5;
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("片名：") + 3;
@@ -786,7 +924,13 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("上映日期：") + 5;
             end = getNextToken3(text, start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("导演：") + 3;
+            end = getNextToken2(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end))));
             }
 
             start = text.indexOf("别名：") + 3;
@@ -828,7 +972,7 @@ public class BttParserImpl implements BttParser {
             start = text.indexOf("上映日期:") + 5;
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
-                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
             }
 
             start = text.indexOf("片长:") + 3;
@@ -923,6 +1067,11 @@ public class BttParserImpl implements BttParser {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
             .trim();
+        return StringUtils.truncate(text, len);
+    }
+
+    private String getValue2(String text, int len) {
+        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").trim();
         return StringUtils.truncate(text, len);
     }
 
