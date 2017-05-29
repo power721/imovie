@@ -2,9 +2,6 @@ package org.har01d.imovie.btt;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Category;
@@ -21,7 +17,6 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
@@ -81,8 +76,6 @@ public class BttParserImpl implements BttParser {
 
     @Autowired
     private ProxyService proxyService;
-
-    private AtomicInteger count = new AtomicInteger();
 
     @Override
     public Movie parse(String url, Movie movie) throws IOException {
@@ -1368,59 +1361,18 @@ public class BttParserImpl implements BttParser {
     }
 
     private Movie searchMovie(Movie movie, String text) {
-        String url;
         try {
-            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("search movie failed: " + text, e);
-            return null;
-        }
-
-        try {
-            String html = HttpUtils.getHtml(url, null, cookieStore, proxyService.getProxy());
-            Document doc = Jsoup.parse(html);
-            Elements elements = doc.select("div.article a.nbg");
-            if (elements.size() == 1) {
-                String dbUrl = elements.attr("href");
-                if (dbUrl.contains("movie.douban.com/subject/")) {
-                    count.set(0);
-                    return douBanParser.parse(dbUrl);
-                }
-            } else {
-                List<Movie> movies = new ArrayList<>();
-                for (Element element : elements) {
-                    String dbUrl = element.attr("href");
-                    Movie m = service.findByDbUrl(dbUrl);
-                    if (m != null) {
-                        movies.add(m);
-                    }
-
-                    if (dbUrl.contains("movie.douban.com/subject/") && m == null) {
-                        try {
-                            m = douBanParser.parse(dbUrl);
-                            service.save(new Source(dbUrl));
-                            if (m != null) {
-                                movies.add(service.save(m));
-                            }
-                        } catch (Exception e) {
-                            service.publishEvent(dbUrl, e.getMessage());
-                            logger.error("Parse page failed: " + dbUrl, e);
-                        }
-                    }
-                }
-                count.set(0);
-                return findBestMatchedMovie(movies, movie);
+            List<Movie> movies = douBanParser.search(text);
+            if (movies.isEmpty()) {
+                return null;
             }
-        } catch (HttpResponseException e) {
-            if (e.getStatusCode() == 403 && count.get() == 0) {
-                douBanService.reLogin();
+            if (movies.size() == 1) {
+                return movies.get(0);
             }
-            if (e.getStatusCode() == 403 && count.incrementAndGet() > 3) {
-                throw new Error("403 Forbidden", e);
-            }
+            return findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
-            service.publishEvent(url, e.getMessage());
-            logger.error("Parse page failed: " + url, e);
+            service.publishEvent(text, e.getMessage());
+            logger.error("search movie from DouBan failed: " + text, e);
         }
         return null;
     }

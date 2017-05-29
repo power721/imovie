@@ -1,12 +1,17 @@
 package org.har01d.imovie.douban;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.service.ProxyService;
@@ -16,6 +21,7 @@ import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +46,8 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private ProxyService proxyService;
 
-    private int errorCount;
-    private int count;
+    private volatile int errorCount;
+    private volatile int count;
 
     @Override
     public synchronized Movie parse(String url) throws IOException {
@@ -54,12 +60,7 @@ public class DouBanParserImpl implements DouBanParser {
             html = HttpUtils.getHtml(url, "UTF-8", cookieStore, proxyService.getProxy());
             errorCount = 0;
         } catch (HttpResponseException e) {
-            if (e.getStatusCode() == 403 && errorCount == 0) {
-                douBanService.reLogin();
-            }
-            if (e.getStatusCode() == 403 && errorCount++ >= 3) {
-                throw new Error("403 Forbidden", e);
-            }
+            handle403(e);
             throw e;
         }
 
@@ -111,6 +112,62 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return movie;
+    }
+
+    @Override
+    public synchronized List<Movie> search(String text) throws IOException {
+        String url;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("search movie failed: " + text, e);
+            return movies;
+        }
+
+        String html;
+        try {
+            html = HttpUtils.getHtml(url, null, cookieStore, proxyService.getProxy());
+        } catch (HttpResponseException e) {
+            handle403(e);
+            throw e;
+        }
+
+        Document doc = Jsoup.parse(html);
+        Elements elements = doc.select("div.article a.nbg");
+
+        for (Element element : elements) {
+            String dbUrl = element.attr("href");
+            Movie m = service.findByDbUrl(dbUrl);
+            if (m != null) {
+                movies.add(m);
+            }
+
+            if (m == null && dbUrl.contains("movie.douban.com/subject/")) {
+                try {
+                    m = parse(dbUrl);
+                    service.save(new Source(dbUrl));
+                    if (m != null) {
+                        movies.add(service.save(m));
+                    }
+                } catch (Exception e) {
+                    service.publishEvent(dbUrl, e.getMessage());
+                    logger.error("Parse page failed: " + dbUrl, e);
+                }
+            }
+        }
+        return movies;
+    }
+
+    private void handle403(HttpResponseException e) {
+        if (e.getStatusCode() == 403) {
+            if (errorCount == 0) {
+                douBanService.reLogin();
+            }
+            if (errorCount++ >= 3) {
+                throw new Error("403 Forbidden", e);
+            }
+        }
     }
 
     private String getCover(String url) {

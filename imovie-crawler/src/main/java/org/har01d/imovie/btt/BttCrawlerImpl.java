@@ -63,7 +63,9 @@ public class BttCrawlerImpl implements BttCrawler {
                 String date = doc.select("td.username .small").last().text();
                 Integer year = service.getYear(date);
                 if (year != null && year <= 2012) {
-                    break;
+                    service.saveConfig("btt_crawler_" + fid, "1");
+                    page = 1;
+                    continue;
                 }
                 Elements elements = doc.select("td.subject");
 
@@ -131,7 +133,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 }
 
                 if (count == 0) {
-//                    break;
+                    break;
                 }
                 page++;
                 savePage(fid, page);
