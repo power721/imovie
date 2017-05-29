@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
@@ -18,9 +17,7 @@ import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
-import org.har01d.imovie.service.ProxyService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -72,15 +69,6 @@ public class BttParserImpl implements BttParser {
 
     @Autowired
     private MovieService service;
-
-    @Autowired
-    private BasicCookieStore cookieStore;
-
-    @Autowired
-    private DouBanService douBanService;
-
-    @Autowired
-    private ProxyService proxyService;
 
     @Override
     public Movie parse(String url, Movie movie) throws IOException {

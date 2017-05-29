@@ -42,6 +42,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     public void crawler() throws InterruptedException {
         int total = 0;
         int page = getPage();
+        Config full = service.getConfig("rs05_crawler");
         while (true) {
             String url = baseUrl + page;
             try {
@@ -99,7 +100,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     }
                 }
 
-                if (count == 0) {
+                if (full != null && count == 0) {
                     break;
                 }
             } catch (SocketTimeoutException e) {

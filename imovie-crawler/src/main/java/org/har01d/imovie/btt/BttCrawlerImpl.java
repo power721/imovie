@@ -55,12 +55,13 @@ public class BttCrawlerImpl implements BttCrawler {
     private void work(int fid) {
         int total = 0;
         int page = getPage(fid);
+        Config full = service.getConfig("btt_crawler_" + fid);
         while (true) {
             String url = String.format(baseUrl, fid, page);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
-                String date = doc.select("td.username .small").last().text();
+                String date = doc.select("td.username .small").text();
                 Integer year = service.getYear(date);
                 if (year != null && year <= 2012) {
                     service.saveConfig("btt_crawler_" + fid, "1");
@@ -132,7 +133,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     }
                 }
 
-                if (count == 0) {
+                if (full != null && count == 0) {
                     break;
                 }
                 page++;

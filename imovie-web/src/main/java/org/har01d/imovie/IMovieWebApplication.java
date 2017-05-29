@@ -21,7 +21,6 @@ public class IMovieWebApplication {
 
     @Configuration
     public class MyRepositoryRestConfiguration extends RepositoryRestConfigurerAdapter {
-
         @Override
         public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
             config.exposeIdsFor(Movie.class, Category.class, Language.class, Person.class, Region.class, Tag.class);
