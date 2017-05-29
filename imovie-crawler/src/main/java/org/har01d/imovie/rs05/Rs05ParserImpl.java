@@ -38,6 +38,7 @@ public class Rs05ParserImpl implements Rs05Parser {
         String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
         Set<Resource> resources = movie.getResources();
+        int size = resources.size();
 
         for (Element element : doc.select(".movie-txt a")) {
             Resource resource = findResource(element);
@@ -53,7 +54,7 @@ public class Rs05ParserImpl implements Rs05Parser {
             }
         }
 
-        logger.info("get {} resources for movie {}", resources.size(), movie.getName());
+        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), movie.getName());
 
         movieRepository.save(movie);
         return movie;

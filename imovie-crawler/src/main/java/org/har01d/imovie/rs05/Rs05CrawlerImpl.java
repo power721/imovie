@@ -50,7 +50,9 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 Elements elements = doc.select("#movielist li");
                 logger.info("{}: get {} movies", page, elements.size());
                 if (elements.isEmpty()) {
-                    break;
+                    service.saveConfig("rs05_crawler", "1");
+                    page = 1;
+                    continue;
                 }
 
                 int count = 0;
@@ -66,7 +68,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
                     if (dbUrl.isEmpty()) {
                         service.publishEvent(pageUrl, "cannot get DouBan url");
-                        logger.warn("cannot get douban url for {}", pageUrl);
+                        logger.warn("cannot get DouBan url for {}", pageUrl);
                         continue;
                     }
 
@@ -92,8 +94,8 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                             logger.error("Parse page failed: " + title, e);
                         }
                     } else {
-                        logger.warn("Cannot find movie for " + pageUrl);
-                        service.publishEvent(pageUrl, "Cannot find movie");
+                        logger.warn("Cannot find movie {} from {}", title, pageUrl);
+                        service.publishEvent(pageUrl, "Cannot find movie: " + title);
                     }
                 }
 
