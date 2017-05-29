@@ -1,6 +1,5 @@
 package org.har01d.imovie.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -22,89 +21,65 @@ public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(JsonViews.List.class)
     private Integer id;
 
     @NotNull
-    @JsonView(JsonViews.List.class)
     private String title;
 
     @NotNull
-    @JsonView(JsonViews.List.class)
     private String name;
 
-    @JsonView(JsonViews.List.class)
     private Integer year;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.List.class)
     private Set<Region> regions;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView(JsonViews.List.class)
     private String synopsis;
 
-    @JsonView(JsonViews.List.class)
     private String thumb;
 
-    @JsonView(JsonViews.List.class)
     private String cover;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Resource> resources = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Category> categories;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<String> aliases = new LinkedHashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Tag> tags;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Person> directors;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Person> editors;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Person> actors;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonView(JsonViews.Detail.class)
     private Set<Language> languages;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(columnDefinition = "TEXT")
-    @JsonView(JsonViews.Detail.class)
     private Set<String> snapshots;
 
-    @JsonView(JsonViews.Detail.class)
     private String releaseDate;
 
-    @JsonView(JsonViews.Detail.class)
     private String runningTime;
 
-    @JsonView(JsonViews.List.class)
     private String imdbUrl;
-    @JsonView(JsonViews.List.class)
     private String imdbScore;
 
-    @JsonView(JsonViews.List.class)
     private String dbUrl;
-    @JsonView(JsonViews.List.class)
     private String dbScore;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(JsonViews.Detail.class)
     private Date createdTime = new Date();
 
     public Integer getId() {

@@ -3,9 +3,8 @@ package org.har01d.imovie.domain;
 import java.util.Set;
 import org.springframework.data.rest.core.config.Projection;
 
-@Projection(name = "all", types = {Movie.class})
+@Projection(name = "detail", types = {Movie.class})
 public interface MovieProjection {
-
     public Integer getId();
 
     public String getTitle();
