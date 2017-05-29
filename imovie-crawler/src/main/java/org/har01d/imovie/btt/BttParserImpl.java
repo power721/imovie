@@ -1477,7 +1477,7 @@ public class BttParserImpl implements BttParser {
         Elements elements = doc.select(".attachlist a");
         for (Element element : elements) {
             String href = element.attr("href");
-            if (href.startsWith("attach-dialog-fid-")) {
+            if (href.startsWith("attach-dialog-fid-") && element.parent().parent().text().contains("0 金币")) {
                 String title = element.text();
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
                 boolean isTorrent = element.html().contains("torrent.gif") || title.endsWith(".torrent");
