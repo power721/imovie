@@ -41,6 +41,9 @@ public class BttParserImpl implements BttParser {
 
     private Pattern CHINESE = Pattern.compile("[\\u4e00-\\u9fa5]");
     private Pattern PERSON_NAME = Pattern.compile("([\\u4e00-\\u9fa5·]+)\\s+[a-zA-Z. ]+");
+    private Pattern DATE1 = Pattern.compile("(\\d{4})-(\\d{1,2})-(\\d{1,2})");
+    private Pattern DATE2 = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})");
+    private Pattern DATE3 = Pattern.compile("(\\d{4})年(\\d{1,2})月(\\d{1,2})日");
     private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
@@ -1325,7 +1328,7 @@ public class BttParserImpl implements BttParser {
             }
 
             if (movie.getReleaseDate() != null && m.getReleaseDate() != null) {
-                if (m.getReleaseDate().contains(movie.getReleaseDate())) {
+                if (getDates(m.getReleaseDate()).containsAll(getDates(movie.getReleaseDate()))) {
                     match++;
                 }
             }
@@ -1561,6 +1564,29 @@ public class BttParserImpl implements BttParser {
             people.add(p);
         }
         return people;
+    }
+
+    private Set<String> getDates(String text) {
+        Set<String> dates = new HashSet<>();
+        Matcher m = DATE1.matcher(text);
+        while (m.find()) {
+            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+
+        m = DATE2.matcher(text);
+        while (m.find()) {
+            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+
+        m = DATE3.matcher(text);
+        while (m.find()) {
+            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+
+        if (dates.isEmpty()) {
+            dates.add(text);
+        }
+        return dates;
     }
 
 }
