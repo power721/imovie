@@ -53,6 +53,8 @@ public class BttParserImpl implements BttParser {
         "上映日期：", "英文：", "别名：", "编剧：", "导演：", "主演：", "简介："};
     private static final String[] TOKENS4 = new String[]{"译　　名", "片　　名", "年　　代", "产　　地", "类　　别", "语　　言",
         "字　　幕", "上映日期", "IMDb评分", "豆瓣评分", "文件格式", "视频尺寸", "文件大小", "片　　长", "导　　演", "主　　演", "简　　介"};
+    private static final String[] TOKENS5 = new String[]{"片   名：", "外文名：", "上映时间：", "制片地区：", "对白语言：",
+        "出品公司：", "发行公司：", "类    型：", "片    长：", "导    演：", "编    剧：", "主    演：", "简    介："};
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -993,6 +995,54 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("片   名：")) { // http://btbtt.co/thread-index-fid-951-tid-4351356.htm
+            int start = text.indexOf("制片地区：") + 5;
+            int end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues4(text.substring(start, end))));
+            }
+
+            start = text.indexOf("类    型：") + 7;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues4(text.substring(start, end))));
+            }
+
+            start = text.indexOf("对白语言：") + 5;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues4(text.substring(start, end))));
+            }
+
+            start = text.indexOf("上映时间：") + 5;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("片    长：") + 7;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("导    演：") + 7;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues4(text.substring(start, end))));
+            }
+
+            start = text.indexOf("片   名：") + 6;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues4(text.substring(start, end)));
+            }
+
+            start = text.indexOf("外文名：") + 4;
+            end = getNextToken5(text, start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues4(text.substring(start, end)));
+            }
         } else {
             int start = text.indexOf("制片国家/地区:") + 8;
             int end = getNextToken(text, start);
@@ -1123,6 +1173,17 @@ public class BttParserImpl implements BttParser {
         return index;
     }
 
+    private int getNextToken5(String text, int start) {
+        int index = text.indexOf("/", start);
+        for (String token : TOKENS5) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
     private String getValue(String text, int len) {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
@@ -1154,6 +1215,21 @@ public class BttParserImpl implements BttParser {
     private Set<String> getValues3(String text) {
         Set<String> values = new LinkedHashSet<>();
         String regex = "/";
+        String[] vals = text.split(regex);
+        for (String val : vals) {
+            val = val.replaceAll("：", "").replaceAll("　", " ").replaceAll(" ", " ").replace("–", "").replace("-", "")
+                .trim();
+            if (!val.isEmpty()) {
+                values.add(val);
+            }
+        }
+
+        return values;
+    }
+
+    private Set<String> getValues4(String text) {
+        Set<String> values = new LinkedHashSet<>();
+        String regex = "、";
         String[] vals = text.split(regex);
         for (String val : vals) {
             val = val.replaceAll("：", "").replaceAll("　", " ").replaceAll(" ", " ").replace("–", "").replace("-", "")
