@@ -1,64 +1,5 @@
 <template>
   <div class="ui container divided items">
-    <!--<div v-for="movie in movies" class="ui basic segment grid">-->
-    <!--<div class="ui card">-->
-    <!--<div class="ui centered small image">-->
-    <!--<router-link :to="'/movies/' + movie.id">-->
-    <!--<img :src="movie.thumb">-->
-    <!--</router-link>-->
-    <!--</div>-->
-    <!--<div class="content">-->
-    <!--<router-link :to="'/movies/' + movie.id" class="header">-->
-    <!--{{ movie.title }}-->
-    <!--</router-link>-->
-    <!--<div class="meta">-->
-    <!--<span class="date">{{ movie.createdTime | date }}</span>-->
-    <!--</div>-->
-    <!--<div class="description">-->
-    <!--{{ movie.synopsis | truncate }}-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="extra content">-->
-    <!--&lt;!&ndash;<div class="ui star rating" data-rating="3" data-max-rating="5"></div>&ndash;&gt;-->
-    <!--<a :href="movie.dbUrl" target="_blank">-->
-    <!--<i class="star icon"></i>-->
-    <!--{{ movie.dbScore }}-->
-    <!--</a>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--<div v-for="movie in movies" class="ui three column row">-->
-    <!--<div class="four wide column"></div>-->
-    <!--<div class="eight wide column">-->
-    <!--<div class="ui segment">-->
-    <!--<div class="ui grid">-->
-    <!--<div class="three wide column">-->
-    <!--<router-link :to="'/movies/' + movie.id" class="ui small image">-->
-    <!--<img :src="movie.thumb">-->
-    <!--</router-link>-->
-    <!--</div>-->
-    <!--<div class="thirteen wide column">-->
-    <!--<div class="content">-->
-    <!--<router-link :to="'/movies/' + movie.id" class="header">-->
-    <!--{{ movie.title }}-->
-    <!--</router-link>-->
-    <!--<div class="description">-->
-    <!--{{ movie.synopsis }}-->
-    <!--</div>-->
-    <!--<div class="extra">-->
-    <!--<a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB：{{ movie.imdbScore || '0.0' }}</a>-->
-    <!--<a :href="movie.dbUrl" target="_blank" class="dou">豆瓣：{{ movie.dbScore || '0.0' }}</a>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="four wide column"></div>-->
-    <!--</div>-->
-    <!--</div>-->
-
     <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
       <router-link :to="'/movies/' + movie.id" class="ui small image">
         <img :src="movie.thumb">
@@ -79,7 +20,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <style>
@@ -113,6 +53,7 @@ export default {
     return {
       loading: false,
       error: '',
+      page: this.$route.query.page || 0,
       pagination: null,
       movies: [
         {
@@ -353,13 +294,13 @@ export default {
     }
   },
   created () {
-  //  this.fetchData()
+    this.fetchData()
   },
   methods: {
     fetchData () {
       // this.error = this.movies = null
       this.loading = true
-      movieService.getAll(this.$route.query.page || 0, (success, data) => {
+      movieService.getAll(this.page, (success, data) => {
         this.loading = false
         if (success) {
           this.movies = data._embedded.movies

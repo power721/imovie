@@ -32,3 +32,14 @@ export function date (value) {
   var year = dateObj.getUTCFullYear()
   return year + '-' + month + '-' + day
 }
+
+export function join (values, delm) {
+  if (!values) {
+    return ''
+  }
+
+  delm = delm || ' / '
+  return values.map(function (elem) {
+    return elem.name || elem
+  }).join(delm)
+}
