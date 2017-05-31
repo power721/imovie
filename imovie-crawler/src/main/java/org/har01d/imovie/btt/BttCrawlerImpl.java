@@ -64,7 +64,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 String date = doc.select("td.username .small").text();
                 Integer year = service.getYear(date);
                 if (year != null && year <= 2012) {
-                    service.saveConfig("btt_crawler_" + fid, "1");
+                    full = service.saveConfig("btt_crawler_" + fid, "1");
                     page = 1;
                     continue;
                 }
