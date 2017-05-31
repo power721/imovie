@@ -1,6 +1,8 @@
 package org.har01d.imovie.util;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -17,30 +19,32 @@ public final class UrlUtils {
         .compile(
             "(magnet:\\?xt=urn:btih:[0-9a-zA-Z]+(&xt=[^ &]*)?(&dn=[^ &]*)?(&xl=[^ &]*)?(&tr=[^ &]*)*(&ws=[^ &]*)?)");
     private static final Pattern ED2K_PATTERN = Pattern
-        .compile("(ed2k://\\|file\\|.+\\|\\d+\\|[0-9a-zA-Z]+\\|(h=[0-9a-zA-Z]+\\|)?/)");
+        .compile("(ed2k://\\|file\\|.+?\\|\\d+\\|[0-9a-zA-Z]+\\|(h=[0-9a-zA-Z]+\\|)?/)");
 
-    public static String findMagnet(String text) {
+    public static List<String> findMagnet(String text) {
+        List<String> urls = new ArrayList<>();
         if (text == null || text.isEmpty()) {
-            return null;
+            return urls;
         }
 
         Matcher matcher = MAGNET_PATTERN.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1);
+        while (matcher.find()) {
+            urls.add(matcher.group(1));
         }
-        return null;
+        return urls;
     }
 
-    public static String findED2K(String text) {
+    public static List<String> findED2K(String text) {
+        List<String> urls = new ArrayList<>();
         if (text == null || text.isEmpty()) {
-            return null;
+            return urls;
         }
 
         Matcher matcher = ED2K_PATTERN.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1);
+        while (matcher.find()) {
+            urls.add(matcher.group(1));
         }
-        return null;
+        return urls;
     }
 
     public static String convertUrl(String encodedUrl) {

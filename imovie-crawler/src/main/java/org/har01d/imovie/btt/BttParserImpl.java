@@ -1462,13 +1462,11 @@ public class BttParserImpl implements BttParser {
     }
 
     private void findResource(String text, Set<Resource> resources) {
-        String magnet = UrlUtils.findMagnet(text);
-        if (magnet != null) {
+        for (String magnet : UrlUtils.findMagnet(text)) {
             resources.add(service.saveResource(magnet, StringUtils.truncate(magnet, 100)));
         }
 
-        String ed2k = UrlUtils.findED2K(text);
-        if (ed2k != null) {
+        for (String ed2k : UrlUtils.findED2K(text)) {
             resources.add(service.saveResource(ed2k, StringUtils.truncate(ed2k, 100)));
         }
     }
