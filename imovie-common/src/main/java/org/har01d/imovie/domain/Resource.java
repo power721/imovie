@@ -1,10 +1,12 @@
 package org.har01d.imovie.domain;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -23,6 +25,9 @@ public class Resource {
     private String original;
 
     private String title;
+
+    @ManyToMany(mappedBy = "resources")
+    private List<Movie> movies;
 
     public Resource() {
     }
@@ -72,6 +77,14 @@ public class Resource {
 
     public void setOriginal(String original) {
         this.original = original;
+    }
+
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
     }
 
     @Override
