@@ -74,6 +74,9 @@ public class Movie {
 
     private String runningTime;
 
+    private int season;
+    private int episode;
+
     private String imdbUrl;
     private String imdbScore;
 
@@ -240,6 +243,22 @@ public class Movie {
 
     public void setRunningTime(String runningTime) {
         this.runningTime = runningTime;
+    }
+
+    public int getSeason() {
+        return season;
+    }
+
+    public void setSeason(int season) {
+        this.season = season;
+    }
+
+    public int getEpisode() {
+        return episode;
+    }
+
+    public void setEpisode(int episode) {
+        this.episode = episode;
     }
 
     public String getImdbUrl() {
