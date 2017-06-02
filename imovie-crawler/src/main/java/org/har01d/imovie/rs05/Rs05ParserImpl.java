@@ -41,14 +41,14 @@ public class Rs05ParserImpl implements Rs05Parser {
         int size = resources.size();
 
         for (Element element : doc.select(".movie-txt a")) {
-            Resource resource = findResource(element);
+            Resource resource = findResource(url, element);
             if (resource != null) {
                 resources.add(resource);
             }
         }
 
         for (Element element : doc.select(".resources a")) {
-            Resource resource = findResource(element);
+            Resource resource = findResource(url, element);
             if (resource != null) {
                 resources.add(resource);
             }
@@ -60,7 +60,7 @@ public class Rs05ParserImpl implements Rs05Parser {
         return movie;
     }
 
-    private Resource findResource(Element element) {
+    private Resource findResource(String original, Element element) {
         String uri = element.attr("href");
         if (!isResource(uri)) {
             return null;
@@ -84,6 +84,8 @@ public class Rs05ParserImpl implements Rs05Parser {
         Resource r = new Resource(newUri, title);
         if (!newUri.equals(uri)) {
             r.setOriginal(uri);
+        } else if (uri.contains("pan.baidu.com")) {
+            r.setOriginal(original);
         }
 
         try {

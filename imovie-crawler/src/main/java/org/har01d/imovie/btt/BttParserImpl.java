@@ -97,7 +97,7 @@ public class BttParserImpl implements BttParser {
         Elements elements = doc.select("div.post p");
         findResource(elements.text(), resources);
 
-        findResource(doc, resources);
+        findResource(url, doc, resources);
         findAttachments(doc, resources);
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
@@ -1444,7 +1444,7 @@ public class BttParserImpl implements BttParser {
         return null;
     }
 
-    private void findResource(Document doc, Set<Resource> resources) {
+    private void findResource(String original, Document doc, Set<Resource> resources) {
         Elements elements = doc.select(".post a");
         for (Element element : elements) {
             String uri = element.attr("href");
@@ -1456,7 +1456,12 @@ public class BttParserImpl implements BttParser {
                         title = title.substring(index);
                     }
                 }
-                resources.add(service.saveResource(uri, StringUtils.truncate(title, 100)));
+
+                if (uri.contains("pan.baidu.com")) {
+                    resources.add(service.saveResource(uri, original, StringUtils.truncate(title, 120)));
+                } else {
+                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                }
             }
         }
     }
