@@ -247,11 +247,6 @@ public class DouBanParserImpl implements DouBanParser {
             movie.setRunningTime(value);
         }
 
-        if ((value = getValue(text, "季数:")) != null) {
-            movie.setSeason(Integer.valueOf(value));
-            return true;
-        }
-
         if ((value = getValue(text, "集数:")) != null) {
             movie.setEpisode(Integer.valueOf(value));
             return true;
