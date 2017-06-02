@@ -1,5 +1,5 @@
 <template>
-  <div class="ui" id="movie">
+  <div class="ui container">
     <div class="ui hidden divider"></div>
     <div class="ui active dimmer" v-if="loading">
       <div class="ui loader"></div>
@@ -7,26 +7,111 @@
     <div class="ui error message" v-show="error" transition="fade">
       {{ error }}
     </div>
-    <div v-if="movie">
-      <div>{{ movie.title }}</div>
+    <div v-if="movie" id="movie">
+      <h2>{{ movie.title }}</h2>
       <div>
         <img :src="movie.thumb">
       </div>
-      <div>{{ movie.releaseDate }}</div>
-      <div>{{ movie.runningTime }}</div>
-      <div>{{ movie._embedded.directors | join }}</div>
-      <div>{{ movie._embedded.editors | join }}</div>
-      <div>{{ movie._embedded.actors | join }}</div>
-      <div>{{ movie._embedded.categories | join }}</div>
-      <div>{{ movie._embedded.languages | join }}</div>
-      <div>{{ movie._embedded.regions | join }}</div>
-      <div>{{ movie.aliases | join }}</div>
-      <div>{{ movie.imdbUrl }}</div>
-      <div>{{ movie.synopsis }}</div>
+      <div class="ui items" v-if="movie._embedded.directors.length">
+        <div class="item">
+          <div class="content">
+            <div class="header">导演</div>
+            <div class="description">{{ movie._embedded.directors | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie._embedded.editors.length">
+          <div class="content">
+            <div class="header">编剧</div>
+            <div class="description">{{ movie._embedded.editors | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie._embedded.actors.length">
+          <div class="content">
+            <div class="header">主演</div>
+            <div class="description">{{ movie._embedded.actors | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie._embedded.categories.length">
+          <div class="content">
+            <div class="header">类型</div>
+            <div class="description">{{ movie._embedded.categories | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie._embedded.regions.length">
+          <div class="content">
+            <div class="header">制片国家/地区</div>
+            <div class="description">{{ movie._embedded.regions | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie._embedded.languages.length">
+          <div class="content">
+            <div class="header">语言</div>
+            <div class="description">{{ movie._embedded.languages | join }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie.releaseDate">
+          <div class="content">
+            <div class="header">上映日期</div>
+            <div class="description">{{ movie.releaseDate }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie.runningTime">
+          <div class="content">
+            <div class="header">片长</div>
+            <div class="description">{{ movie.runningTime }}</div>
+          </div>
+        </div>
+        <div class="item" v-if="movie.aliases.length">
+          <div class="content">
+            <div class="header">又名</div>
+            <div class="description">{{ movie.aliases | join }}</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="content">
+            <div class="header">豆瓣评分</div>
+            <div class="description"><a :href="movie.dbUrl" target="_blank">{{ movie.dbScore || '0.0' }}</a></div>
+          </div>
+        </div>
+        <div class="item" v-if="movie.imdbUrl">
+          <div class="content">
+            <div class="header">IMDb链接</div>
+            <div class="description"><a :href="movie.imdbUrl" target="_blank">{{ movie.imdbUrl | imdb }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui message">
+        <div class="header">剧情简介</div>
+        <p>{{ movie.synopsis }}</p>
+      </div>
+
+      <div class="ui horizontal divider">
+        资源
+      </div>
+      <div class="ui relaxed divided list">
+        <div class="item" v-for="resource in movie.res">
+          <i class="magnet middle aligned icon"></i>
+          <div class="content">
+            <div class="header">
+              <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title }}</a>
+              <a v-if="resource.original" :href="resource.original" title="资源原始地址" target="_blank">
+                &nbsp;&nbsp;<i class="small external icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ui hidden divider"></div>
+
     </div>
   </div>
 </template>
 <style>
+  div.description {
+    min-height: 10px;
+  }
 </style>
 <script>
 import movieService from '@/services/MovieService'
@@ -37,194 +122,7 @@ export default {
     return {
       loading: false,
       error: '',
-      movie: {
-        'id': 21,
-        'title': '哦，我的金雨 오 마이 금비 (2016)',
-        'name': '哦，我的金雨 오 마이 금비',
-        'year': 2016,
-        'synopsis': '　　讲述一个爸爸在照顾患有小儿痴呆症，记忆丧失的8岁女儿的过程中领悟到人生价值的故事。',
-        'thumb': 'https://img1.doubanio.com/view/movie_poster_cover/lpst/public/p2398194347.jpg',
-        'cover': 'https://img1.doubanio.com/view/photo/photo/public/p2398194347.jpg',
-        'aliases': [ '哦，我的锦菲', 'Oh My 锦朏', 'Oh My 金雨', 'Oh My Geum Bi' ],
-        'snapshots': [ 'https://img3.doubanio.com/view/photo/photo/public/p2398194371.jpg', 'https://img3.doubanio.com/view/photo/photo/public/p2398194313.jpg', 'https://img1.doubanio.com/view/photo/photo/public/p2398194347.jpg', 'https://img1.doubanio.com/view/photo/photo/public/p2398194288.jpg', 'https://img3.doubanio.com/view/photo/photo/public/p2410822950.jpg' ],
-        'releaseDate': '2016-11-16(韩国)',
-        'runningTime': null,
-        'imdbUrl': 'http://www.imdb.com/title/tt6234398',
-        'imdbScore': null,
-        'dbUrl': 'https://movie.douban.com/subject/26892555/',
-        'dbScore': '8.3',
-        'createdTime': '2017-05-28T03:04:20.000+0000',
-        '_embedded': {
-          'actors': [ {
-            'name': '许廷恩',
-            'id': 170,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/170{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/170/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/170/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/170/editMovies'
-              }
-            }
-          }, {
-            'name': '吴允儿',
-            'id': 172,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/172{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/172/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/172/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/172/editMovies'
-              }
-            }
-          }, {
-            'name': '朴真熙',
-            'id': 174,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/174{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/174/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/174/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/174/editMovies'
-              }
-            }
-          }, {
-            'name': '吴智昊',
-            'id': 176,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/176{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/176/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/176/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/176/editMovies'
-              }
-            }
-          } ],
-          'regions': [ {
-            'name': '韩国',
-            'id': 6,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/regions/6{?projection}',
-                'templated': true
-              },
-              'movies': {
-                'href': 'http://power.oj/api/regions/6/movies'
-              }
-            }
-          } ],
-          'languages': [ {
-            'name': '韩语',
-            'id': 4,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/languages/4{?projection}',
-                'templated': true
-              },
-              'movies': {
-                'href': 'http://power.oj/api/languages/4/movies'
-              }
-            }
-          } ],
-          'directors': [ {
-            'name': '金英兆',
-            'id': 167,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/167{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/167/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/167/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/167/editMovies'
-              }
-            }
-          } ],
-          'categories': [ {
-            'name': '剧情',
-            'id': 3,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/categories/3{?projection}',
-                'templated': true
-              },
-              'movies': {
-                'href': 'http://power.oj/api/categories/3/movies'
-              }
-            }
-          } ],
-          'editors': [ {
-            'name': '金浩成',
-            'id': 168,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/168{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/168/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/168/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/168/editMovies'
-              }
-            }
-          }, {
-            'name': '李明熙',
-            'id': 169,
-            '_links': {
-              'self': {
-                'href': 'http://power.oj/api/persons/169{?projection}',
-                'templated': true
-              },
-              'actMovies': {
-                'href': 'http://power.oj/api/persons/169/actMovies'
-              },
-              'directMovies': {
-                'href': 'http://power.oj/api/persons/169/directMovies'
-              },
-              'editMovies': {
-                'href': 'http://power.oj/api/persons/169/editMovies'
-              }
-            }
-          } ]
-        }
-      }
+      movie: null
     }
   },
   created () {
@@ -235,7 +133,7 @@ export default {
   },
   methods: {
     fetchData () {
-      // this.error = this.movie = null
+      this.error = this.movie = null
       this.loading = true
       movieService.getMovie(this.$route.params.id, (success, data) => {
         this.loading = false

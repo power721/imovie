@@ -43,3 +43,7 @@ export function join (values, delm) {
     return elem.name || elem
   }).join(delm)
 }
+
+export function imdb (value) {
+  return value.replace('http://www.imdb.com/title/', '')
+}
