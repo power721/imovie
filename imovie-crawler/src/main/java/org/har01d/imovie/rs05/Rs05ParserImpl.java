@@ -37,7 +37,7 @@ public class Rs05ParserImpl implements Rs05Parser {
     public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
-        Set<Resource> resources = movie.getResources();
+        Set<Resource> resources = movie.getRes();
         int size = resources.size();
 
         for (Element element : doc.select(".movie-txt a")) {

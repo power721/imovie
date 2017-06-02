@@ -146,7 +146,7 @@ public class Movie {
         this.cover = cover;
     }
 
-    public Set<Resource> getResources() {
+    public Set<Resource> getRes() {
         return resources;
     }
 

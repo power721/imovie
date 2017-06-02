@@ -51,7 +51,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 Elements elements = doc.select("#movielist li");
                 logger.info("{}: get {} movies", page, elements.size());
                 if (elements.isEmpty()) {
-                    full = service.saveConfig("rs05_crawler", "1");
+                    full = service.saveConfig("rs05_crawler", "full");
                     page = 1;
                     continue;
                 }

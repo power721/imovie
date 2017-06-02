@@ -92,7 +92,7 @@ public class BttParserImpl implements BttParser {
             return null;
         }
 
-        Set<Resource> resources = m.getResources();
+        Set<Resource> resources = m.getRes();
         int size = resources.size();
         Elements elements = doc.select("div.post p");
         findResource(elements.text(), resources);
