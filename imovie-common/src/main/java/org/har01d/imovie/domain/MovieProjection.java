@@ -25,8 +25,6 @@ public interface MovieProjection {
 
     public Set<String> getAliases();
 
-    public Set<Tag> getTags();
-
     public Set<Person> getDirectors();
 
     public Set<Person> getEditors();

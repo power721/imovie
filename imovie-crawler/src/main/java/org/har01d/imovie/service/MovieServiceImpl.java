@@ -26,8 +26,6 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.domain.SourceRepository;
-import org.har01d.imovie.domain.Tag;
-import org.har01d.imovie.domain.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,9 +54,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private RegionRepository regionRepository;
-
-    @Autowired
-    private TagRepository tagRepository;
 
     @Autowired
     private SourceRepository sourceRepository;
@@ -152,22 +147,6 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         return regions;
-    }
-
-    @Override
-    public Set<Tag> getTags(Set<String> names) {
-        Set<Tag> tags = new HashSet<>();
-        for (String name : names) {
-            Optional<Tag> tag = tagRepository.findFirstByName(name);
-            if (tag.isPresent()) {
-                tags.add(tag.get());
-            } else {
-                Tag t = new Tag(name);
-                tagRepository.save(t);
-                tags.add(t);
-            }
-        }
-        return tags;
     }
 
     @Override

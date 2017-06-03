@@ -12,7 +12,6 @@ import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.domain.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,8 +26,6 @@ public interface MovieService {
     Set<Language> getLanguages(Set<String> names);
 
     Set<Region> getRegions(Set<String> names);
-
-    Set<Tag> getTags(Set<String> names);
 
     Movie save(Movie movie);
 

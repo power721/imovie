@@ -52,9 +52,6 @@ public class Movie {
     private Set<String> aliases = new LinkedHashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
-    private Set<Tag> tags;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
     private Set<Person> directors;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
@@ -171,14 +168,6 @@ public class Movie {
 
     public void setAliases(Set<String> aliases) {
         this.aliases = aliases;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 
     public Set<Person> getDirectors() {
