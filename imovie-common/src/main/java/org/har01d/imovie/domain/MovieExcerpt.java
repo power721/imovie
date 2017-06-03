@@ -1,6 +1,7 @@
 package org.har01d.imovie.domain;
 
 import java.util.Date;
+import java.util.Set;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "list", types = {Movie.class})
@@ -12,6 +13,8 @@ public interface MovieExcerpt {
     String getSynopsis();
 
     String getThumb();
+
+    Set<Category> getCategories();
 
     String getDbUrl();
 

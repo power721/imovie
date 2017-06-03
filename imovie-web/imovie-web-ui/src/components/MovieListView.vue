@@ -30,6 +30,7 @@
         <div class="extra">
           <div>
             <span class="date">{{ movie.createdTime | date }}</span>
+            <span class="category">{{ movie.categories | join }}</span>
             <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB：{{ movie.imdbScore || '0.0' }}</a>
             <a :href="movie.dbUrl" target="_blank" class="dou">豆瓣：{{ movie.dbScore || '0.0' }}</a>
           </div>
@@ -46,8 +47,10 @@
   }
   span.date {
     color: #8f8f8f;
-    position: absolute;
     left: 5px;
+  }
+  span.category {
+    color: #9f9f9f;
   }
   a.imdb {
     color: #f2992e;
