@@ -14,38 +14,38 @@
           <img id="thumb" :src="movie.thumb">
         </div>
         <div class="eleven wide column">
-          <div class="ui items" v-if="movie._embedded.directors.length">
-            <div class="item">
+          <div class="ui items">
+            <div class="item" v-if="isNotEmpty(movie._embedded.directors)">
               <div class="content">
                 <div class="header">导演</div>
                 <div class="description">{{ movie._embedded.directors | join }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie._embedded.editors.length">
+            <div class="item" v-if="isNotEmpty(movie._embedded.editors)">
               <div class="content">
                 <div class="header">编剧</div>
                 <div class="description">{{ movie._embedded.editors | join }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie._embedded.actors.length">
+            <div class="item" v-if="isNotEmpty(movie._embedded.actors)">
               <div class="content">
                 <div class="header">主演</div>
                 <div class="description">{{ movie._embedded.actors | join }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie._embedded.categories.length">
+            <div class="item" v-if="isNotEmpty(movie._embedded.categories)">
               <div class="content">
                 <div class="header">类型</div>
                 <div class="description">{{ movie._embedded.categories | join }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie._embedded.regions.length">
+            <div class="item" v-if="isNotEmpty(movie._embedded.regions)">
               <div class="content">
                 <div class="header">制片国家/地区</div>
                 <div class="description">{{ movie._embedded.regions | join }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie._embedded.languages.length">
+            <div class="item" v-if="isNotEmpty(movie._embedded.languages)">
               <div class="content">
                 <div class="header">语言</div>
                 <div class="description">{{ movie._embedded.languages | join }}</div>
@@ -63,7 +63,7 @@
                 <div class="description">{{ movie.runningTime }}</div>
               </div>
             </div>
-            <div class="item" v-if="movie.aliases.length">
+            <div class="item" v-if="isNotEmpty(movie.aliases)">
               <div class="content">
                 <div class="header">又名</div>
                 <div class="description">{{ movie.aliases | join }}</div>
@@ -96,20 +96,22 @@
       <!--<img v-for="snapshot in movie.snapshots" :src="snapshot" class="ui image">-->
       <!--</div>-->
 
-      <div class="ui horizontal divider">资源</div>
-      <div class="ui relaxed divided list">
-        <div class="item" v-for="resource in movie.res">
-          <i class="magnet middle aligned icon"></i>
-          <div class="content">
-            <div class="header">
-              <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
-              <a v-if="resource.original" :href="resource.original" title="资源原始地址" target="_blank">
-                &nbsp;&nbsp;<i class="small external icon"></i>
-              </a>
+      <template v-if="isNotEmpty(movie.res)">
+        <div class="ui horizontal divider">资源</div>
+        <div class="ui relaxed divided list">
+          <div class="item" v-for="resource in movie.res">
+            <i class="magnet middle aligned icon"></i>
+            <div class="content">
+              <div class="header">
+                <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
+                <a v-if="resource.original" :href="resource.original" title="资源原始地址" target="_blank">
+                  &nbsp;&nbsp;<i class="small external icon"></i>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
       <div class="ui hidden divider"></div>
 
     </div>
@@ -150,6 +152,9 @@ export default {
           this.error = data.message || 'Bad Request'
         }
       })
+    },
+    isNotEmpty (array) {
+      return typeof array !== 'undefined' && array !== null && array.length !== null && array.length > 0
     }
   }
 }
