@@ -1,5 +1,18 @@
 <template>
-  <div class="ui container divided items">
+  <div class="ui container divided items" id="movies">
+    <div class="ui hidden divider"></div>
+    <div class="ui active dimmer" v-if="loading">
+      <div class="ui loader"></div>
+    </div>
+    <div class="ui error message" v-show="error" transition="fade">
+      {{ error }}
+    </div>
+
+    <div class="vue-pagination ui basic segment grid">
+      <vue-pagination-info ref="paginationInfo"></vue-pagination-info>
+      <vue-pagination ref="pagination" @vue-pagination:change-page="changePage"></vue-pagination>
+    </div>
+
     <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
       <router-link :to="'/movies/' + movie.id" class="ui small image">
         <img :src="movie.thumb">
@@ -20,10 +33,11 @@
         </div>
       </div>
     </div>
+    <div class="ui hidden divider"></div>
   </div>
 </template>
 <style>
-  div.description {
+  #movies>.movie>.content>.description {
     min-height: 150px;
     text-align: left;
   }
@@ -42,38 +56,95 @@
     position: absolute;
     right: 0px;
   }
-
+  .vue-pagination {
+    background: #f9fafb !important;
+  }
+  .vue-pagination-info {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 </style>
 <script>
 import movieService from '@/services/MovieService'
+import VuePagination from './pagination/VuePagination'
+import VuePaginationInfo from './pagination/VuePaginationInfo'
+import {PaginationEvent} from './pagination/PaginationEvent'
 
 export default {
   name: 'MovieListView',
+  components: {
+    VuePagination,
+    VuePaginationInfo
+  },
   data () {
     return {
       loading: false,
       error: '',
-      page: this.$route.query.page || 0,
+      currentPage: 0,
       pagination: null,
       movies: []
     }
   },
   created () {
-    this.fetchData()
+    this.loadData()
   },
   methods: {
-    fetchData () {
+    loadData: function () {
       this.error = this.movies = null
       this.loading = true
-      movieService.getAll(this.page, (success, data) => {
+      movieService.getAll(this.currentPage, (success, data) => {
         this.loading = false
         if (success) {
+          this.fireEvent('load-success', data)
           this.movies = data._embedded.movies
-          this.pagination = data.page
+          this.pagination = this.getPaginationData(data.page)
+
+          this.$nextTick(function () {
+            this.fireEvent('pagination-data', this.pagination)
+            this.fireEvent('loaded')
+          })
         } else {
           this.error = data.message || 'Bad Request'
+          this.fireEvent('load-error', data)
+          this.fireEvent('loaded')
         }
       })
+    },
+    getPaginationData: function (pagination) {
+      let number = pagination.numberOfElements || pagination.size
+      pagination.from = pagination.number * pagination.size + 1
+      pagination.to = pagination.from + number - 1
+      return pagination
+    },
+    fireEvent: function (eventName, args) {
+      PaginationEvent.$emit('vue-pagination:' + eventName, args)
+    },
+    changePage: function (page) {
+      if (page === 'prev') {
+        this.gotoPreviousPage()
+      } else if (page === 'next') {
+        this.gotoNextPage()
+      } else {
+        this.gotoPage(page)
+      }
+    },
+    gotoPreviousPage: function () {
+      if (this.currentPage > 0) {
+        this.currentPage--
+        this.loadData()
+      }
+    },
+    gotoNextPage: function () {
+      if (this.currentPage + 1 < this.pagination.totalPages) {
+        this.currentPage++
+        this.loadData()
+      }
+    },
+    gotoPage: function (page) {
+      if (page !== this.currentPage && (page >= 0 && page < this.pagination.totalPages)) {
+        this.currentPage = page
+        this.loadData()
+      }
     }
   }
 }

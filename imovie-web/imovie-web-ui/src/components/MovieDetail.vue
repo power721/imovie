@@ -91,13 +91,18 @@
         <p>{{ movie.synopsis }}</p>
       </div>
 
+      <!--<div class="ui horizontal divider">剧照</div>-->
+      <!--<div id="snapshots" class="ui small images">-->
+      <!--<img v-for="snapshot in movie.snapshots" :src="snapshot" class="ui image">-->
+      <!--</div>-->
+
       <div class="ui horizontal divider">资源</div>
       <div class="ui relaxed divided list">
         <div class="item" v-for="resource in movie.res">
           <i class="magnet middle aligned icon"></i>
           <div class="content">
             <div class="header">
-              <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title }}</a>
+              <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
               <a v-if="resource.original" :href="resource.original" title="资源原始地址" target="_blank">
                 &nbsp;&nbsp;<i class="small external icon"></i>
               </a>
@@ -111,9 +116,6 @@
   </div>
 </template>
 <style>
-  div.description {
-    min-height: 10px;
-  }
   img.thumb {
     max-width: 450px;
   }
