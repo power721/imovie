@@ -7,7 +7,6 @@ import org.har01d.imovie.douban.DouBanCrawler;
 import org.har01d.imovie.douban.DouBanExplorer;
 import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.service.DouBanService;
-import org.har01d.imovie.service.ProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -36,9 +35,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Autowired
     private DouBanService douBanService;
 
-    @Autowired
-    private ProxyService proxyService;
-
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -51,7 +47,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
-//            proxyService.initProxies();
             douBanService.tryLogin();
 //            douBanService.updateCookie();
 

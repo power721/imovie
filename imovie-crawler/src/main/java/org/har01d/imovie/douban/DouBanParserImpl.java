@@ -14,7 +14,6 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
-import org.har01d.imovie.service.ProxyService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -43,9 +42,6 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private DouBanService douBanService;
 
-    @Autowired
-    private ProxyService proxyService;
-
     private volatile int errorCount;
     private volatile int count;
 
@@ -57,7 +53,7 @@ public class DouBanParserImpl implements DouBanParser {
 
         String html;
         try {
-            html = HttpUtils.getHtml(url, "UTF-8", cookieStore, proxyService.getProxy());
+            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
             errorCount = 0;
         } catch (HttpResponseException e) {
             handle403(e);
@@ -127,7 +123,7 @@ public class DouBanParserImpl implements DouBanParser {
 
         String html;
         try {
-            html = HttpUtils.getHtml(url, null, cookieStore, proxyService.getProxy());
+            html = HttpUtils.getHtml(url, null, cookieStore);
         } catch (HttpResponseException e) {
             handle403(e);
             throw e;
