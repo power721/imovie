@@ -11,6 +11,18 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @RepositoryRestResource(excerptProjection = MovieExcerpt.class)
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
+    @Override
+    @RestResource(exported = false)
+    Movie save(Movie entity);
+
+    @Override
+    @RestResource(exported = false)
+    void delete(Integer id);
+
+    @Override
+    @RestResource(exported = false)
+    void delete(Movie entity);
+
     @RestResource(exported = false)
     List<Movie> findByNameStartsWith(String name);
 
