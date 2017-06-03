@@ -11,7 +11,7 @@
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info ref="paginationInfo"></vue-pagination-info>
       <div class="ui input">
-        <input id="search" type="text" v-model="text" @keyup.enter="search" placeholder="search by name">
+        <input id="search" type="text" v-model="text" @change="search" placeholder="search by name">
       </div>
       <vue-pagination ref="pagination" @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
@@ -71,6 +71,7 @@
   }
 </style>
 <script>
+import _ from 'lodash'
 import movieService from '@/services/MovieService'
 import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
@@ -120,10 +121,10 @@ export default {
         }
       })
     },
-    search: function () {
+    search: _.debounce(function () {
       this.currentPage = 0
       this.loadData()
-    },
+    }, 500),
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size
       pagination.from = pagination.number * pagination.size + 1

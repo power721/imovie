@@ -247,7 +247,6 @@ table {
 td, th {
   padding: 0
 }
-
 /*!
  * # Semantic UI 2.2.10 - Site
  * http://github.com/semantic-org/semantic-ui/
@@ -369,7 +368,6 @@ input::selection, textarea::selection {
   background-color: rgba(99, 99, 99, .4);
   color: rgba(0, 0, 0, .87)
 }
-
 /*!
  * # Semantic UI 2.2.10 - Button
  * http://github.com/semantic-org/semantic-ui/
@@ -3353,7 +3351,6 @@ input::selection, textarea::selection {
 .ui.vertical.buttons .button:only-child {
   border-radius: .28571429rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Container
  * http://github.com/semantic-org/semantic-ui/
@@ -3468,7 +3465,6 @@ input::selection, textarea::selection {
   -ms-hyphens: auto;
   hyphens: auto
 }
-
 /*!
  * # Semantic UI 2.2.10 - Divider
  * http://github.com/semantic-org/semantic-ui/
@@ -3653,7 +3649,6 @@ input::selection, textarea::selection {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaAAAAACCAYAAACuTHuKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1OThBRDY4OUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1OThBRDY4QUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjU5OEFENjg3Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU5OEFENjg4Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+VU513gAAADVJREFUeNrs0DENACAQBDBIWLGBJQby/mUcJn5sJXQmOQMAAAAAAJqt+2prAAAAAACg2xdgANk6BEVuJgyMAAAAAElFTkSuQmCC")
   }
 }
-
 /*!
  * # Semantic UI 2.2.10 - Flag
  * http://github.com/semantic-org/semantic-ui/
@@ -4660,7 +4655,6 @@ i.flag.zambia:before, i.flag.zm:before {
 i.flag.zimbabwe:before, i.flag.zw:before {
   background-position: -108px -390px
 }
-
 /*!
  * # Semantic UI 2.2.10 - Header
  * http://github.com/semantic-org/semantic-ui/
@@ -5285,7 +5279,6 @@ a.ui.inverted.grey.header:hover {
 .ui.header:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
   font-size: 1.28571429em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Icon
  * http://github.com/semantic-org/semantic-ui/
@@ -9156,7 +9149,6 @@ i.icon.times.rectangle:before {
 i.icon.times.rectangle.outline:before {
   content: "\F2D4"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Image
  * http://github.com/semantic-org/semantic-ui/
@@ -9342,7 +9334,6 @@ img.ui.image {
   display: inline-block;
   margin: 0 .25rem .5rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Input
  * http://github.com/semantic-org/semantic-ui/
@@ -9767,7 +9758,6 @@ img.ui.image {
 .ui.massive.input {
   font-size: 1.71428571em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Label
  * http://github.com/semantic-org/semantic-ui/
@@ -10785,7 +10775,6 @@ a.ui.basic.label:hover {
 .ui.massive.label, .ui.massive.labels .label {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - List
  * http://github.com/semantic-org/semantic-ui/
@@ -11518,7 +11507,6 @@ ol.ui.list li[value]:before {
 .ui.massive.horizontal.list .list > .item, .ui.massive.horizontal.list > .item {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Loader
  * http://github.com/semantic-org/semantic-ui/
@@ -11805,7 +11793,6 @@ ol.ui.list li[value]:before {
   margin-left: auto;
   margin-right: auto
 }
-
 /*!
  * # Semantic UI 2.2.10 - Rail
  * http://github.com/semantic-org/semantic-ui/
@@ -11930,7 +11917,6 @@ ol.ui.list li[value]:before {
 .ui.massive.rail {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Reveal
  * http://github.com/semantic-org/semantic-ui/
@@ -12152,7 +12138,6 @@ ol.ui.list li[value]:before {
 .ui.reveal > .content {
   font-size: 1rem !important
 }
-
 /*!
  * # Semantic UI 2.2.10 - Segment
  * http://github.com/semantic-org/semantic-ui/
@@ -12820,7 +12805,6 @@ ol.ui.list li[value]:before {
 .ui.massive.segment, .ui.massive.segments .segment {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Step
  * http://github.com/semantic-org/semantic-ui/
@@ -13316,7 +13300,6 @@ ol.ui.list li[value]:before {
   font-family: Step;
   content: "\E800"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Breadcrumb
  * http://github.com/semantic-org/semantic-ui/
@@ -13413,7 +13396,6 @@ ol.ui.list li[value]:before {
 .ui.massive.breadcrumb {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Form
  * http://github.com/semantic-org/semantic-ui/
@@ -14148,7 +14130,6 @@ ol.ui.list li[value]:before {
 .ui.massive.form {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Grid
  * http://github.com/semantic-org/semantic-ui/
@@ -17149,7 +17130,6 @@ ol.ui.list li[value]:before {
 .ui.massive.vertical.menu {
   width: 25rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Message
  * http://github.com/semantic-org/semantic-ui/
@@ -17589,7 +17569,6 @@ ol.ui.list li[value]:before {
 .ui.massive.message {
   font-size: 1.71428571em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Table
  * http://github.com/semantic-org/semantic-ui/
@@ -18487,7 +18466,6 @@ ol.ui.list li[value]:before {
 .ui.large.table {
   font-size: 1.1em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Ad
  * http://github.com/semantic-org/semantic-ui/
@@ -18670,7 +18648,6 @@ ol.ui.list li[value]:before {
 .ui.test.ad[data-text]:after {
   content: attr(data-text)
 }
-
 /*!
  * # Semantic UI 2.2.10 - Item
  * http://github.com/semantic-org/semantic-ui/
@@ -19455,7 +19432,6 @@ ol.ui.list li[value]:before {
 .ui.cards > .card {
   font-size: 1em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Comment
  * http://github.com/semantic-org/semantic-ui/
@@ -19660,7 +19636,6 @@ ol.ui.list li[value]:before {
 .ui.massive.comments {
   font-size: 1.71428571rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Feed
  * http://github.com/semantic-org/semantic-ui/
@@ -19901,7 +19876,6 @@ ol.ui.list li[value]:before {
 .ui.large.feed {
   font-size: 1.14285714rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Item
  * http://github.com/semantic-org/semantic-ui/
@@ -20293,7 +20267,6 @@ ol.ui.list li[value]:before {
     width: 125px !important
   }
 }
-
 /*!
  * # Semantic UI 2.2.10 - Statistic
  * http://github.com/semantic-org/semantic-ui/
@@ -20744,7 +20717,6 @@ ol.ui.list li[value]:before {
 .ui.huge.statistic > .text.value, .ui.huge.statistics .statistic > .text.value {
   font-size: 2.5rem !important
 }
-
 /*!
  * # Semantic UI 2.2.10 - Accordion
  * http://github.com/semantic-org/semantic-ui/
@@ -20901,7 +20873,6 @@ ol.ui.list li[value]:before {
 .ui.accordion .accordion .title .dropdown.icon:before, .ui.accordion .title .dropdown.icon:before {
   content: "\F0DA"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Checkbox
  * http://github.com/semantic-org/semantic-ui/
@@ -21309,7 +21280,6 @@ ol.ui.list li[value]:before {
   font-size: 12px;
   content: "\E801"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Dimmer
  * http://github.com/semantic-org/semantic-ui/
@@ -21461,7 +21431,6 @@ body.dimmable > .dimmer {
 .dimmed.dimmable > .ui.simple.inverted.dimmer {
   background-color: hsla(0, 0%, 100%, .85)
 }
-
 /*!
  * # Semantic UI 2.2.10 - Dropdown
  * http://github.com/semantic-org/semantic-ui/
@@ -22560,7 +22529,6 @@ select.ui.dropdown {
 .ui.vertical.menu .dropdown.item > .dropdown.icon:before {
   content: "\F0DA"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Video
  * http://github.com/semantic-org/semantic-ui/
@@ -22671,7 +22639,6 @@ select.ui.dropdown {
 .ui[class*="21:9"].embed {
   padding-bottom: 42.85714286%
 }
-
 /*!
  * # Semantic UI 2.2.10 - Modal
  * http://github.com/semantic-org/semantic-ui/
@@ -23117,7 +23084,6 @@ select.ui.dropdown {
     margin: 0 0 0 -570px
   }
 }
-
 /*!
  * # Semantic UI 2.2.10 - Nag
  * http://github.com/semantic-org/semantic-ui/
@@ -23213,7 +23179,6 @@ a.ui.nag {
 .ui.bottom.nags .nag:last-child {
   border-radius: .28571429rem .28571429rem 0 0
 }
-
 /*!
  * # Semantic UI 2.2.10 - Popup
  * http://github.com/semantic-org/semantic-ui/
@@ -23836,7 +23801,6 @@ a.ui.nag {
 .ui.huge.popup {
   font-size: 1.42857143rem
 }
-
 /*!
  * # Semantic UI 2.2.10 - Progress Bar
  * http://github.com/semantic-org/semantic-ui/
@@ -24250,7 +24214,6 @@ a.ui.nag {
 .ui.big.progress .bar {
   height: 3.5em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Rating
  * http://github.com/semantic-org/semantic-ui/
@@ -24404,7 +24367,6 @@ a.ui.nag {
 .ui.heart.rating .active.icon:before, .ui.heart.rating .icon:before {
   content: "\F004"
 }
-
 /*!
  * # Semantic UI 2.2.10 - Search
  * http://github.com/semantic-org/semantic-ui/
@@ -24728,7 +24690,6 @@ a.ui.nag {
 .ui.massive.search {
   font-size: 1.71428571em
 }
-
 /*!
  * # Semantic UI 2.2.10 - Shape
  * http://github.com/semantic-org/semantic-ui/
@@ -24838,7 +24799,6 @@ a.ui.nag {
 .ui.shape .active.side {
   display: block
 }
-
 /*!
  * # Semantic UI 2.2.10 - Sidebar
  * http://github.com/semantic-org/semantic-ui/
@@ -25302,7 +25262,6 @@ html.ios {
   -webkit-transform: scale(.75);
   transform: scale(.75)
 }
-
 /*!
  * # Semantic UI 2.2.10 - Sticky
  * http://github.com/semantic-org/semantic-ui/
@@ -25347,7 +25306,6 @@ html.ios {
   position: -o-sticky;
   position: sticky
 }
-
 /*!
  * # Semantic UI 2.2.10 - Tab
  * http://github.com/semantic-org/semantic-ui/
@@ -25407,7 +25365,6 @@ html.ios {
   border-width: .2em;
   box-shadow: 0 0 0 1px transparent
 }
-
 /*!
  * # Semantic UI 2.2.10 - Transition
  * http://github.com/semantic-org/semantic-ui/
