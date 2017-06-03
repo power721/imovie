@@ -69,6 +69,7 @@
 </style>
 <script>
 import movieService from '@/services/MovieService'
+import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
@@ -83,8 +84,8 @@ export default {
     return {
       loading: false,
       error: '',
-      text: null,
-      currentPage: 0,
+      text: this.$route.query.search || storageService.getItem('search') || '',
+      currentPage: this.$route.query.page || storageService.getItem('currentPage') || 0,
       pagination: null,
       movies: []
     }
@@ -96,6 +97,8 @@ export default {
     loadData: function () {
       this.error = this.movies = null
       this.loading = true
+      storageService.setItem('search', this.text)
+      storageService.setItem('currentPage', this.currentPage)
       movieService.getMovies(this.text, this.currentPage, (success, data) => {
         this.loading = false
         if (success) {
