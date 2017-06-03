@@ -5,45 +5,46 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detail", types = {Movie.class})
 public interface MovieProjection {
-    public Integer getId();
 
-    public String getTitle();
+    Integer getId();
 
-    public String getName();
+    String getTitle();
 
-    public Integer getYear();
+    String getName();
 
-    public Set<Region> getRegions();
+    Integer getYear();
 
-    public String getSynopsis();
+    Set<Region> getRegions();
 
-    public String getCover();
+    String getSynopsis();
 
-    public Set<Resource> getResources();
+    String getCover();
 
-    public Set<Category> getCategories();
+    Set<Resource> getResources();
 
-    public Set<String> getAliases();
+    Set<Category> getCategories();
 
-    public Set<Person> getDirectors();
+    Set<String> getAliases();
 
-    public Set<Person> getEditors();
+    Set<Person> getDirectors();
 
-    public Set<Person> getActors();
+    Set<Person> getEditors();
 
-    public Set<Language> getLanguages();
+    Set<Person> getActors();
 
-    public Set<String> getSnapshots();
+    Set<Language> getLanguages();
 
-    public String getReleaseDate();
+    Set<String> getSnapshots();
 
-    public String getRunningTime();
+    String getReleaseDate();
 
-    public String getImdbUrl();
+    String getRunningTime();
 
-    public String getImdbScore();
+    String getImdbUrl();
 
-    public String getDbUrl();
+    String getImdbScore();
 
-    public String getDbScore();
+    String getDbUrl();
+
+    String getDbScore();
 }
