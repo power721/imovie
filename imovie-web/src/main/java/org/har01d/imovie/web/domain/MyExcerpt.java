@@ -1,4 +1,4 @@
-package org.har01d.imovie.domain;
+package org.har01d.imovie.web.domain;
 
 import org.springframework.data.rest.core.config.Projection;
 

@@ -1,10 +1,10 @@
-package org.har01d.imovie;
+package org.har01d.imovie.web;
 
-import org.har01d.imovie.domain.Category;
-import org.har01d.imovie.domain.Language;
-import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.Person;
-import org.har01d.imovie.domain.Region;
+import org.har01d.imovie.web.domain.Category;
+import org.har01d.imovie.web.domain.Language;
+import org.har01d.imovie.web.domain.Movie;
+import org.har01d.imovie.web.domain.Person;
+import org.har01d.imovie.web.domain.Region;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;

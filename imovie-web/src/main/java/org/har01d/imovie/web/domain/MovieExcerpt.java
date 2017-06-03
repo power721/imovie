@@ -1,4 +1,4 @@
-package org.har01d.imovie.domain;
+package org.har01d.imovie.web.domain;
 
 import java.util.Date;
 import java.util.Set;
