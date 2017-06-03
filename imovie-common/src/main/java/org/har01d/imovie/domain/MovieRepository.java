@@ -20,6 +20,9 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     @RestResource(exported = false)
     Movie findFirstByImdbUrl(String imdbUrl);
 
+    @RestResource(path = "by-name", rel = "by-name")
+    Page<Movie> findByNameContaining(@Param("name") String name, Pageable pageable);
+
     @RestResource(path = "by-category", rel = "by-category")
     Page<Movie> findByCategories_Id(@Param("id") Integer categoryId, Pageable pageable);
 

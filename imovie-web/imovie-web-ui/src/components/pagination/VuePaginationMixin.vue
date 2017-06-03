@@ -13,7 +13,7 @@ export default {
           pageClass: 'item',
           linkClass: 'icon item',
           paginationClass: 'ui bottom attached segment grid',
-          paginationInfoClass: 'left floated left aligned six wide column'
+          paginationInfoClass: 'left floated left aligned five wide column'
         }
       }
     },

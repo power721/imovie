@@ -1,8 +1,12 @@
 import Vue from 'vue'
 
 export default {
-  getAll (page, cb) {
-    return Vue.http.get('/api/movies/?page=' + page)
+  getMovies (text, page, cb) {
+    var uri = '/api/movies/?page=' + page
+    if (text !== null && text !== '') {
+      uri = '/api/movies/search/by-name?name=' + text + '&page=' + page
+    }
+    return Vue.http.get(uri)
     .then(({data}) => {
       if (cb) {
         cb(true, data)

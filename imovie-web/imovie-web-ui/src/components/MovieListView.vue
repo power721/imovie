@@ -10,6 +10,9 @@
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info ref="paginationInfo"></vue-pagination-info>
+      <div class="ui input">
+        <input id="search" type="text" v-model="text" @keyup.enter="search" placeholder="search by name">
+      </div>
       <vue-pagination ref="pagination" @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
@@ -80,6 +83,7 @@ export default {
     return {
       loading: false,
       error: '',
+      text: null,
       currentPage: 0,
       pagination: null,
       movies: []
@@ -92,7 +96,7 @@ export default {
     loadData: function () {
       this.error = this.movies = null
       this.loading = true
-      movieService.getAll(this.currentPage, (success, data) => {
+      movieService.getMovies(this.text, this.currentPage, (success, data) => {
         this.loading = false
         if (success) {
           this.fireEvent('load-success', data)
@@ -110,10 +114,17 @@ export default {
         }
       })
     },
+    search: function () {
+      this.currentPage = 0
+      this.loadData()
+    },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size
       pagination.from = pagination.number * pagination.size + 1
       pagination.to = pagination.from + number - 1
+      if (pagination.to > pagination.totalElements) {
+        pagination.to = pagination.totalElements
+      }
       return pagination
     },
     fireEvent: function (eventName, args) {

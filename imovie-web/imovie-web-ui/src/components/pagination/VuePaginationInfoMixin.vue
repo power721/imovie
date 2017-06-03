@@ -4,7 +4,7 @@ export default {
     infoClass: {
       type: String,
       default () {
-        return 'left floated left aligned six wide column'
+        return 'left floated left aligned five wide column'
       }
     },
     infoTemplate: {
