@@ -88,7 +88,7 @@
 
       <div class="ui message">
         <div class="header">剧情简介</div>
-        <p>{{ movie.synopsis }}</p>
+        <p>{{ movie.synopsis || '暂无介绍' }}</p>
       </div>
 
       <!--<div class="ui horizontal divider">剧照</div>-->
