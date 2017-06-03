@@ -1,4 +1,4 @@
-package org.har01d.imovie;
+package org.har01d.imovie.web;
 
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
