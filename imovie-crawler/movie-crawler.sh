@@ -14,4 +14,4 @@ fi
 
 cd ${WORK_SPACE} || exit 1
 echo "executing crawler now"
-java -XX:+HeapDumpOnOutOfMemoryError -jar imovie-crawler/target/movie-crawler-0.1.jar 2>&1 >1 &
+java -XX:+HeapDumpOnOutOfMemoryError -jar imovie-crawler/target/movie-crawler-0.1.jar 2>&1 >/dev/null &
