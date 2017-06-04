@@ -59,6 +59,12 @@
             <div class="description">{{ movie.runningTime }}</div>
           </div>
         </div>
+        <div class="item" v-if="movie.episode">
+          <div class="content">
+            <div class="header">集数</div>
+            <div class="description">{{ movie.episode }}</div>
+          </div>
+        </div>
         <div class="item" v-if="isNotEmpty(movie.aliases)">
           <div class="content">
             <div class="header">又名</div>
