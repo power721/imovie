@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WORK_SPACE='/home/administrator/git/imovie'
+WORK_SPACE='~/git/imovie'
 JAR="${WORK_SPACE}/imovie-crawler/target/movie-crawler-0.1.jar"
 if [ ! -x "${JAR}" ]; then
   exit 1
