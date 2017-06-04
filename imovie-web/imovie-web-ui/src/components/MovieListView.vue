@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="vue-pagination ui basic segment grid">
+    <div class="vue-pagination ui basic segment grid" v-if="movies && movies.length">
       <vue-pagination-info></vue-pagination-info>
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
@@ -80,7 +80,6 @@
   }
 </style>
 <script>
-import _ from 'lodash'
 import movieService from '@/services/MovieService'
 import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
@@ -130,10 +129,10 @@ export default {
         }
       })
     },
-    search: _.debounce(function () {
+    search: function () {
       this.currentPage = 0
       this.loadData()
-    }, 500),
+    },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size
       pagination.from = pagination.number * pagination.size + 1
