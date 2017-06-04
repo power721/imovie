@@ -24,6 +24,9 @@
         <router-link :to="'/movies/' + movie.id" class="header">
           {{ movie.title }}
         </router-link>
+        <div class="ui label" v-if="movie.resourcesSize">
+          {{ movie.resourcesSize }}
+        </div>
         <div class="description">
           <p>{{ movie.synopsis || '暂无介绍' }}</p>
         </div>

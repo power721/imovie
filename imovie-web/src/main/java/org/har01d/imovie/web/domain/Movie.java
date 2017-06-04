@@ -150,6 +150,10 @@ public class Movie {
         return resources;
     }
 
+    public int getResourcesSize() {
+        return resources.size();
+    }
+
     public void setResources(Set<Resource> resources) {
         this.resources = resources;
     }

@@ -16,6 +16,8 @@ public interface MovieExcerpt {
 
     Set<Category> getCategories();
 
+    int getResourcesSize();
+
     String getDbUrl();
 
     String getDbScore();
