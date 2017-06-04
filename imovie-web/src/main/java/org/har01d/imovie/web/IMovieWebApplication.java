@@ -25,7 +25,7 @@ public class IMovieWebApplication {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
         return (container -> {
-            ErrorPage error404Page = new ErrorPage(HttpStatus.OK, "/");
+            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/");
             container.addErrorPages(error404Page);
         });
     }
