@@ -9,11 +9,11 @@
     </div>
 
     <div class="vue-pagination ui basic segment grid">
-      <vue-pagination-info ref="paginationInfo"></vue-pagination-info>
+      <vue-pagination-info></vue-pagination-info>
       <div class="ui input">
         <input id="search" type="text" v-model="text" @change="search" placeholder="search by name">
       </div>
-      <vue-pagination ref="pagination" @vue-pagination:change-page="changePage"></vue-pagination>
+      <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
     <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
@@ -40,6 +40,12 @@
         </div>
       </div>
     </div>
+
+    <div class="vue-pagination ui basic segment grid">
+      <vue-pagination-info></vue-pagination-info>
+      <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
+    </div>
+
     <div class="ui hidden divider"></div>
   </div>
 </template>
