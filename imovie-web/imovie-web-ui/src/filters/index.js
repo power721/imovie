@@ -4,7 +4,7 @@ export function truncate (text, length, clamp) {
   }
 
   clamp = clamp || '...'
-  length = length || 300
+  length = length || 650
 
   if (text.length <= length) {
     return text

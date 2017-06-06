@@ -8,6 +8,24 @@
       {{ error }}
     </div>
 
+    <!--<div class="ui fixed menu">-->
+    <!--<div class="ui container">-->
+    <!--<div class="ui simple dropdown item">-->
+    <!--Category <i class="dropdown icon"></i>-->
+    <!--<div class="menu">-->
+    <!--<a class="item" href="#">All</a>-->
+    <!--<a class="item" href="#">Link Item</a>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="right item">-->
+    <!--<div class="ui icon input">-->
+    <!--<input type="text" v-model="text" @change="search" placeholder="Search...">-->
+    <!--<i class="search icon"></i>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
       <div class="ui input">
@@ -28,7 +46,7 @@
           {{ movie.resourcesSize }}
         </div>
         <div class="description">
-          <p>{{ movie.synopsis || '暂无介绍' }}</p>
+          <p>{{ movie.synopsis || '暂无介绍' | truncate }}</p>
         </div>
         <div class="extra">
           <div>
@@ -97,6 +115,7 @@ export default {
       loading: false,
       error: '',
       text: this.$route.query.search || storageService.getItem('search') || '',
+      category: this.$route.query.category || storageService.getItem('category') || '',
       currentPage: this.$route.query.page || storageService.getItem('currentPage') || 0,
       pagination: null,
       movies: []
@@ -111,7 +130,8 @@ export default {
       this.loading = true
       storageService.setItem('search', this.text)
       storageService.setItem('currentPage', this.currentPage)
-      movieService.getMovies(this.text, this.currentPage, (success, data) => {
+      let params = { name: this.text, category: this.category, page: this.currentPage }
+      movieService.getMovies(params, (success, data) => {
         this.loading = false
         if (success) {
           this.fireEvent('load-success', data)
