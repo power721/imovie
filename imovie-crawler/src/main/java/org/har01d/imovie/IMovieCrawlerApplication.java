@@ -76,6 +76,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             return;
         }
 
+        int count = 0;
         String url = "http://www.imdb.com/chart/top";
         try {
             String html = HttpUtils.getHtml(url);
@@ -89,9 +90,13 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 if (movie != null) {
                     movie.setImdbScore(imdbScore);
                     service.save(movie);
+                    count++;
                 }
             }
-            service.saveConfig("imdb_250", "true");
+
+            if (count >= 250) {
+                service.saveConfig("imdb_250", "true");
+            }
         } catch (IOException e) {
             logger.warn("parse page failed: " + url, e);
         }
