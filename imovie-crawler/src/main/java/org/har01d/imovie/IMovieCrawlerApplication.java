@@ -55,8 +55,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
-            updateImdbTop250();
             douBanService.tryLogin();
+            updateImdbTop250();
 
             new Thread(() -> {
                 try {
@@ -72,7 +72,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     private void updateImdbTop250() {
         Config config = service.getConfig("imdb_250");
-        if (config != null) {
+        if (config != null || service.getConfig("rs05_crawler") == null) {
             return;
         }
 
