@@ -1466,6 +1466,13 @@ public class BttParserImpl implements BttParser {
             String uri = element.attr("href");
             if (isResource(uri)) {
                 String title = element.parent().text();
+                if (uri.contains("pan.baidu.com") && !title.contains("密码") && !title.contains("提取码")) {
+                    String temp = element.parent().parent().text();
+                    if (temp.contains("密码") || title.contains("提取码")) {
+                        title = temp;
+                    }
+                }
+
                 if (title.length() > 200) {
                     int index = title.indexOf(element.text());
                     if (index > 0) {
