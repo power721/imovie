@@ -1,6 +1,10 @@
 package org.har01d.imovie.rs05;
 
 import java.net.SocketTimeoutException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -87,7 +91,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     if (movie != null) {
                         try {
                             parser.parse(pageUrl, movie);
-                            service.save(new Source(pageUrl));
+                            service.save(new Source(pageUrl, getSourceTime(element)));
                             count++;
                             total++;
                         } catch (Exception e) {
@@ -117,6 +121,17 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
         savePage(1);
         logger.info("===== get {} movies =====", total);
+    }
+
+    private Date getSourceTime(Element element) {
+        String text = element.select(".intro .tags").first().ownText();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return df.parse(text);
+        } catch (ParseException e) {
+            logger.warn("get time failed.", e);
+        }
+        return new Date();
     }
 
     private int getPage() {

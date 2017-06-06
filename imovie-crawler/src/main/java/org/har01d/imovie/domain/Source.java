@@ -18,7 +18,7 @@ public class Source {
     private String uri;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTime = new Date();
+    private Date createdTime;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
@@ -28,6 +28,11 @@ public class Source {
 
     public Source(String uri) {
         this.uri = uri;
+    }
+
+    public Source(String uri, Date createdTime) {
+        this.uri = uri;
+        this.createdTime = createdTime;
     }
 
     public Integer getId() {

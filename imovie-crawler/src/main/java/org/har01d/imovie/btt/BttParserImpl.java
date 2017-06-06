@@ -2,6 +2,10 @@ package org.har01d.imovie.btt;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -102,7 +106,19 @@ public class BttParserImpl implements BttParser {
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);
+        m.setSourceTime(getSourceTime(doc));
         return m;
+    }
+
+    private Date getSourceTime(Document doc) {
+        String text = doc.select("div.bg2.border b").first().text();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return df.parse(text);
+        } catch (ParseException e) {
+            logger.warn("get time failed.", e);
+        }
+        return new Date();
     }
 
     private Movie getMovie(String html, String text, Movie movie) throws IOException {

@@ -126,7 +126,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            service.save(new Source(pageUrl));
+                            service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
                         }

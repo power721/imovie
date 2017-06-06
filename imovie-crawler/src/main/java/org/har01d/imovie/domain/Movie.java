@@ -85,6 +85,8 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    private transient Date sourceTime;
+
     public Integer getId() {
         return id;
     }
@@ -290,5 +292,13 @@ public class Movie {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Date getSourceTime() {
+        return sourceTime;
+    }
+
+    public void setSourceTime(Date sourceTime) {
+        this.sourceTime = sourceTime;
     }
 }
