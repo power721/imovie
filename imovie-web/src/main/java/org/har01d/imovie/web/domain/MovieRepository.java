@@ -25,11 +25,11 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     Page<Movie> findByNameContaining(@Param("name") String name, Pageable pageable);
 
     @RestResource(path = "by-category", rel = "by-category")
-    Page<Movie> findByCategories_Id(@Param("id") Integer categoryId, Pageable pageable);
+    Page<Movie> findByCategories_Name(@Param("category") String category, Pageable pageable);
 
     @RestResource(path = "by-language", rel = "by-language")
-    Page<Movie> findByLanguages_Id(@Param("id") Integer languageId, Pageable pageable);
+    Page<Movie> findByLanguages_Name(@Param("language") String language, Pageable pageable);
 
     @RestResource(path = "by-region", rel = "by-region")
-    Page<Movie> findByRegions_Id(@Param("id") Integer regionId, Pageable pageable);
+    Page<Movie> findByRegions_Name(@Param("region") String region, Pageable pageable);
 }

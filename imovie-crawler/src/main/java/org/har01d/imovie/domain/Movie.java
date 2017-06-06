@@ -82,6 +82,9 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime = new Date();
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedTime;
+
     public Integer getId() {
         return id;
     }
@@ -279,5 +282,13 @@ public class Movie {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }

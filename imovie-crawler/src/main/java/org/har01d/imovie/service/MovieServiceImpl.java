@@ -1,5 +1,6 @@
 package org.har01d.imovie.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -151,6 +152,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie save(Movie movie) {
+        movie.setUpdatedTime(new Date());
         return movieRepository.save(movie);
     }
 

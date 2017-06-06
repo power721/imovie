@@ -1,9 +1,12 @@
 package org.har01d.imovie.domain;
 
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Source {
@@ -13,6 +16,12 @@ public class Source {
     private Integer id;
 
     private String uri;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdTime = new Date();
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedTime;
 
     public Source() {
     }
@@ -35,5 +44,21 @@ public class Source {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }
