@@ -1,0 +1,11 @@
+[Unit]
+Description=iMvoies
+After=syslog.target
+
+[Service]
+User=power
+ExecStart=/opt/imovies/imovie-web-0.1.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
