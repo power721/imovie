@@ -158,6 +158,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Source save(Source source) {
+        source.setUpdatedTime(new Date());
         return sourceRepository.save(source);
     }
 
