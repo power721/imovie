@@ -126,7 +126,8 @@ public class RarBtParserImpl implements RarBtParser {
                 int index = newUri.lastIndexOf('/');
                 if (index > -1) {
                     newUri =
-                        newUri.substring(0, index) + URLEncoder.encode(newUri.substring(index, newUri.length()), "GBK")
+                        newUri.substring(0, index) + "/" + URLEncoder
+                            .encode(newUri.substring(index + 1, newUri.length()), "GBK")
                             .replaceAll("\\+", "%20");
                 }
                 logger.info("newUri: {}", newUri);
