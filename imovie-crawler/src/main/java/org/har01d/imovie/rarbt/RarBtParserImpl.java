@@ -121,8 +121,8 @@ public class RarBtParserImpl implements RarBtParser {
                 if (newUri.isEmpty()) {
                     throw new IOException("download file failed!");
                 }
-                logger.info("newUri: {}", newUri);
                 newUri = new String(newUri.getBytes("ISO-8859-1"), "UTF-8");
+                logger.info("newUri: {}", newUri);
                 int index = newUri.lastIndexOf('/');
                 if (index > -1) {
                     newUri =
