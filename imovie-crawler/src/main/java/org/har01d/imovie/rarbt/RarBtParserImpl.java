@@ -79,6 +79,7 @@ public class RarBtParserImpl implements RarBtParser {
                 String uri = baseUrl + element.attr("href");
                 String title = element.attr("title");
                 if (title.contains("本地下载.")) {
+                    title = title.replace("本地下载.", "");
                     String magnet = convertTorrent(uri, title);
                     resources.add(service.saveResource(magnet, uri, title));
                 }
