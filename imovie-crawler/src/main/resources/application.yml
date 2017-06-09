@@ -15,7 +15,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
 
 logging:
-  file: /tmp/imovie-crawler.log
+  file: imovie-crawler.log
   level:
     org.power.oj: DEBUG
     org.springframework:
@@ -28,6 +28,10 @@ url:
     site: http://btbtt.co/
     page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
     thread: http://btbtt.co/thread-index-fid-%d-tid-%d.htm
+  rarbt:
+    site: http://www.rarbt.com
+    page: http://www.rarbt.com/index.php/index/index/p/%d.html
+    download: http://111.73.45.199:8090/b1/
 file:
   download: /tmp/bt/
 
@@ -48,7 +52,7 @@ spring:
     database: H2
     hibernate:
       # possible values: validate | update | create | create-drop
-      ddl-auto: update
+      ddl-auto: create-drop
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE

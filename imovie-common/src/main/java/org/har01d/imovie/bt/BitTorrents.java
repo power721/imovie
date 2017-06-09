@@ -2,8 +2,6 @@ package org.har01d.imovie.bt;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
@@ -132,22 +130,22 @@ public class BitTorrents {
     }
 
     public static void main(String[] args) throws Exception {
-        FilenameFilter filter = (dir, name) -> name.endsWith(".torrent");
-        File dir = new File("/media/harold/Download/TDDOWNLOAD/bt/");
-        File output = new File("/media/harold/Download/TDDOWNLOAD/bt/magnet1.txt");
-        output.createNewFile();
-        try (FileWriter fileWriter = new FileWriter(output)) {
-            for (File file : dir.listFiles(filter)) {
-                System.out.println(file);
-                fileWriter.write(file.getName());
-                fileWriter.write(": ");
-                fileWriter.write(String.valueOf(BtUtils.torrent2Magnet(file)));
-                fileWriter.write("\n");
-            }
-        }
+//        FilenameFilter filter = (dir, name) -> name.endsWith(".torrent");
+//        File dir = new File("/media/harold/Download/TDDOWNLOAD/bt/");
+//        File output = new File("/media/harold/Download/TDDOWNLOAD/bt/magnet1.txt");
+//        output.createNewFile();
+//        try (FileWriter fileWriter = new FileWriter(output)) {
+//            for (File file : dir.listFiles(filter)) {
+//                System.out.println(file);
+//                fileWriter.write(file.getName());
+//                fileWriter.write(": ");
+//                fileWriter.write(String.valueOf(BtUtils.torrent2Magnet(file)));
+//                fileWriter.write("\n");
+//            }
+//        }
 
         BitTorrentInfo info = parse(
-            "/media/harold/Download/TDDOWNLOAD/bt/8DF9E68813C4232DB0506C897AE4C210DAA98250.torrent");
+            "/tmp/bt/1-1.torrent");
         System.out.println("SHA1: " + info.getSha1());
         System.out.println("Magnet: " + info.getMagnet());
         System.out.println(

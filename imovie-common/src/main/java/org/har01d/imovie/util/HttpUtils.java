@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
@@ -23,6 +24,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -181,6 +183,27 @@ public final class HttpUtils {
             httpClient.execute(httpget, responseHandler);
         } finally {
             IOUtils.closeQuietly(httpClient);
+        }
+    }
+
+    public static void downloadFile(String url, List<NameValuePair> params, File file) throws IOException {
+        HttpClientBuilder builder = HttpClients.custom().setUserAgent(getAgent())
+            .setRedirectStrategy(new LaxRedirectStrategy());
+
+        try (CloseableHttpClient httpClient = builder.build()) {
+            RequestBuilder requestBuilder = RequestBuilder.post().setUri(url);
+            if (params != null) {
+                requestBuilder.addParameters(params.toArray(new NameValuePair[params.size()]));
+            }
+
+            HttpUriRequest request = requestBuilder.build();
+            LOGGER.info("Executing request {}", request.getRequestLine());
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                HttpEntity entity = response.getEntity();
+
+                FileUtils.copyInputStreamToFile(entity.getContent(), file);
+                LOGGER.info("download {} completed. {}", url, file);
+            }
         }
     }
 

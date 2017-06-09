@@ -6,6 +6,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.btt.BttCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
@@ -38,6 +39,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private BttCrawler bttCrawler;
 
     @Autowired
+    private RarBtCrawler rarBtCrawler;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
@@ -66,6 +70,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }).start();
 
+            rarBtCrawler.crawler();
             bttCrawler.crawler();
         }
     }
