@@ -70,7 +70,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }).start();
 
-            rarBtCrawler.crawler();
+            new Thread(() -> {
+                try {
+                    rarBtCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
             bttCrawler.crawler();
         }
     }

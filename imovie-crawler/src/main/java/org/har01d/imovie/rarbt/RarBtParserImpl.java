@@ -122,10 +122,13 @@ public class RarBtParserImpl implements RarBtParser {
                 }
                 logger.info("newUri: {}", newUri);
                 newUri = new String(newUri.getBytes("ISO-8859-1"), "UTF-8");
-                String[] comp = newUri.split("/b1/");
-                if (comp.length == 2) {
-                    newUri = comp[0] + "/b1/" + URLEncoder.encode(comp[1], "UTF-8").replaceAll("\\+", "%20");
+                int index = newUri.lastIndexOf('/');
+                if (index > -1) {
+                    newUri =
+                        newUri.substring(0, index) + URLEncoder.encode(newUri.substring(index, newUri.length()), "GBK")
+                            .replaceAll("\\+", "%20");
                 }
+                logger.info("newUri: {}", newUri);
                 HttpUtils.downloadFile(newUri, file);
             }
             String magnet = BtUtils.torrent2Magnet(file);
