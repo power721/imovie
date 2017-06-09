@@ -145,7 +145,7 @@ public class BitTorrents {
 //        }
 
         BitTorrentInfo info = parse(
-            "/tmp/bt/1-1.torrent");
+            "/tmp/bt/0-1.torrent");
         System.out.println("SHA1: " + info.getSha1());
         System.out.println("Magnet: " + info.getMagnet());
         System.out.println(

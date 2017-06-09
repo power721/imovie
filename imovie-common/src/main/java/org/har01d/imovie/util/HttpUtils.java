@@ -24,7 +24,6 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -186,25 +185,35 @@ public final class HttpUtils {
         }
     }
 
-    public static void downloadFile(String url, List<NameValuePair> params, File file) throws IOException {
-        HttpClientBuilder builder = HttpClients.custom().setUserAgent(getAgent())
-            .setRedirectStrategy(new LaxRedirectStrategy());
+    public static String downloadFile(String url, List<NameValuePair> params, List<Header> headers, File file)
+        throws IOException {
+        HttpClientBuilder builder = HttpClients.custom().setUserAgent(getAgent());
 
         try (CloseableHttpClient httpClient = builder.build()) {
             RequestBuilder requestBuilder = RequestBuilder.post().setUri(url);
             if (params != null) {
                 requestBuilder.addParameters(params.toArray(new NameValuePair[params.size()]));
             }
+            if (headers != null) {
+                for (Header header : headers) {
+                    requestBuilder.addHeader(header);
+                }
+            }
 
             HttpUriRequest request = requestBuilder.build();
             LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
+                Header header = response.getFirstHeader("Location");
+                if (header != null) {
+                    return header.getValue();
+                }
 
                 FileUtils.copyInputStreamToFile(entity.getContent(), file);
                 LOGGER.info("download {} completed. {}", url, file);
             }
         }
+        return null;
     }
 
     public static String getJson(String url) throws IOException {

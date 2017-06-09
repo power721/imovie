@@ -2,10 +2,17 @@ package org.har01d.imovie.rarbt;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
+import org.apache.http.Header;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.har01d.imovie.bt.BtUtils;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -30,9 +37,6 @@ public class RarBtParserImpl implements RarBtParser {
 
     @Value("${url.rarbt.site}")
     private String baseUrl;
-
-    @Value("${url.rarbt.download}")
-    private String downloadUrl;
 
     @Value("${file.download}")
     private File downloadDir;
@@ -108,9 +112,22 @@ public class RarBtParserImpl implements RarBtParser {
         try {
             downloadDir.mkdirs();
             file.createNewFile();
-            uri = downloadUrl + URLEncoder
-                .encode(title.replace("本地下载.", "").replace("mp4bt种子.", "").replace("mp4.", ""), "UTF-8");
-            HttpUtils.downloadFile(uri, file);
+            List<NameValuePair> params = URLEncodedUtils.parse(new URI(uri), "UTF-8");
+            params.add(new BasicNameValuePair("zz", "zz1"));
+            List<Header> headers = new ArrayList<>();
+            String newUri = HttpUtils.downloadFile(uri, params, headers, file);
+            if (newUri != null) {
+                if (newUri.isEmpty()) {
+                    throw new IOException("download file failed!");
+                }
+                logger.info("newUri: {}", newUri);
+                newUri = new String(newUri.getBytes("ISO-8859-1"), "UTF-8");
+                String[] comp = newUri.split("/b1/");
+                if (comp.length == 2) {
+                    newUri = comp[0] + "/b1/" + URLEncoder.encode(comp[1], "UTF-8").replaceAll("\\+", "%20");
+                }
+                HttpUtils.downloadFile(newUri, file);
+            }
             String magnet = BtUtils.torrent2Magnet(file);
             logger.info("convert {} to {}", title, magnet);
             return magnet;

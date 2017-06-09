@@ -31,7 +31,6 @@ url:
   rarbt:
     site: http://www.rarbt.com
     page: http://www.rarbt.com/index.php/index/index/p/%d.html
-    download: http://111.73.45.199:8090/b1/
 file:
   download: /tmp/bt/
 
