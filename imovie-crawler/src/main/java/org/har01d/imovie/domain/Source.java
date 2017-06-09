@@ -18,7 +18,7 @@ public class Source {
     private String uri;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdTime;
+    private Date createdTime = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
