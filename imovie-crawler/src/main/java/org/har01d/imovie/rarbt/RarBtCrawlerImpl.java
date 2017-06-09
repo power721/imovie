@@ -66,11 +66,11 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                     String dbUrl = getDbUrl(db);
                     Movie movie = new Movie();
                     movie.setDbUrl(dbUrl);
-                    movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
 
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
+                            movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
