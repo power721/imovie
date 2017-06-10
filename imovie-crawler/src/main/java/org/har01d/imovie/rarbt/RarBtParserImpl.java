@@ -114,7 +114,12 @@ public class RarBtParserImpl implements RarBtParser {
             downloadDir.mkdirs();
             file.createNewFile();
             List<NameValuePair> params = URLEncodedUtils.parse(new URI(uri), "UTF-8");
-            params.add(new BasicNameValuePair("zz", "zz1"));
+            for (NameValuePair pair : params) {
+                if ("zz".equals(pair.getName())) {
+                    params.add(new BasicNameValuePair("zz", "zz" + pair.getValue()));
+                    break;
+                }
+            }
             List<Header> headers = new ArrayList<>();
             String newUri = HttpUtils.downloadFile(uri, params, headers, file);
             if (newUri != null) {
@@ -122,6 +127,9 @@ public class RarBtParserImpl implements RarBtParser {
                     throw new IOException("download file failed!");
                 }
                 newUri = new String(newUri.getBytes("ISO-8859-1"), "UTF-8");
+                if (newUri.startsWith("/")) {
+                    newUri = baseUrl + newUri;
+                }
                 logger.info("newUri: {}", newUri);
                 int index = newUri.lastIndexOf('/');
                 if (index > -1) {
