@@ -95,8 +95,8 @@ public class RarBtParserImpl implements RarBtParser {
                         }
                         magnet = info.getMagnet();
                         logger.info("convert {} to {}", title, magnet);
+                        resources.add(service.saveResource(magnet, uri, title));
                     }
-                    resources.add(service.saveResource(magnet, uri, title));
                 }
             }
 
