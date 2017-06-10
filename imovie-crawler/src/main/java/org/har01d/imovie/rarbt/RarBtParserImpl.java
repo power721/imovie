@@ -81,7 +81,7 @@ public class RarBtParserImpl implements RarBtParser {
                 String uri = baseUrl + element.attr("href");
                 String title = element.attr("title");
                 if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
-                    title = title.replace("本地下载.", "").trim();
+                    title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();
                     String magnet = null;
                     BitTorrentInfo info = convertTorrent(uri, title);
                     if (info != null) {
