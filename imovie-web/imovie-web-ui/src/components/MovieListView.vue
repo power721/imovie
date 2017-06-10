@@ -115,6 +115,7 @@ export default {
       loading: false,
       error: '',
       text: this.$route.query.search || storageService.getItem('search') || '',
+      sort: this.$route.query.sort || storageService.getItem('sort') || '',
       category: this.$route.query.category || storageService.getItem('category') || '',
       currentPage: this.$route.query.page || storageService.getItem('currentPage') || 0,
       pagination: null,
@@ -130,7 +131,7 @@ export default {
       this.loading = true
       storageService.setItem('search', this.text)
       storageService.setItem('currentPage', this.currentPage)
-      let params = { name: this.text, category: this.category, page: this.currentPage }
+      let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
       movieService.getMovies(params, (success, data) => {
         this.loading = false
         if (success) {
