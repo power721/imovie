@@ -53,7 +53,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                     page = 0;
                     continue;
                 }
-                logger.info("{}: {} movies", page, elements.size());
+                logger.info("[bttiantang] {}: {} movies", page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
@@ -66,7 +66,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("{}-{} find movie {}", page, count, movie.getName());
+                            logger.info("[bttiantang] {}-{} find movie {}", page, count, movie.getName());
                             movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
@@ -74,7 +74,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
-                        logger.error("Parse page failed: " + pageUrl, e);
+                        logger.error("[bttiantang] Parse page failed: " + pageUrl, e);
                     }
                 }
 
@@ -85,12 +85,12 @@ public class BtttCrawlerImpl implements BtttCrawler {
                 savePage(page);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
-                logger.error("Get HTML failed: " + url, e);
+                logger.error("[bttiantang] Get HTML failed: " + url, e);
             }
         }
 
         savePage(0);
-        logger.info("===== get {} movies =====", total);
+        logger.info("[bttiantang] ===== get {} movies =====", total);
     }
 
     private Date getSourceTime(String text) {
@@ -98,7 +98,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
         try {
             return df.parse(text);
         } catch (ParseException e) {
-            logger.warn("get time failed.", e);
+            logger.warn("[bttiantang] get time failed.", e);
         }
         return new Date();
     }

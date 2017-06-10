@@ -73,7 +73,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
 //            clean();
             douBanService.tryLogin();
-            updateImdbTop250();
+//            updateImdbTop250();
 
             ExecutorService executorService = Executors.newFixedThreadPool(3, new MyThreadFactory("Crawler"));
             executorService.submit(() -> {
@@ -139,6 +139,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 String imdbScore = element.select("td.imdbRating strong").text();
                 Movie movie = service.findByImdb(imdbUrl);
                 if (movie != null) {
+                    logger.info("update imdb for movie {}", movie.getName());
                     movie.setImdbScore(imdbScore);
                     service.save(movie);
                     count++;
