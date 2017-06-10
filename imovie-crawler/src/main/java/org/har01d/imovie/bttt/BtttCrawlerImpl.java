@@ -67,7 +67,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[bttiantang] {}-{} find movie {}", page, count, movie.getName());
+                            logger.info("[bttiantang] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;

@@ -36,7 +36,7 @@ url:
     page: http://www.bttiantang.org/index-%d.html
   btapple:
     site: http://www.btapple.com
-    page: http://www.btapple.com/%s/1-0-0-0-0-%d.html
+    page: http://www.btapple.com/%s/%d-0-0-0-0-%d.html
 file:
   download: /tmp/bt/
 

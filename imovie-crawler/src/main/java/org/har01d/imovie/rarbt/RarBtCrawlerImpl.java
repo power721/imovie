@@ -72,7 +72,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("{}-{} find movie {}", page, count, movie.getName());
+                            logger.info("{}-{}-{} find movie {}", page, total, count, movie.getName());
                             movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;

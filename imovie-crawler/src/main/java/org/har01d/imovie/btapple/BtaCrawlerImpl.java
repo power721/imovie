@@ -39,16 +39,17 @@ public class BtaCrawlerImpl implements BtaCrawler {
     @Override
     public void crawler() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BtApple"));
-        executorService.submit(() -> work("movie"));
-        executorService.submit(() -> work("tv"));
+        executorService.submit(() -> work(1, "movie"));
+        executorService.submit(() -> work(3, "tv"));
+        executorService.shutdown();
     }
 
-    private void work(String type) {
+    private void work(int id, String type) {
         int total = 0;
         int page = getPage(type);
         Config full = service.getConfig("bta_crawler_" + type);
         while (true) {
-            String url = String.format(baseUrl, type, page);
+            String url = String.format(baseUrl, type, id, page);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
@@ -73,7 +74,7 @@ public class BtaCrawlerImpl implements BtaCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[BtApple] {}-{} find movie {}", page, count, movie.getName());
+                            logger.info("[BtApple] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
