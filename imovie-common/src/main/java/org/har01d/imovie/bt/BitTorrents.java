@@ -126,6 +126,14 @@ public class BitTorrents {
             btInfo.setMagnet("magnet:?xt=urn:btih:" + btInfo.getSha1() + "&dn=" + btInfo.getInfo().getName());
         }
 
+        if (btInfo.getInfo().getFiles() != null) {
+            long size = 0;
+            for (Files fileInfo : btInfo.getInfo().getFiles()) {
+                size += fileInfo.getLength();
+            }
+            btInfo.setFileSize(size);
+        }
+
         return btInfo;
     }
 
@@ -145,7 +153,7 @@ public class BitTorrents {
 //        }
 
         BitTorrentInfo info = parse(
-            "/tmp/bt/0-1.torrent");
+            "/tmp/bt/1-1.torrent");
         System.out.println("SHA1: " + info.getSha1());
         System.out.println("Magnet: " + info.getMagnet());
         System.out.println(
@@ -153,7 +161,7 @@ public class BitTorrents {
                 info.getCreationDate()));
         Info it = info.getInfo();
         System.out.println(
-            "信息:" + it.getName() + "\t" + it.getPiecesLength() + "\t" + it.getLength() + "\t" + it.getMd5sum() + "\t"
+            "信息1:" + it.getName() + "\t" + it.getPiecesLength() + "\t" + it.getLength() + "\t" + it.getMd5sum() + "\t"
                 + it.getPieces());
         if (info.getAnnounceList() != null) {
             for (String str : info.getAnnounceList()) {

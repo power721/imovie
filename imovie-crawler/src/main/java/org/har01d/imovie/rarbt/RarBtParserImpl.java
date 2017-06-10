@@ -13,12 +13,14 @@ import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.har01d.imovie.bt.BtUtils;
+import org.har01d.imovie.bt.BitTorrentInfo;
+import org.har01d.imovie.bt.BitTorrents;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -78,9 +80,22 @@ public class RarBtParserImpl implements RarBtParser {
             for (Element element : elements) {
                 String uri = baseUrl + element.attr("href");
                 String title = element.attr("title");
-                if (!title.contains("论坛下载.")) {
-                    title = title.replace("本地下载.", "");
-                    String magnet = convertTorrent(uri, title);
+                if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
+                    title = title.replace("本地下载.", "").trim();
+                    String magnet = null;
+                    BitTorrentInfo info = convertTorrent(uri, title);
+                    if (info != null) {
+                        String fileSize = StringUtils.convertFileSize(info.getFileSize());
+                        String temp = fileSize;
+                        if (temp.length() > 2) {
+                            temp = fileSize.substring(fileSize.length() - 2, fileSize.length());
+                            if (!title.contains(temp)) {
+                                title = title + " " + fileSize;
+                            }
+                        }
+                        magnet = info.getMagnet();
+                        logger.info("convert {} to {}", title, magnet);
+                    }
                     resources.add(service.saveResource(magnet, uri, title));
                 }
             }
@@ -107,7 +122,7 @@ public class RarBtParserImpl implements RarBtParser {
         return null;
     }
 
-    private String convertTorrent(String uri, String title) {
+    private BitTorrentInfo convertTorrent(String uri, String title) {
         String name = (id.getAndIncrement() % 20) + "-1.torrent";
         File file = new File(downloadDir, name);
         try {
@@ -144,9 +159,8 @@ public class RarBtParserImpl implements RarBtParser {
                 logger.info("newUri: {}", newUri);
                 HttpUtils.downloadFile(newUri, file);
             }
-            String magnet = BtUtils.torrent2Magnet(file);
-            logger.info("convert {} to {}", title, magnet);
-            return magnet;
+
+            return BitTorrents.parse(file);
         } catch (Exception e) {
             logger.error("convert torrent to magnet failed: " + title, e);
             service.publishEvent(uri, "convert torrent to magnet failed: " + title);

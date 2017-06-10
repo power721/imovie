@@ -17,4 +17,16 @@ public final class StringUtils {
         return c == ' ' || c == '\t' || c == '\n';
     }
 
+    public static String convertFileSize(long size) {
+        if (size >= 1024 * 1024 * 1024L) {
+            return String.format("%.2fGB", (size / (1024 * 1024 * 1024D)));
+        } else if (size >= 1024 * 1024L) {
+            return String.format("%.2fMB", (size / (1024 * 1024D)));
+        } else if (size >= 1024) {
+            return String.format("%.2fKB", (size / 1024D));
+        } else {
+            return String.valueOf(size);
+        }
+    }
+
 }

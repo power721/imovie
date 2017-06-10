@@ -13,7 +13,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.har01d.imovie.bt.BtUtils;
+import org.har01d.imovie.bt.BitTorrentInfo;
+import org.har01d.imovie.bt.BitTorrents;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
@@ -1507,13 +1508,22 @@ public class BttParserImpl implements BttParser {
                 String title = element.text();
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
                 boolean isTorrent = element.html().contains("torrent.gif") || title.endsWith(".torrent");
-                String magnet = convertTorrent(uri, title, isTorrent);
+                String magnet = null;
+                BitTorrentInfo info = convertTorrent(uri, title, isTorrent);
+                if (info != null) {
+                    magnet = info.getMagnet();
+                    String fileSize = StringUtils.convertFileSize(info.getFileSize());
+                    if (!title.contains(fileSize)) {
+                        title = title + " " + fileSize;
+                    }
+                    logger.info("convert {} to {}", title, magnet);
+                }
                 resources.add(service.saveResource(magnet, uri, title));
             }
         }
     }
 
-    private String convertTorrent(String uri, String title, boolean isTorrent) {
+    private BitTorrentInfo convertTorrent(String uri, String title, boolean isTorrent) {
         if (!isTorrent) {
             return null;
         }
@@ -1524,9 +1534,7 @@ public class BttParserImpl implements BttParser {
             downloadDir.mkdirs();
             file.createNewFile();
             HttpUtils.downloadFile(uri, file);
-            String magnet = BtUtils.torrent2Magnet(file);
-            logger.info("convert {} to {}", title, magnet);
-            return magnet;
+            return BitTorrents.parse(file);
         } catch (Exception e) {
             logger.error("convert torrent to magnet failed: " + title, e);
             service.publishEvent(uri, "convert torrent to magnet failed: " + title);

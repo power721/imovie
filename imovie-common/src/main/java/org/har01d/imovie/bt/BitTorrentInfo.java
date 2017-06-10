@@ -21,6 +21,7 @@ public class BitTorrentInfo {
     private Info info;
     private String sha1;
     private String magnet;
+    private long fileSize;
 
     public BitTorrentInfo() {
     }
@@ -108,6 +109,14 @@ public class BitTorrentInfo {
 
     public void setMagnet(String magnet) {
         this.magnet = magnet;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public void setValue(String key, Object value) throws Exception {
