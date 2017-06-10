@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.MyThreadFactory;
@@ -94,7 +93,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
                 JSONArray items = (JSONArray) jsonObject.get("subjects");
                 for (Object item1 : items) {
                     JSONObject item = (JSONObject) item1;
-                    String pageUrl = getDbUrl((String) item.get("url"));
+                    String pageUrl = UrlUtils.getDbUrl((String) item.get("url"));
                     if (service.findSource(pageUrl) == null) {
                         queue.put(service.save(new Explorer(TYPE, pageUrl)));
                     }
@@ -164,7 +163,7 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("#recommendations a");
             for (Element element : elements) {
-                String pageUrl = getDbUrl(element.attr("href"));
+                String pageUrl = UrlUtils.getDbUrl(element.attr("href"));
                 if (service.findSource(pageUrl) == null) {
                     queue.put(service.save(new Explorer(TYPE, pageUrl)));
                 }
@@ -175,19 +174,6 @@ public class DouBanExplorerImpl implements DouBanExplorer {
             service.publishEvent(url, e.getMessage());
             logger.error("Parse page failed: " + url, e);
         }
-    }
-
-    private String getDbUrl(String text) {
-        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
-        if (matcher.find()) {
-            String url = matcher.group(1).replace("http://", "https://");
-            if (url.endsWith("/")) {
-                return url;
-            } else {
-                return url + "/";
-            }
-        }
-        return text;
     }
 
 }

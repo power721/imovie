@@ -5,7 +5,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -101,22 +100,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
 
     private String getDbUrl(String redirectUrl) throws IOException {
         String html = HttpUtils.getHtml(redirectUrl);
-        int index = html.indexOf("movie.douban.com/subject/");
-        if (index < 0) {
-            return null;
-        }
-
-        String text = html.substring(index - "https://".length(), index + 45);
-        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
-        if (matcher.find()) {
-            String url = matcher.group(1).replace("http://", "https://");
-            if (url.endsWith("/")) {
-                return url;
-            } else {
-                return url + "/";
-            }
-        }
-        return null;
+        return UrlUtils.getDbUrl(html);
     }
 
     private Date getSourceTime(String text) {

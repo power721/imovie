@@ -123,7 +123,7 @@ public class BttParserImpl implements BttParser {
     }
 
     private Movie getMovie(String html, String text, Movie movie) throws IOException {
-        String dbUrl = getDbUrl(html);
+        String dbUrl = UrlUtils.getDbUrl(html);
         if (dbUrl != null) {
             Movie m = service.findByDbUrl(dbUrl);
             if (m == null) {
@@ -1350,25 +1350,6 @@ public class BttParserImpl implements BttParser {
             }
         }
         return best;
-    }
-
-    private String getDbUrl(String html) {
-        int index = html.indexOf("movie.douban.com/subject/");
-        if (index < 0) {
-            return null;
-        }
-
-        String text = html.substring(index - "https://".length(), index + 45);
-        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
-        if (matcher.find()) {
-            String url = matcher.group(1).replace("http://", "https://");
-            if (url.endsWith("/")) {
-                return url;
-            } else {
-                return url + "/";
-            }
-        }
-        return null;
     }
 
     private String getImdbUrl(String html) {

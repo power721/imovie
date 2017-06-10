@@ -2,7 +2,6 @@ package org.har01d.imovie.bttt;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.regex.Matcher;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
@@ -39,7 +38,7 @@ public class BttttParserImpl implements BttttParser {
         Document doc = Jsoup.parse(html);
 
         Movie m = null;
-        String dbUrl = getDbUrl(html);
+        String dbUrl = UrlUtils.getDbUrl(html);
         if (dbUrl != null) {
             m = service.findByDbUrl(dbUrl);
             if (m == null) {
@@ -64,25 +63,6 @@ public class BttttParserImpl implements BttttParser {
             return m;
         }
 
-        return null;
-    }
-
-    private String getDbUrl(String html) {
-        int index = html.indexOf("movie.douban.com/subject/");
-        if (index < 0) {
-            return null;
-        }
-
-        String text = html.substring(index - "https://".length(), index + 45);
-        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
-        if (matcher.find()) {
-            String url = matcher.group(1).replace("http://", "https://");
-            if (url.endsWith("/")) {
-                return url;
-            } else {
-                return url + "/";
-            }
-        }
         return null;
     }
 

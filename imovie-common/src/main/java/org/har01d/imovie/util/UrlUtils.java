@@ -47,6 +47,25 @@ public final class UrlUtils {
         return urls;
     }
 
+    public static String getDbUrl(String html) {
+        int index = html.indexOf("movie.douban.com/subject/");
+        if (index < 0) {
+            return null;
+        }
+
+        String text = html.substring(index - "https://".length(), index + 45);
+        Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
+        if (matcher.find()) {
+            String url = matcher.group(1).replace("http://", "https://");
+            if (url.endsWith("/")) {
+                return url;
+            } else {
+                return url + "/";
+            }
+        }
+        return null;
+    }
+
     public static String convertUrl(String encodedUrl) {
         try {
             if (encodedUrl.startsWith("thunder://")) {
