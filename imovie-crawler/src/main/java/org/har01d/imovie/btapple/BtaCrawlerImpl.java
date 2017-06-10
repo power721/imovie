@@ -1,10 +1,9 @@
-package org.har01d.imovie.bttt;
+package org.har01d.imovie.btapple;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -21,61 +20,67 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BtttCrawlerImpl implements BtttCrawler {
+public class BtaCrawlerImpl implements BtaCrawler {
 
-    private static final Logger logger = LoggerFactory.getLogger(BtttCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(BtaCrawler.class);
 
-    @Value("${url.bttt.site}")
+    @Value("${url.btapple.site}")
     private String siteUrl;
 
-    @Value("${url.bttt.page}")
+    @Value("${url.btapple.page}")
     private String baseUrl;
 
     @Autowired
-    private BttttParser parser;
+    private BtaParser parser;
 
     @Autowired
     private MovieService service;
 
     @Override
     public void crawler() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BtApple"));
+        executorService.submit(() -> work("movie"));
+        executorService.submit(() -> work("tv"));
+    }
+
+    private void work(String type) {
         int total = 0;
-        int page = getPage();
-        Config full = service.getConfig("bttt_crawler");
+        int page = getPage(type);
+        Config full = service.getConfig("bta_crawler_" + type);
         while (true) {
-            String url = String.format(baseUrl, page);
+            String url = String.format(baseUrl, type, page);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
-                Elements elements = doc.select("div.ml .item .title");
+                Elements elements = doc.select("div.row .info a");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("bttt_crawler", "full");
+                    full = service.saveConfig("bta_crawler_" + type, "full");
                     page = 0;
                     continue;
                 }
-                logger.info("[bttiantang] {}: {} movies", page, elements.size());
+                logger.info("[BtApple] {}: {} movies", page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
-                    String pageUrl = siteUrl + element.select(".tt a").attr("href");
+                    String pageUrl = siteUrl + element.attr("href");
                     if (service.findSource(pageUrl) != null) {
                         continue;
                     }
 
                     Movie movie = new Movie();
-                    movie.setTitle(element.select(".tt a").text());
+                    movie.setTitle(element.attr("title"));
+                    movie.setName(element.text());
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[bttiantang] {}-{} find movie {}", page, count, movie.getName());
-                            movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
+                            logger.info("[BtApple] {}-{} find movie {}", page, count, movie.getName());
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
-                        logger.error("[bttiantang] Parse page failed: " + pageUrl, e);
+                        logger.error("[BtApple] Parse page failed: " + pageUrl, e);
                     }
                 }
 
@@ -83,29 +88,19 @@ public class BtttCrawlerImpl implements BtttCrawler {
                     break;
                 }
                 page++;
-                savePage(page);
+                savePage(type, page);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
-                logger.error("[bttiantang] Get HTML failed: " + url, e);
+                logger.error("[BtApple] Get HTML failed: " + url, e);
             }
         }
 
-        savePage(0);
-        logger.info("[bttiantang] ===== get {} movies =====", total);
+        savePage(type, 0);
+        logger.info("[BtApple] ===== get {} movies =====", total);
     }
 
-    private Date getSourceTime(String text) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            return df.parse(text);
-        } catch (ParseException e) {
-            logger.warn("[bttiantang] get time failed.", e);
-        }
-        return new Date();
-    }
-
-    private int getPage() {
-        String key = "bttt_page";
+    private int getPage(String type) {
+        String key = "bta_page_" + type;
         Config config = service.getConfig(key);
         if (config == null) {
             return 0;
@@ -114,8 +109,8 @@ public class BtttCrawlerImpl implements BtttCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void savePage(int page) {
-        service.saveConfig("bttt_page", String.valueOf(page));
+    private void savePage(String type, int page) {
+        service.saveConfig("bta_page_" + type, String.valueOf(page));
     }
 
 }

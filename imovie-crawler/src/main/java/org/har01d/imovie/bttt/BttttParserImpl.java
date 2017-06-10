@@ -64,6 +64,8 @@ public class BttttParserImpl implements BttttParser {
             return m;
         }
 
+        logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
+        service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
         return null;
     }
 

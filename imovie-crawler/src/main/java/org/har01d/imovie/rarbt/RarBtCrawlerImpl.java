@@ -67,6 +67,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                     String dbUrl = getDbUrl(db);
                     Movie movie = new Movie();
                     movie.setDbUrl(dbUrl);
+                    movie.setTitle(element.select(".tt a").text());
 
                     try {
                         movie = parser.parse(pageUrl, movie);

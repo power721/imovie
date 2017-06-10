@@ -1344,6 +1344,12 @@ public class BttParserImpl implements BttParser {
                 }
             }
 
+            if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
+                if (m.getImdbUrl().equals(movie.getImdbUrl())) {
+                    match++;
+                }
+            }
+
             if (match > 2 && match > maxMatch) {
                 maxMatch = match;
                 best = m;

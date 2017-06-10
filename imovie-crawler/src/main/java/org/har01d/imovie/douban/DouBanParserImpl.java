@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Movie;
@@ -253,7 +252,7 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         if ((value = getValue(text, "IMDb链接:")) != null) {
-            movie.setImdbUrl(getImdbUrl(value));
+            movie.setImdbUrl(UrlUtils.getImdbUrl(value));
             return true;
         }
         return false;
@@ -293,21 +292,6 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return values;
-    }
-
-    private String getImdbUrl(String imdb) {
-        if (imdb.contains("http://www.imdb.com/title/")) {
-            Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(imdb);
-            if (matcher.find()) {
-                return matcher.group(1);
-            }
-        }
-
-        Matcher matcher = UrlUtils.IMDB.matcher(imdb);
-        if (matcher.find()) {
-            return "http://www.imdb.com/title/" + matcher.group(1);
-        }
-        return null;
     }
 
 }

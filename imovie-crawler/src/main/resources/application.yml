@@ -34,6 +34,9 @@ url:
   bttt:
     site: http://www.bttiantang.org
     page: http://www.bttiantang.org/index-%d.html
+  btapple:
+    site: http://www.btapple.com
+    page: http://www.btapple.com/%s/1-0-0-0-0-%d.html
 file:
   download: /tmp/bt/
 

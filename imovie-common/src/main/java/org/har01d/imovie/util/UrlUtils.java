@@ -66,6 +66,21 @@ public final class UrlUtils {
         return null;
     }
 
+    public static String getImdbUrl(String imdb) {
+        if (imdb.contains("http://www.imdb.com/title/")) {
+            Matcher matcher = UrlUtils.IMDB_PATTERN.matcher(imdb);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+
+        Matcher matcher = UrlUtils.IMDB.matcher(imdb);
+        if (matcher.find()) {
+            return "http://www.imdb.com/title/" + matcher.group(1);
+        }
+        return null;
+    }
+
     public static String convertUrl(String encodedUrl) {
         try {
             if (encodedUrl.startsWith("thunder://")) {
