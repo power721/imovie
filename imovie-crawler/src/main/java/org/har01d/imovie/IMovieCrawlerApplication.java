@@ -2,10 +2,16 @@ package org.har01d.imovie;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.btt.BttCrawler;
+import org.har01d.imovie.bttt.BtttCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Resource;
+import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.service.DouBanService;
@@ -42,10 +48,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private RarBtCrawler rarBtCrawler;
 
     @Autowired
+    private BtttCrawler btttCrawler;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
     private DouBanService douBanService;
+
+    @Autowired
+    private ResourceRepository resourceRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -59,26 +71,53 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
+//            clean();
             douBanService.tryLogin();
             updateImdbTop250();
 
-            new Thread(() -> {
+            ExecutorService executorService = Executors.newFixedThreadPool(3, new MyThreadFactory("Crawler"));
+            executorService.submit(() -> {
                 try {
                     rs05Crawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
 
-            new Thread(() -> {
+            executorService.submit(() -> {
                 try {
                     rarBtCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
+
+            executorService.submit(() -> {
+                try {
+                    btttCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
 
             bttCrawler.crawler();
+        }
+    }
+
+    private void clean() {
+        List<Resource> resources = resourceRepository.findByUriStartingWith("http://www.rarbt.com/");
+        logger.info("find {} resources", resources.size());
+        for (Resource resource : resources) {
+            for (Movie movie : resource.getMovies()) {
+                if (movie.getRes().remove(resource)) {
+                    service.save(movie);
+                    logger.info("{}: update movie {}:{}", resource.getId(), movie.getId(), movie.getName());
+                }
+            }
+        }
+
+        for (Resource resource : resources) {
+            resourceRepository.delete(resource);
         }
     }
 
@@ -106,6 +145,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }
 
+            logger.info("update {} movies for imdb", count);
             if (count >= 250) {
                 service.saveConfig("imdb_250", "true");
             }

@@ -31,6 +31,9 @@ url:
   rarbt:
     site: http://www.rarbt.com
     page: http://www.rarbt.com/index.php/index/index/p/%d.html
+  bttt:
+    site: http://www.bttiantang.org
+    page: http://www.bttiantang.org/index-%d.html
 file:
   download: /tmp/bt/
 

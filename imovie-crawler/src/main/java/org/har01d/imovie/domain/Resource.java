@@ -3,6 +3,7 @@ package org.har01d.imovie.domain;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class Resource {
 
     private String title;
 
-    @ManyToMany(mappedBy = "resources")
+    @ManyToMany(mappedBy = "resources", fetch = FetchType.EAGER)
     private List<Movie> movies;
 
     public Resource() {
