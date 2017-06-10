@@ -148,7 +148,7 @@ public class BttCrawlerImpl implements BttCrawler {
         }
 
         savePage(fid, 1);
-        logger.info("===== get {} movies =====", total);
+        logger.info("===== {}: get {} movies =====", fid, total);
     }
 
     private String getName(String title) {

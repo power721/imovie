@@ -3,6 +3,7 @@ package org.har01d.imovie.web.domain;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,7 +44,7 @@ public class Movie {
     private String cover;
 
     @ManyToMany(cascade = {CascadeType.REMOVE})
-    private Set<Resource> resources = new HashSet<>();
+    private List<Resource> resources;
 
     @ManyToMany(cascade = {CascadeType.REMOVE})
     private Set<Category> categories;
@@ -149,7 +150,7 @@ public class Movie {
         this.cover = cover;
     }
 
-    public Set<Resource> getRes() {
+    public List<Resource> getRes() {
         return resources;
     }
 
@@ -157,7 +158,7 @@ public class Movie {
         return resources.size();
     }
 
-    public void setResources(Set<Resource> resources) {
+    public void setResources(List<Resource> resources) {
         this.resources = resources;
     }
 

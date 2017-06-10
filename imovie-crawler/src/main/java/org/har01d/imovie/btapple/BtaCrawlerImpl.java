@@ -97,7 +97,7 @@ public class BtaCrawlerImpl implements BtaCrawler {
         }
 
         savePage(type, 0);
-        logger.info("[BtApple] ===== get {} movies =====", total);
+        logger.info("[BtApple] ===== {}: get {} movies =====", type, total);
     }
 
     private int getPage(String type) {
