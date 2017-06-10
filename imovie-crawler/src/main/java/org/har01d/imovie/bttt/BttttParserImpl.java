@@ -58,7 +58,8 @@ public class BttttParserImpl implements BttttParser {
                 }
             }
 
-            logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
+            logger.info("[bttiantang] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+                m.getName());
             service.save(m);
             return m;
         }
@@ -79,7 +80,7 @@ public class BttttParserImpl implements BttttParser {
                 resources.add(service.saveResource(ed2k, title));
             }
         } catch (IOException e) {
-            logger.error("get resource failed: " + uri, e);
+            logger.error("[bttiantang] get resource failed: " + uri, e);
             service.publishEvent(uri, "get resource failed: " + uri);
         }
 
