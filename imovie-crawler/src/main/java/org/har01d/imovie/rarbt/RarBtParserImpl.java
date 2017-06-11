@@ -153,7 +153,7 @@ public class RarBtParserImpl implements RarBtParser {
                 if (index > -1) {
                     newUri =
                         newUri.substring(0, index) + "/" + URLEncoder
-                            .encode(newUri.substring(index + 1, newUri.length()), "GBK")
+                            .encode(newUri.substring(index + 1, newUri.length()), "UTF-8")
                             .replaceAll("\\+", "%20");
                 }
                 logger.info("newUri: {}", newUri);
