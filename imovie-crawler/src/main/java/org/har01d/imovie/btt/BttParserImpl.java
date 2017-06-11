@@ -46,6 +46,7 @@ public class BttParserImpl implements BttParser {
     private Pattern DATE2 = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})");
     private Pattern DATE3 = Pattern.compile("(\\d{4})年(\\d{1,2})月(\\d{1,2})日");
     private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
+    private Pattern NUMBER = Pattern.compile("(\\d+)");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
         "上映日期:", "日期:", "上映:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "官网:", "压制:", "地区:", "字幕:",
         "首播:", "季数:", "集数:", "单集片长:", "资源发布网站:", "出品:", "发售日期:", "重播:", "来源:", "演员:", "译名:", "媒介:",
@@ -353,6 +354,12 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎集     数:") + 9;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setEpisode(getNumber(text.substring(start, end)));
             }
 
             start = text.indexOf("◎英 文  名：") + 8;
@@ -882,6 +889,48 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("[剧 名]:")) { // http://btbtt.co/thread-index-fid-950-tid-4358617.htm
+            int start = text.indexOf("[播 送]:") + 7;
+            int end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("[类 型]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+//            start = text.indexOf("【对白语言】：") + 7;
+//            end = text.indexOf("[", start);
+//            if (start > 20 && end > start) {
+//                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+//            }
+
+            start = text.indexOf("[首 播]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("[集 数]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setEpisode(getNumber(text.substring(start, end)));
+            }
+
+            start = text.indexOf("[导 演]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("[剧 名]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
         } else if (text.contains("中文片名：")) { // http://btbtt.co/thread-index-fid-951-tid-4236792.htm
             int start = text.indexOf("国家：") + 3;
             int end = getNextToken2(text, start);
@@ -1251,6 +1300,14 @@ public class BttParserImpl implements BttParser {
         return StringUtils.truncate(text, len);
     }
 
+    private int getNumber(String text) {
+        Matcher matcher = NUMBER.matcher(text);
+        if (matcher.find()) {
+            return Integer.valueOf(matcher.group(1));
+        }
+        return 0;
+    }
+
     private Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String regex = "/";
@@ -1393,6 +1450,12 @@ public class BttParserImpl implements BttParser {
 
             if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
                 if (m.getImdbUrl().equals(movie.getImdbUrl())) {
+                    match++;
+                }
+            }
+
+            if (movie.getEpisode() != 0 && m.getEpisode() != 0) {
+                if (m.getEpisode() == movie.getEpisode()) {
                     match++;
                 }
             }
