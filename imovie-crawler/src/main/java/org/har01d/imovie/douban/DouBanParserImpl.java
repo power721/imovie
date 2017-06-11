@@ -247,8 +247,12 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         if ((value = getValue(text, "集数:")) != null) {
-            movie.setEpisode(Integer.valueOf(value));
-            return true;
+            try {
+                movie.setEpisode(Integer.valueOf(value));
+                return true;
+            } catch (NumberFormatException e) {
+                // ignore
+            }
         }
 
         if ((value = getValue(text, "IMDb链接:")) != null) {

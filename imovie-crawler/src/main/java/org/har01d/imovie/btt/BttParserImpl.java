@@ -926,6 +926,18 @@ public class BttParserImpl implements BttParser {
                 movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
             }
 
+            start = text.indexOf("[编 剧]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setEditors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("[演 员]:") + 6;
+            end = text.indexOf("[", start);
+            if (start > 20 && end > start) {
+                movie.setActors(getPersons(getValues3(text.substring(start, end))));
+            }
+
             start = text.indexOf("[剧 名]:") + 6;
             end = text.indexOf("[", start);
             if (start > 20 && end > start) {
@@ -1170,6 +1182,18 @@ public class BttParserImpl implements BttParser {
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
                 movie.setDirectors(getPersons(getValues2(text.substring(start, end))));
+            }
+
+            start = text.indexOf("编剧:") + 3;
+            end = getNextToken(text, start);
+            if (start > 20 && end > start) {
+                movie.setEditors(getPersons(getValues2(text.substring(start, end))));
+            }
+
+            start = text.indexOf("主演:") + 3;
+            end = getNextToken(text, start);
+            if (start > 20 && end > start) {
+                movie.setActors(getPersons(getValues2(text.substring(start, end))));
             }
 
             start = text.indexOf("上映日期:") + 5;
@@ -1432,6 +1456,18 @@ public class BttParserImpl implements BttParser {
 
             if (movie.getDirectors() != null && !movie.getDirectors().isEmpty() && m.getDirectors() != null) {
                 if (m.getDirectors().containsAll(movie.getDirectors())) {
+                    match++;
+                }
+            }
+
+            if (movie.getEditors() != null && !movie.getEditors().isEmpty() && m.getEditors() != null) {
+                if (m.getEditors().containsAll(movie.getEditors())) {
+                    match++;
+                }
+            }
+
+            if (movie.getActors() != null && !movie.getActors().isEmpty() && m.getActors() != null) {
+                if (m.getActors().containsAll(movie.getActors())) {
                     match++;
                 }
             }

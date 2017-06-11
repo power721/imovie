@@ -30,7 +30,7 @@ public class BttCrawlerImpl implements BttCrawler {
         .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[([^]]+)]\\[([^]]+)]\\[[^]]+]\\[[^]]+].*$");
 
     private static final Pattern SUBJECT_PATTERN2 = Pattern
-        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] \\[[^]]+](.*)$");
+        .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] (?:\\[连载] )?(?:\\[打包] )?(?:\\[全集] )?(?:\\[合集] )?\\[[^]]+](.*)$");
 
     @Value("${url.btt.page}")
     private String baseUrl;
@@ -66,12 +66,12 @@ public class BttCrawlerImpl implements BttCrawler {
                 Document doc = Jsoup.parse(html);
                 String date = doc.select("td.username .small").last().text();
                 Integer year = service.getYear(date);
-                if (year != null && year <= 2012) {
+                Elements elements = doc.select("td.subject");
+                if ((year != null && year <= 2012) || elements.size() == 0) {
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
                     continue;
                 }
-                Elements elements = doc.select("td.subject");
 
                 int count = 0;
                 for (Element element : elements) {
@@ -103,14 +103,15 @@ public class BttCrawlerImpl implements BttCrawler {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
                             pageUrl = siteUrl + element.select("a").attr("href");
-                            logger.info(
-                                fid + "-" + page + "-" + total + "-" + count + " " + matcher.group(3) + ": " + pageUrl);
+                            String name = getName(matcher.group(3));
+                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
                             if (service.findSource(pageUrl) != null) {
                                 continue;
                             }
 
                             String y = matcher.group(1);
                             movie = new Movie();
+                            movie.setName(name);
                             movie.setTitle(text);
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
@@ -152,6 +153,20 @@ public class BttCrawlerImpl implements BttCrawler {
     }
 
     private String getName(String title) {
+        if (title.startsWith("[")) {
+            int index = title.indexOf(']');
+            String temp = title.substring(1, index);
+            if (temp.contains("BT") || temp.contains("下载") || temp.contains("网盘")) {
+                int start = index + 1;
+                index = title.indexOf(']', start);
+                if (index < 0) {
+                    index = title.length();
+                }
+                temp = title.substring(start, index);
+            }
+            title = temp;
+        }
+
         String[] comps = title.split("/");
         return comps[0];
     }
