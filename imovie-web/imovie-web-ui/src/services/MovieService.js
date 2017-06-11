@@ -5,7 +5,7 @@ export default {
     var uri = '/api/movies/'
     if (params.name) {
       uri = '/api/movies/search/by-name/'
-    } else if (params.category) {
+    } else if (params.category && params.category !== 'all') {
       uri = '/api/movies/search/by-category/'
     }
     return Vue.http.get(uri, {params: params})

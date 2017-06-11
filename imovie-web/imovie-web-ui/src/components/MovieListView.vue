@@ -8,29 +8,66 @@
       {{ error }}
     </div>
 
-    <!--<div class="ui fixed menu">-->
-    <!--<div class="ui container">-->
-    <!--<div class="ui simple dropdown item">-->
-    <!--Category <i class="dropdown icon"></i>-->
-    <!--<div class="menu">-->
-    <!--<a class="item" href="#">All</a>-->
-    <!--<a class="item" href="#">Link Item</a>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="right item">-->
-    <!--<div class="ui icon input">-->
-    <!--<input type="text" v-model="text" @change="search" placeholder="Search...">-->
-    <!--<i class="search icon"></i>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
+    <template v-if="movies && movies.length">
+      <div class="ui form">
+        <div class="inline fields">
+          <label>排序</label>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="sort" v-model="sort" value="id,desc" @change="filter">
+              <label>添加时间</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="filter">
+              <label>更新时间</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
+              <label>豆瓣评分</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>类型</label>
+            <select class="ui dropdown" v-model="category" @change="filter">
+              <option value="all">默认</option>
+              <option value="剧情">剧情</option>
+              <option value="爱情">爱情</option>
+              <option value="喜剧">喜剧</option>
+              <option value="动作">动作</option>
+              <option value="科幻">科幻</option>
+              <option value="奇幻">奇幻</option>
+              <option value="冒险">冒险</option>
+              <option value="战争">战争</option>
+              <option value="悬疑">悬疑</option>
+              <option value="惊悚">惊悚</option>
+              <option value="恐怖">恐怖</option>
+              <option value="犯罪">犯罪</option>
+              <option value="音乐">音乐</option>
+              <option value="歌舞">歌舞</option>
+              <option value="情色">情色</option>
+              <option value="历史">历史</option>
+              <option value="传记">传记</option>
+              <option value="家庭">家庭</option>
+              <option value="纪录片">纪录片</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>搜索</label>
+            <div class="ui icon input">
+              <input type="text" v-model="text" @change="filter" placeholder="Search...">
+              <i class="circular search link icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
-      <div class="ui input">
-        <input id="search" type="text" v-model="text" @change="search" placeholder="search by name">
-      </div>
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
@@ -103,6 +140,7 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
+import $ from 'jquery'
 
 export default {
   name: 'MovieListView',
@@ -116,7 +154,7 @@ export default {
       error: '',
       text: this.$route.query.search || storageService.getItem('search') || '',
       sort: this.$route.query.sort || storageService.getItem('sort') || '',
-      category: this.$route.query.category || storageService.getItem('category') || '',
+      category: this.$route.query.category || storageService.getItem('category') || 'all',
       currentPage: this.$route.query.page || storageService.getItem('currentPage') || 0,
       pagination: null,
       movies: []
@@ -125,11 +163,15 @@ export default {
   created () {
     this.loadData()
   },
+  mounted () {
+    $(document).ready(function () {
+      $('select.dropdown').dropdown()
+    })
+  },
   methods: {
     loadData: function () {
       this.error = this.movies = null
       this.loading = true
-      storageService.setItem('search', this.text)
       storageService.setItem('currentPage', this.currentPage)
       let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
       movieService.getMovies(params, (success, data) => {
@@ -150,8 +192,11 @@ export default {
         }
       })
     },
-    search: function () {
+    filter: function () {
       this.currentPage = 0
+      storageService.setItem('sort', this.sort)
+      storageService.setItem('search', this.text)
+      storageService.setItem('category', this.category)
       this.loadData()
     },
     getPaginationData: function (pagination) {
