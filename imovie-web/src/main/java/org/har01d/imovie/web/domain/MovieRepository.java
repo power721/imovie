@@ -24,6 +24,9 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     @RestResource(path = "by-name", rel = "by-name")
     Page<Movie> findByNameContaining(@Param("name") String name, Pageable pageable);
 
+    @RestResource(path = "search", rel = "search")
+    Page<Movie> findByNameContainingAndCategories_Name(@Param("name") String name, @Param("category") String category, Pageable pageable);
+
     @RestResource(path = "by-category", rel = "by-category")
     Page<Movie> findByCategories_Name(@Param("category") String category, Pageable pageable);
 

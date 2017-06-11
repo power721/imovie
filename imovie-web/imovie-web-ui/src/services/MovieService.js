@@ -3,7 +3,9 @@ import Vue from 'vue'
 export default {
   getMovies (params, cb) {
     var uri = '/api/movies/'
-    if (params.name) {
+    if (params.name && params.category && params.category !== 'all') {
+      uri = '/api/movies/search/search/'
+    } else if (params.name) {
       uri = '/api/movies/search/by-name/'
     } else if (params.category && params.category !== 'all') {
       uri = '/api/movies/search/by-category/'
