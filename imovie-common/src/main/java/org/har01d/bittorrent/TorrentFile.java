@@ -85,10 +85,6 @@ public class TorrentFile {
         } else if (file.isDirectory()) {
             throw new IllegalArgumentException("The provided file is a directory"); //$NON-NLS-1$
         }
-        name = file.getName();
-        if (name.endsWith(".torrent")) { //$NON-NLS-1$
-            name = name.substring(0, name.length() - 8);
-        }
 
         BEncodedDictionary dictionary = Decode.bDecode(new FileInputStream(file));
         torrentData = dictionary.toString().getBytes("ISO-8859-1"); //$NON-NLS-1$
@@ -136,7 +132,8 @@ public class TorrentFile {
             hash.append(Integer.toHexString(0xff & bytes[i]));
         }
         hexHash = hash.toString().toUpperCase();
-        magnet = "magnet:?xt=urn:btih:" + hexHash + "&dn=" + info.get("name");
+        name = new String(info.get("name").toString().getBytes("ISO-8859-1"), "GBK");
+        magnet = "magnet:?xt=urn:btih:" + hexHash + "&dn=" + name;
     }
 
     private boolean hashCheckFile() throws FileNotFoundException, IOException {
