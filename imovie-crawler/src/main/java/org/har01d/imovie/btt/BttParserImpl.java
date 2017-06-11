@@ -318,6 +318,54 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("◎中 文  名：")) { // http://btbtt.co/thread-index-fid-950-tid-4359274.htm
+            int start = text.indexOf("◎国家/地区:") + 7;
+            int end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎类     型:") + 9;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎导     演:") + 9;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎语     言:") + 9;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("◎上 映时间") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎单集片长:") + 6;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("◎英 文  名：") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("◎中 文  名：") + 8;
+            end = text.indexOf("◎", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
         } else if (text.contains("◎译 名")) { // http://btbtt.co/thread-index-fid-1183-tid-4092435.htm
             int start = text.indexOf("◎国 家") + 4;
             int end = text.indexOf("◎", start);
