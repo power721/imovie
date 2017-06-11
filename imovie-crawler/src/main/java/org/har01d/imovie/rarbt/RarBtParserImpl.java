@@ -13,8 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.har01d.imovie.bt.BitTorrentInfo;
-import org.har01d.imovie.bt.BitTorrents;
+import org.har01d.bittorrent.TorrentFile;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
@@ -82,9 +81,9 @@ public class RarBtParserImpl implements RarBtParser {
                 String title = element.attr("title");
                 if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
                     title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();
-                    BitTorrentInfo info = convertTorrent(uri, title);
+                    TorrentFile info = convertTorrent(uri, title);
                     if (info != null) {
-                        String fileSize = StringUtils.convertFileSize(info.getFileSize());
+                        String fileSize = StringUtils.convertFileSize(info.getTotalLength());
                         String temp = fileSize;
                         if (temp.length() > 2) {
                             temp = fileSize.substring(fileSize.length() - 2, fileSize.length());
@@ -123,7 +122,7 @@ public class RarBtParserImpl implements RarBtParser {
         return null;
     }
 
-    private BitTorrentInfo convertTorrent(String uri, String title) {
+    private TorrentFile convertTorrent(String uri, String title) {
         String name = (id.getAndIncrement() % 20) + "-1.torrent";
         File file = new File(downloadDir, name);
         try {
@@ -161,7 +160,7 @@ public class RarBtParserImpl implements RarBtParser {
                 HttpUtils.downloadFile(newUri, file);
             }
 
-            return BitTorrents.parse(file);
+            return new TorrentFile(file);
         } catch (Exception e) {
             logger.error("convert torrent to magnet failed: " + title, e);
             service.publishEvent(uri, "convert torrent to magnet failed: " + title);

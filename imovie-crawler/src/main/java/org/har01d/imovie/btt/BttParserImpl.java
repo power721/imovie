@@ -13,8 +13,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.har01d.imovie.bt.BitTorrentInfo;
-import org.har01d.imovie.bt.BitTorrents;
+import org.har01d.bittorrent.TorrentFile;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
@@ -1496,10 +1495,10 @@ public class BttParserImpl implements BttParser {
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
                 boolean isTorrent = element.html().contains("torrent.gif") || title.endsWith(".torrent");
                 String magnet = null;
-                BitTorrentInfo info = convertTorrent(uri, title, isTorrent);
+                TorrentFile info = convertTorrent(uri, title, isTorrent);
                 if (info != null) {
                     magnet = info.getMagnet();
-                    String fileSize = StringUtils.convertFileSize(info.getFileSize());
+                    String fileSize = StringUtils.convertFileSize(info.getTotalLength());
                     if (!title.contains(fileSize)) {
                         title = title + " " + fileSize;
                     }
@@ -1510,7 +1509,7 @@ public class BttParserImpl implements BttParser {
         }
     }
 
-    private BitTorrentInfo convertTorrent(String uri, String title, boolean isTorrent) {
+    private TorrentFile convertTorrent(String uri, String title, boolean isTorrent) {
         if (!isTorrent) {
             return null;
         }
@@ -1521,7 +1520,7 @@ public class BttParserImpl implements BttParser {
             downloadDir.mkdirs();
             file.createNewFile();
             HttpUtils.downloadFile(uri, file);
-            return BitTorrents.parse(file);
+            return new TorrentFile(file);
         } catch (Exception e) {
             logger.error("convert torrent to magnet failed: " + title, e);
             service.publishEvent(uri, "convert torrent to magnet failed: " + title);
