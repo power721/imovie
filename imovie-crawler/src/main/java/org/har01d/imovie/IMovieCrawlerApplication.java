@@ -113,6 +113,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             });
 
             bttCrawler.crawler();
+            executorService.shutdown();
         }
     }
 
