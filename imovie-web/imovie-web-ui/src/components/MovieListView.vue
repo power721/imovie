@@ -31,6 +31,13 @@
             </div>
           </div>
           <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="sort" v-model="sort" value="imdbScore,desc" @change="filter">
+              <label>IMDB评分</label>
+            </div>
+          </div>
+
+          <div class="field">
             <label>类型</label>
             <select class="ui dropdown" v-model="category" @change="filter">
               <option value="all">默认</option>
