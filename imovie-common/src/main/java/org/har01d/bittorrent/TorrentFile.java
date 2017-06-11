@@ -132,7 +132,7 @@ public class TorrentFile {
             hash.append(Integer.toHexString(0xff & bytes[i]));
         }
         hexHash = hash.toString().toUpperCase();
-        name = new String(info.get("name").toString().getBytes("ISO-8859-1"), "GBK");
+        name = new String(info.get("name").toString().getBytes("ISO-8859-1"), (String) dictionary.get("encoding"));
         magnet = "magnet:?xt=urn:btih:" + hexHash + "&dn=" + name;
     }
 
