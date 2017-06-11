@@ -84,6 +84,8 @@ public final class Decode {
                 String value = getInteger(string);
                 string = string.substring(value.length() + 2);
                 list.add(new Long(value));
+            } else {
+                throw new IllegalStateException("Invalid bencoded string");
             }
             ch = string.charAt(0);
         }
