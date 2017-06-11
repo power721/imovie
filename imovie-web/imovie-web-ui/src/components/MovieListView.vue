@@ -14,7 +14,7 @@
           <label>排序</label>
           <div class="field">
             <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="id,desc" @change="filter">
+              <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
               <label>添加时间</label>
             </div>
           </div>
