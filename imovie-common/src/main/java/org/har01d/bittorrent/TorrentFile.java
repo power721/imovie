@@ -87,9 +87,14 @@ public class TorrentFile {
         }
 
         BEncodedDictionary dictionary = Decode.bDecode(new FileInputStream(file));
+        String encoding = (String) dictionary.get("encoding");
+        if (encoding == null || encoding.isEmpty()) {
+            encoding = "UTF-8";
+        }
         torrentData = dictionary.toString().getBytes("ISO-8859-1"); //$NON-NLS-1$
         tracker = (String) dictionary.get("announce"); //$NON-NLS-1$
         final BEncodedDictionary info = (BEncodedDictionary) dictionary.get("info"); //$NON-NLS-1$
+        name = new String(info.get("name").toString().getBytes("ISO-8859-1"), encoding);
         final List list = (List) info.get("files"); //$NON-NLS-1$
         if (list != null) {
             filenames = new String[list.size()];
@@ -97,21 +102,22 @@ public class TorrentFile {
             total = 0;
             for (int i = 0; i < filenames.length; i++) {
                 final BEncodedDictionary aDictionary = (BEncodedDictionary) list.get(i);
-                lengths[i] = ((Long) aDictionary.get("length")).longValue(); //$NON-NLS-1$
+                lengths[i] = (Long) aDictionary.get("length"); //$NON-NLS-1$
                 total += lengths[i];
                 final List aList = (List) aDictionary.get("path"); //$NON-NLS-1$
                 final StringBuffer buffer = new StringBuffer();
                 synchronized (buffer) {
-                    for (int j = 0; j < aList.size(); j++) {
-                        buffer.append(aList.get(j)).append(File.separator);
+                    for (Object anAList : aList) {
+                        buffer.append(anAList).append(File.separator);
                     }
+                    buffer.deleteCharAt(buffer.length() - 1);
                 }
-                filenames[i] = buffer.toString();
+                filenames[i] = new String(buffer.toString().getBytes("ISO-8859-1"), encoding);
             }
         } else {
-            lengths = new long[]{((Long) info.get("length")).longValue()}; //$NON-NLS-1$
+            lengths = new long[]{(Long) info.get("length")}; //$NON-NLS-1$
             total = lengths[0];
-            filenames = new String[]{(String) info.get("name")}; //$NON-NLS-1$
+            filenames = new String[]{name}; //$NON-NLS-1$
         }
         pieceLength = ((Long) info.get("piece length")).intValue(); //$NON-NLS-1$
         buffer = ByteBuffer.allocate(pieceLength);
@@ -124,23 +130,19 @@ public class TorrentFile {
         infoHash = new String(shaDigest.digest(info.toString().getBytes("ISO-8859-1")),
             "ISO-8859-1"); //$NON-NLS-1$ //$NON-NLS-2$
         final byte[] bytes = infoHash.getBytes("ISO-8859-1"); //$NON-NLS-1$
-        final StringBuffer hash = new StringBuffer(40);
-        for (int i = 0; i < bytes.length; i++) {
-            if (-1 < bytes[i] && bytes[i] < 16) {
+        final StringBuilder hash = new StringBuilder(40);
+        for (byte aByte : bytes) {
+            if (-1 < aByte && aByte < 16) {
                 hash.append('0');
             }
-            hash.append(Integer.toHexString(0xff & bytes[i]));
+            hash.append(Integer.toHexString(0xff & aByte));
         }
+
         hexHash = hash.toString().toUpperCase();
-        String encoding = (String) dictionary.get("encoding");
-        if (encoding == null || encoding.isEmpty()) {
-            encoding = "UTF-8";
-        }
-        name = new String(info.get("name").toString().getBytes("ISO-8859-1"), encoding);
         magnet = "magnet:?xt=urn:btih:" + hexHash + "&dn=" + name;
     }
 
-    private boolean hashCheckFile() throws FileNotFoundException, IOException {
+    private boolean hashCheckFile() throws IOException {
         final int remainder = (int) (file.length() % pieceLength);
         int count = 0;
         final FileChannel channel = new FileInputStream(file).getChannel();
@@ -156,11 +158,11 @@ public class TorrentFile {
         return pieces[pieces.length - 1].equals(new String(shaDigest.digest(), "ISO-8859-1")); //$NON-NLS-1$
     }
 
-    private boolean hashCheckFolder() throws FileNotFoundException, IOException {
+    private boolean hashCheckFolder() throws IOException {
         int read = 0;
         int count = 0;
-        for (int i = 0; i < filenames.length; i++) {
-            final File download = new File(file.getAbsolutePath(), filenames[i]);
+        for (String filename : filenames) {
+            final File download = new File(file.getAbsolutePath(), filename);
             final FileChannel channel = new FileInputStream(download).getChannel();
             while ((read += channel.read(buffer)) == pieceLength) {
                 buffer.rewind();

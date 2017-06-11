@@ -20,33 +20,6 @@ import java.util.List;
 
 public final class Decode {
 
-    /**
-     * Reads four bytes in succesion within the specified byte array and return
-     * the corresponding integer value.
-     *
-     * @param bytes the byte array with the four bytes to decode
-     * @param index the starting index of the four-byte value
-     * @return the integer that is encoded within the four bytes of the array
-     */
-    public static int decodeFourByteNumber(byte[] bytes, int index) {
-        return (bytes[index] & 0xff) * 16777216 + (bytes[index + 1] & 0xff)
-            * 65536 + (bytes[index + 2] & 0xff) * 256
-            + (bytes[index + 3] & 0xff);
-    }
-
-    public static int decodeSignedByte(int num) {
-        num = num & 0xff;
-        if (num < 128) {
-            return num + 127;
-        }
-        String str = Integer.toString(num, 2);
-        char[] array = new char[8];
-        for (int j = 0; j < str.length(); j++) {
-            array[j] = str.charAt(7 - j);
-        }
-        return Integer.parseInt(new String(array), 2);
-    }
-
     private static String getInteger(String input) {
         return input.substring(1, input.indexOf('e'));
     }
@@ -73,7 +46,7 @@ public final class Decode {
                             buffer.append(string.length()).append(':').append(
                                 string);
                         } else if (obj instanceof Long) {
-                            buffer.append('i' + String.valueOf(obj) + 'e');
+                            buffer.append('i').append(String.valueOf(obj)).append('e');
                         } else if (obj instanceof List
                             || obj instanceof BEncodedDictionary) {
                             buffer.append(obj.toString());
