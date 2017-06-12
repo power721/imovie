@@ -69,7 +69,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                     }
                 }
 
-                if (doc.select("div.pages em").text().equals(String.valueOf(page))) {
+                if (doc.select("div.pages").last().text().equals(String.valueOf(page))) {
                     full = service.saveConfig("btdy_crawler", "full");
                     page = 1;
                     continue;
