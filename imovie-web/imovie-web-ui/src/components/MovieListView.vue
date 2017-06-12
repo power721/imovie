@@ -26,13 +26,19 @@
           </div>
           <div class="field">
             <div class="ui radio checkbox">
+              <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="filter">
+              <label>上映时间</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
               <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
               <label>豆瓣评分</label>
             </div>
           </div>
           <div class="field">
             <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="imdbScore,desc" @change="filter">
+              <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="filter">
               <label>IMDB评分</label>
             </div>
           </div>
