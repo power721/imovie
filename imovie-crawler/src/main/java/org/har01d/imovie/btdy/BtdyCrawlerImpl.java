@@ -71,7 +71,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
 
                 if (doc.select("div.pages em").text().equals(String.valueOf(page))) {
                     full = service.saveConfig("btdy_crawler", "full");
-                    page = 0;
+                    page = 1;
                     continue;
                 }
 
@@ -86,7 +86,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
             }
         }
 
-        savePage(0);
+        savePage(1);
         logger.info("[btbtdy] ===== get {} movies =====", total);
     }
 
@@ -94,7 +94,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
         String key = "btdy_page";
         Config config = service.getConfig(key);
         if (config == null) {
-            return 0;
+            return 1;
         }
 
         return Integer.valueOf(config.getValue());
