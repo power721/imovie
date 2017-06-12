@@ -51,7 +51,9 @@ public class BtaParserImple implements BtaParser {
             String imdb = UrlUtils.getImdbUrl(doc.select(".detail .cl a").attr("href"));
             if (imdb != null) {
                 m = service.findByImdb(imdb);
-                movie.setImdbUrl(imdb);
+                if (m != null) {
+                    movie.setImdbUrl(imdb);
+                }
             }
         }
 

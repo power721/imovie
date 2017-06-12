@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.btapple.BtaCrawler;
+import org.har01d.imovie.btdy.BtdyCrawler;
 import org.har01d.imovie.btt.BttCrawler;
 import org.har01d.imovie.bttt.BtttCrawler;
 import org.har01d.imovie.domain.Config;
@@ -52,6 +53,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private BtaCrawler btaCrawler;
 
     @Autowired
+    private BtdyCrawler btdyCrawler;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
@@ -72,7 +76,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             douBanService.tryLogin();
             updateImdbTop250();
 
-            ExecutorService executorService = Executors.newFixedThreadPool(4, new MyThreadFactory("Crawler"));
+            ExecutorService executorService = Executors.newFixedThreadPool(5, new MyThreadFactory("Crawler"));
             executorService.submit(() -> {
                 try {
                     rs05Crawler.crawler();
@@ -100,6 +104,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             executorService.submit(() -> {
                 try {
                     btaCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            executorService.submit(() -> {
+                try {
+                    btdyCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

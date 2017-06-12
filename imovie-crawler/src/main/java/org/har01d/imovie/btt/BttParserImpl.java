@@ -42,9 +42,6 @@ public class BttParserImpl implements BttParser {
 
     private Pattern CHINESE = Pattern.compile("[\\u4e00-\\u9fa5]");
     private Pattern PERSON_NAME = Pattern.compile("([\\u4e00-\\u9fa5·]+)\\s+[a-zA-Z. ]+");
-    private Pattern DATE1 = Pattern.compile("(\\d{4})-(\\d{1,2})-(\\d{1,2})");
-    private Pattern DATE2 = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})");
-    private Pattern DATE3 = Pattern.compile("(\\d{4})年(\\d{1,2})月(\\d{1,2})日");
     private Pattern DB_NAME = Pattern.compile("\\s*(\\S+)的剧情简介");
     private Pattern NUMBER = Pattern.compile("(\\d+)");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "国家/地区:", "语言:", "对白:",
@@ -1410,98 +1407,7 @@ public class BttParserImpl implements BttParser {
             movies = service.findByName(name);
         }
 
-        return findBestMatchedMovie(movies, movie);
-    }
-
-    private Movie findBestMatchedMovie(List<Movie> movies, Movie movie) {
-        Movie best = null;
-        int maxMatch = 0;
-        for (Movie m : movies) {
-            int match = 0;
-            if (movie.getName().equals(m.getName())) {
-                match += 2;
-            } else if (m.getName().startsWith(movie.getName())) {
-                match++;
-            }
-
-            if (movie.getYear() != null) {
-                if (movie.getYear().equals(m.getYear())) {
-                    match++;
-                }
-            }
-
-            if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null) {
-                if (m.getCategories().containsAll(movie.getCategories())) {
-                    match++;
-                }
-            }
-
-            if (movie.getRegions() != null && !movie.getRegions().isEmpty() && m.getRegions() != null) {
-                if (m.getRegions().containsAll(movie.getRegions())) {
-                    match++;
-                }
-            }
-
-            if (movie.getLanguages() != null && !movie.getLanguages().isEmpty() && m.getLanguages() != null) {
-                if (m.getLanguages().containsAll(movie.getLanguages())) {
-                    match++;
-                }
-            }
-
-            if (movie.getAliases() != null && !movie.getAliases().isEmpty() && m.getAliases() != null) {
-                if (m.getAliases().containsAll(movie.getAliases())) {
-                    match++;
-                }
-            }
-
-            if (movie.getDirectors() != null && !movie.getDirectors().isEmpty() && m.getDirectors() != null) {
-                if (m.getDirectors().containsAll(movie.getDirectors())) {
-                    match++;
-                }
-            }
-
-            if (movie.getEditors() != null && !movie.getEditors().isEmpty() && m.getEditors() != null) {
-                if (m.getEditors().containsAll(movie.getEditors())) {
-                    match++;
-                }
-            }
-
-            if (movie.getActors() != null && !movie.getActors().isEmpty() && m.getActors() != null) {
-                if (m.getActors().containsAll(movie.getActors())) {
-                    match++;
-                }
-            }
-
-            if (movie.getReleaseDate() != null && m.getReleaseDate() != null) {
-                if (getDates(m.getReleaseDate()).containsAll(getDates(movie.getReleaseDate()))) {
-                    match++;
-                }
-            }
-
-            if (movie.getRunningTime() != null && m.getRunningTime() != null) {
-                if (m.getRunningTime().equals(movie.getRunningTime())) {
-                    match++;
-                }
-            }
-
-            if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
-                if (m.getImdbUrl().equals(movie.getImdbUrl())) {
-                    match++;
-                }
-            }
-
-            if (movie.getEpisode() != 0 && m.getEpisode() != 0) {
-                if (m.getEpisode() == movie.getEpisode()) {
-                    match++;
-                }
-            }
-
-            if (match > 2 && match > maxMatch) {
-                maxMatch = match;
-                best = m;
-            }
-        }
-        return best;
+        return service.findBestMatchedMovie(movies, movie);
     }
 
     private String getImdbUrl(String html) {
@@ -1586,7 +1492,7 @@ public class BttParserImpl implements BttParser {
             if (movies.size() == 1) {
                 return movies.get(0);
             }
-            return findBestMatchedMovie(movies, movie);
+            return service.findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
             service.publishEvent(text, e.getMessage());
             logger.error("search movie from DouBan failed: " + text, e);
@@ -1719,29 +1625,6 @@ public class BttParserImpl implements BttParser {
             people.add(p);
         }
         return people;
-    }
-
-    private Set<String> getDates(String text) {
-        Set<String> dates = new HashSet<>();
-        Matcher m = DATE1.matcher(text);
-        while (m.find()) {
-            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
-        }
-
-        m = DATE2.matcher(text);
-        while (m.find()) {
-            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
-        }
-
-        m = DATE3.matcher(text);
-        while (m.find()) {
-            dates.add(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
-        }
-
-        if (dates.isEmpty()) {
-            dates.add(text);
-        }
-        return dates;
     }
 
 }

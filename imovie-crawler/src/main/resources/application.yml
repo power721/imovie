@@ -37,6 +37,9 @@ url:
   btapple:
     site: http://www.btapple.com
     page: http://www.btapple.com/%s/%d-0-0-0-0-%d.html
+  btdy:
+    site: http://www.btbtdy.com
+    page: http://www.btbtdy.com/screen/0-----time-%d.html
 file:
   download: /tmp/bt/
 

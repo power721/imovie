@@ -59,4 +59,5 @@ public interface MovieService {
 
     Event publishEvent(String source, String message);
 
+    Movie findBestMatchedMovie(List<Movie> movies, Movie movie);
 }
