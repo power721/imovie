@@ -54,7 +54,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                     }
 
                     Movie movie = new Movie();
-                    movie.setName(element.attr("title"));
+                    movie.setName(element.attr("title").replaceAll("全.季", ""));
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {

@@ -262,6 +262,15 @@ public class MovieServiceImpl implements MovieService {
                 match++;
             }
 
+            if (m.getAliases() != null) {
+                for (String name : m.getAliases()) {
+                    if (name.equals(movie.getName())) {
+                        match++;
+                        break;
+                    }
+                }
+            }
+
             if (movie.getYear() != null) {
                 if (movie.getYear().equals(m.getYear())) {
                     match++;
@@ -270,6 +279,8 @@ public class MovieServiceImpl implements MovieService {
 
             if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null) {
                 if (m.getCategories().containsAll(movie.getCategories())) {
+                    match++;
+                } else if (movie.getCategories().containsAll(m.getCategories())) {
                     match++;
                 }
             }
@@ -324,6 +335,14 @@ public class MovieServiceImpl implements MovieService {
 
             if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
                 if (m.getImdbUrl().equals(movie.getImdbUrl())) {
+                    match++;
+                }
+            }
+
+            if (movie.getSynopsis() != null && !movie.getSynopsis().isEmpty() && m.getSynopsis() != null) {
+                if (m.getSynopsis().equals(movie.getSynopsis())) {
+                    match += 2;
+                } else if (m.getSynopsis().contains(movie.getSynopsis())) {
                     match++;
                 }
             }
