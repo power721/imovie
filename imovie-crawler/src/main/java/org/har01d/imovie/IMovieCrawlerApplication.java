@@ -77,37 +77,37 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             updateImdbTop250();
 
             ExecutorService executorService = Executors.newFixedThreadPool(5, new MyThreadFactory("Crawler"));
-//            executorService.submit(() -> {
-//                try {
-//                    rs05Crawler.crawler();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//
-//            executorService.submit(() -> {
-//                try {
-//                    rarBtCrawler.crawler();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//
-//            executorService.submit(() -> {
-//                try {
-//                    btttCrawler.crawler();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//
-//            executorService.submit(() -> {
-//                try {
-//                    btaCrawler.crawler();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
+            executorService.submit(() -> {
+                try {
+                    rs05Crawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            executorService.submit(() -> {
+                try {
+                    rarBtCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            executorService.submit(() -> {
+                try {
+                    btttCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            executorService.submit(() -> {
+                try {
+                    btaCrawler.crawler();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
 
             executorService.submit(() -> {
                 try {
@@ -117,7 +117,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             });
 
-//            bttCrawler.crawler();
+            bttCrawler.crawler();
             executorService.shutdown();
         }
     }
