@@ -257,12 +257,6 @@ public class BtdyParserImpl implements BtdyParser {
     private Movie searchMovie(Movie movie, String text) {
         try {
             List<Movie> movies = douBanParser.search(text);
-            if (movies.isEmpty()) {
-                return null;
-            }
-            if (movies.size() == 1) {
-                return movies.get(0);
-            }
             return service.findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
             service.publishEvent(text, e.getMessage());

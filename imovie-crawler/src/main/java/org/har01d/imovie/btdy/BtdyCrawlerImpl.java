@@ -43,6 +43,19 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
+
+                int last = 9999;
+                try {
+                    last = Integer.valueOf(doc.select("div.pages").first().children().last().text());
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+                if (page > last) {
+                    full = service.saveConfig("btdy_crawler", "full");
+                    page = 1;
+                    continue;
+                }
+
                 Elements elements = doc.select("div.list_su dl .title a");
                 logger.info("[btbtdy] {}: {} movies", page, elements.size());
 
@@ -67,12 +80,6 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[btbtdy] Parse page failed: " + pageUrl, e);
                     }
-                }
-
-                if (doc.select("div.pages").last().text().equals(String.valueOf(page))) {
-                    full = service.saveConfig("btdy_crawler", "full");
-                    page = 1;
-                    continue;
                 }
 
                 if (full != null && count == 0) {
