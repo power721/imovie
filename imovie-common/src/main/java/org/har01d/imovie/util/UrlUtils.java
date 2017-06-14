@@ -53,7 +53,7 @@ public final class UrlUtils {
             return null;
         }
 
-        String text = html.substring(index - "https://".length(), index + 45);
+        String text = html.substring(index - "https://".length(), Math.min(index + 45, html.length()));
         Matcher matcher = UrlUtils.DB_PATTERN.matcher(text);
         if (matcher.find()) {
             String url = matcher.group(1).replace("http://", "https://");
