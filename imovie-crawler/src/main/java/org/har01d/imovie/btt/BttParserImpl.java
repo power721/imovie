@@ -91,6 +91,11 @@ public class BttParserImpl implements BttParser {
         if (m == null) {
             logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
+            Set<Resource> resources = movie.getRes();
+            Elements elements = doc.select("div.post p");
+            findResource(elements.text(), resources);
+            findResource(url, doc, resources);
+            findAttachments(doc, resources);
             return null;
         }
 

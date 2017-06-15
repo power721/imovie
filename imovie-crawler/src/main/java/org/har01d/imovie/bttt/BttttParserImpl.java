@@ -1,6 +1,7 @@
 package org.har01d.imovie.bttt;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -49,24 +50,32 @@ public class BttttParserImpl implements BttttParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            Elements elements = doc.select("#download_links .dl_item");
-            for (Element element : elements) {
-                String uri = baseUrl + element.select(".dl_item_cell_dld a").attr("href");
-                if (uri.contains("/down/")) {
-                    String title = element.select(".dl_item_cell_note").text();
-                    getResource(uri, title, resources);
-                }
-            }
+            resources.addAll(getResource(doc));
 
             logger.info("[bttiantang] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
             return m;
+        } else {
+            getResource(doc);
         }
 
         logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
         service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
         return null;
+    }
+
+    private Set<Resource> getResource(Document doc) {
+        Set<Resource> resources = new HashSet<>();
+        Elements elements = doc.select("#download_links .dl_item");
+        for (Element element : elements) {
+            String uri = baseUrl + element.select(".dl_item_cell_dld a").attr("href");
+            if (uri.contains("/down/")) {
+                String title = element.select(".dl_item_cell_note").text();
+                getResource(uri, title, resources);
+            }
+        }
+        return resources;
     }
 
     private void getResource(String uri, String title, Set<Resource> resources) {

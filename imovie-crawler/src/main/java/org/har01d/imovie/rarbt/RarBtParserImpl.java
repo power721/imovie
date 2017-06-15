@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,32 +76,13 @@ public class RarBtParserImpl implements RarBtParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            Elements elements = doc.select(".sl .tinfo a");
-            for (Element element : elements) {
-                String uri = baseUrl + element.attr("href");
-                String title = element.attr("title");
-                if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
-                    title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();
-                    TorrentFile info = convertTorrent(uri, title);
-                    if (info != null) {
-                        String fileSize = StringUtils.convertFileSize(info.getTotalLength());
-                        String temp = fileSize;
-                        if (temp.length() > 2) {
-                            temp = fileSize.substring(fileSize.length() - 2, fileSize.length());
-                            if (!title.contains(temp)) {
-                                title = title + " " + fileSize;
-                            }
-                        }
-                        String magnet = info.getMagnet();
-                        logger.info("convert {} to {}", title, magnet);
-                        resources.add(service.saveResource(magnet, uri, title));
-                    }
-                }
-            }
+            resources.addAll(getResource(doc));
 
             logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
             service.save(m);
             return m;
+        } else {
+            getResource(doc);
         }
 
         logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
@@ -108,6 +90,32 @@ public class RarBtParserImpl implements RarBtParser {
         return null;
     }
 
+    private Set<Resource> getResource(Document doc) {
+        Set<Resource> resources = new HashSet<>();
+        Elements elements = doc.select(".sl .tinfo a");
+        for (Element element : elements) {
+            String uri = baseUrl + element.attr("href");
+            String title = element.attr("title");
+            if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
+                title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();
+                TorrentFile info = convertTorrent(uri, title);
+                if (info != null) {
+                    String fileSize = StringUtils.convertFileSize(info.getTotalLength());
+                    String temp = fileSize;
+                    if (temp.length() > 2) {
+                        temp = fileSize.substring(fileSize.length() - 2, fileSize.length());
+                        if (!title.contains(temp)) {
+                            title = title + " " + fileSize;
+                        }
+                    }
+                    String magnet = info.getMagnet();
+                    logger.info("convert {} to {}", title, magnet);
+                    resources.add(service.saveResource(magnet, uri, title));
+                }
+            }
+        }
+        return resources;
+    }
 
     private String getImdbUrl(String html) {
         int index = html.indexOf("imdb:");
