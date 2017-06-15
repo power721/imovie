@@ -56,7 +56,9 @@ public class Rs05ParserImpl implements Rs05Parser {
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), movie.getName());
 
-        movieRepository.save(movie);
+        if (movie.getId() != null) {
+            movieRepository.save(movie);
+        }
         return movie;
     }
 

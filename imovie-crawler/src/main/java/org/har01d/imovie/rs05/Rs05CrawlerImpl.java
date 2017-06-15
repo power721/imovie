@@ -99,6 +99,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                             logger.error("Parse page failed: " + title, e);
                         }
                     } else {
+                        parser.parse(pageUrl, new Movie());
                         logger.warn("Cannot find movie {} from {}", title, pageUrl);
                         service.publishEvent(pageUrl, "Cannot find movie: " + title);
                     }
