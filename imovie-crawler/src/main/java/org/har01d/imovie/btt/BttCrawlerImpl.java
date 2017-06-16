@@ -121,7 +121,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     }
 
                     if (movie == null) {
-                        continue;
+                        movie = new Movie();
                     }
 
                     try {
@@ -130,6 +130,8 @@ public class BttCrawlerImpl implements BttCrawler {
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
+                        } else {
+                            service.save(new Source(pageUrl));
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
