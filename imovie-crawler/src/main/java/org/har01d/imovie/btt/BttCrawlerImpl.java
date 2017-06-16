@@ -80,11 +80,12 @@ public class BttCrawlerImpl implements BttCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String text = element.text();
-                    Movie movie = null;
+                    Movie movie = new Movie();
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
                     if (service.findSource(pageUrl) != null) {
                         continue;
                     }
+                    movie.setTitle(element.select("a.subject_link").text());
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
                         String str = matcher.group(3);
@@ -92,14 +93,9 @@ public class BttCrawlerImpl implements BttCrawler {
                         if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
                             name = matcher.group(4);
                         }
-                        pageUrl = siteUrl + element.select("a").attr("href");
                         logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
-                        if (service.findSource(pageUrl) != null) {
-                            continue;
-                        }
 
                         String y = matcher.group(1);
-                        movie = new Movie();
                         movie.setTitle(text);
                         movie.setName(getName(name));
                         if (y.matches("\\d{4}")) {
@@ -109,15 +105,10 @@ public class BttCrawlerImpl implements BttCrawler {
                     } else {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
-                            pageUrl = siteUrl + element.select("a").attr("href");
                             String name = getName(matcher.group(3));
                             logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
-                            if (service.findSource(pageUrl) != null) {
-                                continue;
-                            }
 
                             String y = matcher.group(1);
-                            movie = new Movie();
                             movie.setName(name);
                             movie.setTitle(text);
                             if (y.matches("\\d{4}")) {
@@ -125,10 +116,6 @@ public class BttCrawlerImpl implements BttCrawler {
                             }
                             movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
                         }
-                    }
-
-                    if (movie == null) {
-                        movie = new Movie();
                     }
 
                     try {
