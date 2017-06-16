@@ -96,6 +96,7 @@ public class BttParserImpl implements BttParser {
             findResource(elements.text(), resources);
             findResource(url, doc, resources);
             findAttachments(doc, resources);
+            logger.info("get {}/{} resources for movie {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
 
