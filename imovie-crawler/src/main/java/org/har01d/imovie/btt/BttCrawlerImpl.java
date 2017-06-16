@@ -64,10 +64,14 @@ public class BttCrawlerImpl implements BttCrawler {
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
-                String date = doc.select("td.username .small").last().text();
-                Integer year = service.getYear(date);
                 Elements elements = doc.select("td.subject");
-                if ((year != null && year <= 2012) || elements.size() == 0) {
+                int last = 99999;
+                try {
+                    last = Integer.valueOf(doc.select("div.page a.checked").text());
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+                if (page > last || elements.size() == 0) {
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
                     continue;
