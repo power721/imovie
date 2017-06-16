@@ -82,6 +82,9 @@ public class BttCrawlerImpl implements BttCrawler {
                     String text = element.text();
                     Movie movie = null;
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
+                    if (service.findSource(pageUrl) != null) {
+                        continue;
+                    }
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
                         String str = matcher.group(3);
