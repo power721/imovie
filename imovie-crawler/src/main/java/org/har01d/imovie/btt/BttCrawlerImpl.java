@@ -125,7 +125,7 @@ public class BttCrawlerImpl implements BttCrawler {
                             count++;
                             total++;
                         } else {
-                            service.save(new Source(pageUrl));
+//                            service.save(new Source(pageUrl));
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());

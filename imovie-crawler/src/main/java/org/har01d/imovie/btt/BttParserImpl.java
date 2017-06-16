@@ -1607,6 +1607,9 @@ public class BttParserImpl implements BttParser {
     private Set<Language> getLanguages(Set<String> names) {
         Set<Language> languages = new HashSet<>();
         for (String name : names) {
+            if ("国语".equals(name) || "普通话".equals(name)) {
+                name = "汉语普通话";
+            }
             Language l = new Language(name);
             languages.add(l);
         }
@@ -1616,6 +1619,9 @@ public class BttParserImpl implements BttParser {
     private Set<Region> getRegions(Set<String> names) {
         Set<Region> regions = new HashSet<>();
         for (String name : names) {
+//            if ("中国".equals(name)) {
+//                name = "中国大陆";
+//            }
             Region r = new Region(name);
             regions.add(r);
         }
