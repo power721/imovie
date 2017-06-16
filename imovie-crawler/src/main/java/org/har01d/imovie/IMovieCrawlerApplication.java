@@ -13,6 +13,7 @@ import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
+import org.har01d.imovie.rs05.Rs05Parser;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -61,6 +62,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Autowired
     private DouBanService douBanService;
 
+    @Autowired
+    private Rs05Parser parser;
+
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -75,6 +79,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
             updateImdbTop250();
+            fixRs05();
 
             ExecutorService executorService = Executors.newFixedThreadPool(5, new MyThreadFactory("Crawler"));
             executorService.submit(() -> {
@@ -153,6 +158,22 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
         } catch (IOException e) {
             logger.warn("parse page failed: " + url, e);
+        }
+    }
+
+    private void fixRs05() {
+        String[] urls = new String[]{"http://www.rs05.com/movie118213.html", "http://www.rs05.com/movie118200.html",
+            "http://www.rs05.com/movie118145.html", "http://www.rs05.com/movie2111.html",
+            "http://www.rs05.com/movie118213.html", "http://www.rs05.com/movie118200.html",
+            "http://www.rs05.com/movie118145.html", "http://www.rs05.com/movie2111.html",
+            "http://www.rs05.com/movie116250.html", "http://www.rs05.com/movie107263.html"};
+        Movie movie = new Movie();
+        for (String url : urls) {
+            try {
+                parser.parse(url, movie);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
