@@ -94,11 +94,12 @@ public class BttCrawlerImpl implements BttCrawler {
                         if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
                             name = matcher.group(4);
                         }
+                        name = getName(name);
                         logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
 
                         String y = matcher.group(1);
                         movie.setTitle(text);
-                        movie.setName(getName(name));
+                        movie.setName(name);
                         if (y.matches("\\d{4}")) {
                             movie.setYear(Integer.valueOf(y));
                         }
