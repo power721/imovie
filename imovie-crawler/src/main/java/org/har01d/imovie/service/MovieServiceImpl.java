@@ -231,9 +231,12 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Resource saveResource(String uri, String original, String title) {
-        Resource resource = resourceRepository.findFirstByUri(uri);
-        if (resource != null) {
-            return resource;
+        Resource resource;
+        if (uri != null) {
+            resource = resourceRepository.findFirstByUri(uri);
+            if (resource != null) {
+                return resource;
+            }
         }
 
         resource = resourceRepository.findFirstByOriginal(original);
