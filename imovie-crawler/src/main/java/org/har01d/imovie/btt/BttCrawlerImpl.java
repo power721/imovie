@@ -86,6 +86,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         continue;
                     }
                     movie.setTitle(element.select("a.subject_link").text());
+                    movie.setName(getName(movie.getTitle()));
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
                         String str = matcher.group(3);
@@ -152,7 +153,9 @@ public class BttCrawlerImpl implements BttCrawler {
         if (title.startsWith("[")) {
             int index = title.indexOf(']');
             String temp = title.substring(1, index);
-            if (temp.contains("BT") || temp.contains("下载") || temp.contains("网盘")) {
+            if (temp.contains("BT") || temp.contains("电驴") || temp.contains("下载") || temp.contains("网盘")
+                || temp.contains("三立") || temp.contains("民视")
+                || temp.contains("TVB") || temp.contains("ATV") || temp.contains("HKTV") || temp.contains("Viu TV")) {
                 int start = index + 1;
                 index = title.indexOf(']', start);
                 if (index < 0) {

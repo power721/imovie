@@ -96,7 +96,7 @@ public class BttParserImpl implements BttParser {
             findResource(elements.text(), resources);
             findResource(url, doc, resources);
             findAttachments(doc, resources);
-            logger.info("get {}/{} resources for movie {}", resources.size(), resources.size(), movie.getName());
+            logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
 
@@ -1492,12 +1492,6 @@ public class BttParserImpl implements BttParser {
     private Movie searchMovie(Movie movie, String text) {
         try {
             List<Movie> movies = douBanParser.search(text);
-            if (movies.isEmpty()) {
-                return null;
-            }
-            if (movies.size() == 1) {
-                return movies.get(0);
-            }
             return service.findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
             service.publishEvent(text, e.getMessage());
@@ -1609,6 +1603,8 @@ public class BttParserImpl implements BttParser {
         for (String name : names) {
             if ("国语".equals(name) || "普通话".equals(name)) {
                 name = "汉语普通话";
+            } else if ("国粤".equals(name)) {
+                name = "粤语";
             }
             Language l = new Language(name);
             languages.add(l);
