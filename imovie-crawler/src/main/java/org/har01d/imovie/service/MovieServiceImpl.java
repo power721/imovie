@@ -254,6 +254,17 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Resource findResource(String uri) {
+        Resource resource = resourceRepository.findFirstByUri(uri);
+        if (resource != null) {
+            return resource;
+        }
+
+        resource = resourceRepository.findFirstByOriginal(uri);
+        return resource;
+    }
+
+    @Override
     public Event publishEvent(String source, String message) {
         return eventRepository.save(new Event(source, message));
     }

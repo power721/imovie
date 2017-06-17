@@ -95,6 +95,12 @@ public class RarBtParserImpl implements RarBtParser {
         Elements elements = doc.select(".sl .tinfo a");
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");
+            Resource resource = service.findResource(uri);
+            if (resource != null) {
+                resources.add(resource);
+                continue;
+            }
+
             String title = element.attr("title");
             if (!title.contains("论坛下载.") && !title.contains("百度网盘")) {
                 title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();

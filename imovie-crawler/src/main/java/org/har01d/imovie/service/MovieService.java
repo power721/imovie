@@ -57,6 +57,8 @@ public interface MovieService {
 
     Resource saveResource(String uri, String original, String title);
 
+    Resource findResource(String uri);
+
     Event publishEvent(String source, String message);
 
     Movie findBestMatchedMovie(List<Movie> movies, Movie movie);

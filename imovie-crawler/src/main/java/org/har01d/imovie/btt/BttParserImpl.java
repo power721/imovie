@@ -1549,6 +1549,12 @@ public class BttParserImpl implements BttParser {
                     continue;
                 }
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
+                Resource resource = service.findResource(uri);
+                if (resource != null) {
+                    resources.add(resource);
+                    continue;
+                }
+
                 boolean isTorrent = element.html().contains("torrent.gif") || title.endsWith(".torrent");
                 String magnet = null;
                 TorrentFile info = convertTorrent(uri, title, isTorrent);
