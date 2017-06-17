@@ -236,6 +236,11 @@ public class MovieServiceImpl implements MovieService {
             return resource;
         }
 
+        resource = resourceRepository.findFirstByOriginal(original);
+        if (resource != null) {
+            return resource;
+        }
+
         if (uri == null) {
             resource = new Resource(original, title);
         } else {
