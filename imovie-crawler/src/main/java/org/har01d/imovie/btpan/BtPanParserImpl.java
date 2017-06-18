@@ -71,8 +71,9 @@ public class BtPanParserImpl implements BtPanParser {
         for (Element element : elements) {
             String uri = element.select("span a").attr("href");
             if (isResource(uri)) {
+                String original = baseUrl + element.select("a").attr("href");
                 String title = element.select("a").first().text();
-                resources.add(service.saveResource(uri, title));
+                resources.add(service.saveResource(uri, original, title));
             }
         }
         return resources;
