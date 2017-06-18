@@ -59,6 +59,8 @@ public class BttParserImpl implements BttParser {
         "出品公司：", "发行公司：", "类    型：", "片    长：", "导    演：", "编    剧：", "主    演：", "简    介："};
     private static final String[] TOKENS6 = new String[]{"播出：", "類    型：", "地區：", "制作公司：", "語言：",
         "首播日期：", "英文：", "編劇：", "導演：", "主演：", "簡介："};
+    private static final String[] TOKENS7 = new String[]{"出品时间：", "出品公司：", "上映时间：", "制片地区：", "导演：",
+        "主演："};
 
     @Value("${url.btt.site}")
     private String siteUrl;
@@ -1218,6 +1220,30 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues3(text.substring(start, end)));
             }
+        }  else if (text.contains("制片地区：")) { // http://btbtt.co/thread-index-fid-950-tid-4127966.htm
+            int start = text.indexOf("制片地区：") + 5;
+            int end = getNextToken7(text, start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("上映时间：") + 5;
+            end = getNextToken7(text, start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("导演：") + 3;
+            end = getNextToken7(text, start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues(text.substring(start, end), "，")));
+            }
+
+            start = text.indexOf("主演：") + 3;
+            end = getNextToken7(text, start);
+            if (start > 20 && end > start) {
+                movie.setActors(getPersons(getValues(text.substring(start, end), "，")));
+            }
         } else {
             int start = text.indexOf("制片国家/地区:") + 8;
             int end = getNextToken(text, start);
@@ -1382,6 +1408,17 @@ public class BttParserImpl implements BttParser {
         return index;
     }
 
+    private int getNextToken7(String text, int start) {
+        int index = text.indexOf('，', start);
+        for (String token : TOKENS7) {
+            int i = text.indexOf(token, start);
+            if (i > 0 && (i < index || index == -1)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
     private String getValue(String text, int len) {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
@@ -1403,9 +1440,12 @@ public class BttParserImpl implements BttParser {
     }
 
     private Set<String> getValues(String text) {
+        return getValues(text, "/");
+    }
+
+    private Set<String> getValues(String text, String delm) {
         Set<String> values = new LinkedHashSet<>();
-        String regex = "/";
-        String[] vals = text.split(regex);
+        String[] vals = text.split(delm);
         for (String val : vals) {
             val = val.replaceAll("　", "").replaceAll("：", "").replaceAll(" ", "")
                 .replace("–", "").replace("-", "").trim();
