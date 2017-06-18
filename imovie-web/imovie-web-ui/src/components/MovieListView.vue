@@ -8,76 +8,75 @@
       {{ error }}
     </div>
 
-    <template v-if="movies && movies.length">
-      <div class="ui form">
-        <div class="inline fields">
-          <label>排序</label>
-          <div class="field">
-            <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
-              <label>添加时间</label>
-            </div>
+    <div class="ui form">
+      <div class="inline fields">
+        <label>排序</label>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
+            <label>添加时间</label>
           </div>
-          <div class="field">
-            <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="filter">
-              <label>更新时间</label>
-            </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="filter">
+            <label>更新时间</label>
           </div>
-          <div class="field">
-            <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="filter">
-              <label>上映时间</label>
-            </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="filter">
+            <label>上映时间</label>
           </div>
-          <div class="field">
-            <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
-              <label>豆瓣评分</label>
-            </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
+            <label>豆瓣评分</label>
           </div>
-          <div class="field">
-            <div class="ui radio checkbox">
-              <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="filter">
-              <label>IMDB评分</label>
-            </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="filter">
+            <label>IMDB评分</label>
           </div>
+        </div>
 
-          <div class="field">
-            <label>类型</label>
-            <select class="ui dropdown" v-model="category" @change="filter">
-              <option value="all">默认</option>
-              <option value="剧情">剧情</option>
-              <option value="爱情">爱情</option>
-              <option value="喜剧">喜剧</option>
-              <option value="动作">动作</option>
-              <option value="科幻">科幻</option>
-              <option value="奇幻">奇幻</option>
-              <option value="冒险">冒险</option>
-              <option value="战争">战争</option>
-              <option value="悬疑">悬疑</option>
-              <option value="惊悚">惊悚</option>
-              <option value="恐怖">恐怖</option>
-              <option value="犯罪">犯罪</option>
-              <option value="音乐">音乐</option>
-              <option value="歌舞">歌舞</option>
-              <option value="情色">情色</option>
-              <option value="历史">历史</option>
-              <option value="传记">传记</option>
-              <option value="家庭">家庭</option>
-              <option value="纪录片">纪录片</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>搜索</label>
-            <div class="ui icon input">
-              <input type="text" v-model="text" @change="filter" placeholder="Search...">
-              <i class="circular search link icon"></i>
-            </div>
+        <div class="field">
+          <label>类型</label>
+          <select class="ui dropdown" v-model="category" @change="filter">
+            <option value="all">默认</option>
+            <option value="剧情">剧情</option>
+            <option value="爱情">爱情</option>
+            <option value="喜剧">喜剧</option>
+            <option value="动作">动作</option>
+            <option value="科幻">科幻</option>
+            <option value="奇幻">奇幻</option>
+            <option value="冒险">冒险</option>
+            <option value="战争">战争</option>
+            <option value="悬疑">悬疑</option>
+            <option value="惊悚">惊悚</option>
+            <option value="恐怖">恐怖</option>
+            <option value="犯罪">犯罪</option>
+            <option value="音乐">音乐</option>
+            <option value="歌舞">歌舞</option>
+            <option value="情色">情色</option>
+            <option value="历史">历史</option>
+            <option value="传记">传记</option>
+            <option value="家庭">家庭</option>
+            <option value="纪录片">纪录片</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>搜索</label>
+          <div class="ui icon input">
+            <input type="text" v-model="text" @change="filter" placeholder="Search...">
+            <i class="circular search link icon"></i>
           </div>
         </div>
       </div>
-    </template>
+    </div>
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
