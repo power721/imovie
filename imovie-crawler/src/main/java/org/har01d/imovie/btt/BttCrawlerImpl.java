@@ -31,6 +31,7 @@ public class BttCrawlerImpl implements BttCrawler {
 
     private static final Pattern SUBJECT_PATTERN2 = Pattern
         .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] (?:\\[连载] )?(?:\\[打包] )?(?:\\[全集] )?(?:\\[合集] )?\\[[^]]+](.*)$");
+    private static final Pattern NUMBER = Pattern.compile("(\\d+)");
 
     @Value("${url.btt.page}")
     private String baseUrl;
@@ -65,12 +66,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("td.subject");
-                int last = 99999;
-                try {
-                    last = Integer.valueOf(doc.select("div.page a.checked").text());
-                } catch (NumberFormatException e) {
-                    // ignore
-                }
+                int last = getNumber(doc.select("div.page a.checked").text());
                 if (page > last || elements.size() == 0) {
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
@@ -148,6 +144,14 @@ public class BttCrawlerImpl implements BttCrawler {
 
         savePage(fid, 1);
         logger.info("===== {}: get {} movies =====", fid, total);
+    }
+
+    private Integer getNumber(String text) {
+        Matcher matcher = NUMBER.matcher(text);
+        if (matcher.find()) {
+            return Integer.valueOf(matcher.group(1));
+        }
+        return Integer.MAX_VALUE;
     }
 
     private String getName(String title) {
