@@ -66,7 +66,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("td.subject");
-                int last = getNumber(doc.select("div.page a.checked").text());
+                int last = getNumber(doc.select("div.page a").last().text());
                 if (page > last || elements.size() == 0) {
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
