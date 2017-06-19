@@ -2,8 +2,9 @@ package org.har01d.imovie.btt;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.MyThreadFactory;
@@ -47,12 +48,13 @@ public class BttCrawlerImpl implements BttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(3, new MyThreadFactory("BttCrawler"));
-        executorService.submit(() -> work(951));
+        ScheduledExecutorService executorService = Executors
+            .newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
+        executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
 //        executorService.submit(() -> work(981));
-        executorService.submit(() -> work(1183));
-        executorService.submit(() -> work(950));
-        executorService.submit(() -> work(1193));
+        executorService.scheduleWithFixedDelay(() -> work(1183), 0, 60, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 60, TimeUnit.MINUTES);
         executorService.shutdown();
     }
 

@@ -2,8 +2,9 @@ package org.har01d.imovie;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.btapple.BtaCrawler;
 import org.har01d.imovie.btdy.BtdyCrawler;
@@ -80,54 +81,55 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             douBanService.tryLogin();
             updateImdbTop250();
 
-            ExecutorService executorService = Executors.newFixedThreadPool(6, new MyThreadFactory("Crawler"));
-            executorService.submit(() -> {
+            ScheduledExecutorService executorService = Executors
+                .newScheduledThreadPool(6, new MyThreadFactory("Crawler"));
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     rs05Crawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 3, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     rarBtCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 5, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btttCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 5, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btaCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 5, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btdyCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 5, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
+            executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btPanCrawler.crawler();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }, 0, 5, TimeUnit.HOURS);
 
             bttCrawler.crawler();
             executorService.shutdown();
