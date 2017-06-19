@@ -100,7 +100,7 @@
         <div class="ui horizontal divider">资源</div>
         <div class="ui relaxed divided list">
           <div class="item" v-for="resource in movie.res">
-            <i class="magnet middle aligned icon"></i>
+            <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
             <div class="content">
               <div class="header">
                 <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
@@ -152,6 +152,15 @@ export default {
           this.error = data.message || 'Bad Request'
         }
       })
+    },
+    getIconClass (uri) {
+      if (uri.startsWith('magnet:?')) {
+        return 'magnet'
+      }
+      if (uri.startsWith('http://pan.baidu.com/')) {
+        return 'cloud download'
+      }
+      return 'download'
     },
     isNotEmpty (array) {
       return typeof array !== 'undefined' && array !== null && array.length !== null && array.length > 0

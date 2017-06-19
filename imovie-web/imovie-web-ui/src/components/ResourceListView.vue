@@ -26,7 +26,7 @@
     </div>
 
     <div v-for="resource in resources" class="item resource">
-      <i class="magnet middle aligned icon"></i>
+      <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
       <div class="content">
         <div class="header">
           <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
@@ -106,6 +106,15 @@ export default {
       this.currentPage = 0
       storageService.setItem('searchResource', this.text)
       this.loadData()
+    },
+    getIconClass (uri) {
+      if (uri.startsWith('magnet:?')) {
+        return 'magnet'
+      }
+      if (uri.startsWith('http://pan.baidu.com/')) {
+        return 'cloud download'
+      }
+      return 'download'
     },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size
