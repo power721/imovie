@@ -692,6 +692,72 @@ public class BttParserImpl implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
             }
+        } else if (text.contains("【剧 名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4172432.htm
+            int start = text.indexOf("【国 家】：") + 6;
+            int end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRegions(getRegions(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【类 型】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setCategories(getCategories(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【语 言】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setLanguages(getLanguages(getValues(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【日 期】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setReleaseDate(getValue2(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【时 间】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setRunningTime(getValue(text.substring(start, end), 120));
+            }
+
+            start = text.indexOf("【集 数】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setEpisode(getNumber(text.substring(start, end)));
+            }
+
+            start = text.indexOf("【监 制】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setDirectors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【编 审】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setEditors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【主 演】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.setActors(getPersons(getValues3(text.substring(start, end))));
+            }
+
+            start = text.indexOf("【剧 名】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
+
+            start = text.indexOf("【英 名】：") + 6;
+            end = text.indexOf("【", start);
+            if (start > 20 && end > start) {
+                movie.getAliases().addAll(getValues(text.substring(start, end)));
+            }
         } else if (text.contains("【译名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4140337.htm
             int start = text.indexOf("【国家】：") + 5;
             int end = text.indexOf("【", start);
