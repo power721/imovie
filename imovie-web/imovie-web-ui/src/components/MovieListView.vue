@@ -152,7 +152,6 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
-import $ from 'jquery'
 
 export default {
   name: 'MovieListView',
@@ -167,7 +166,7 @@ export default {
       text: this.$route.query.search || storageService.getItem('search') || '',
       sort: this.$route.query.sort || storageService.getItem('sort') || '',
       category: this.$route.query.category || storageService.getItem('category') || 'all',
-      currentPage: this.$route.query.page || storageService.getItem('currentPage') || 0,
+      currentPage: this.$route.query.page || storageService.getItem('moviePage') || 0,
       pagination: null,
       movies: []
     }
@@ -175,16 +174,11 @@ export default {
   created () {
     this.loadData()
   },
-  mounted () {
-    $(document).ready(function () {
-      $('select.dropdown').dropdown()
-    })
-  },
   methods: {
     loadData: function () {
       this.error = this.movies = null
       this.loading = true
-      storageService.setItem('currentPage', this.currentPage)
+      storageService.setItem('moviePage', this.currentPage)
       let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
       movieService.getMovies(params, (success, data) => {
         this.loading = false

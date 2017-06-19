@@ -1,6 +1,19 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <header class="header">
+      <div class="ui menu">
+        <div class="ui container">
+          <router-link class="item header" to="/" exact>电影</router-link>
+          <router-link class="item" to="/resources">资源</router-link>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
+    </main>
   </div>
 </template>
 
