@@ -161,21 +161,31 @@ public class BttCrawlerImpl implements BttCrawler {
         if (title.startsWith("[")) {
             int index = title.indexOf(']');
             String temp = title.substring(1, index);
-            if (temp.contains("BT") || temp.contains("电驴") || temp.contains("下载") || temp.contains("网盘")
-                || temp.contains("三立") || temp.contains("民视") || temp.contains("中视") || temp.contains("台视")
-                || temp.contains("TVB") || temp.contains("ATV") || temp.contains("HKTV") || temp.contains("Viu TV")) {
-                int start = index + 1;
-                index = title.indexOf(']', start);
-                if (index < 0) {
-                    index = title.length();
-                }
-                temp = title.substring(start, index);
-            }
-            title = temp;
+            temp = fixName(title, index, temp);
+            temp = fixName(title, index, temp);
+            title = temp.replace("未删减版", "");
         }
 
         String[] comps = title.split("/");
         return comps[0];
+    }
+
+    private String fixName(String title, int index, String temp) {
+        if (temp.contains("BT") || temp.contains("电驴") || temp.contains("下载") || temp.contains("网盘")
+            || temp.contains("迅雷") || temp.contains("快传") || temp.contains("百度")
+            || temp.contains("三立") || temp.contains("民视") || temp.contains("中视") || temp.contains("台视")
+            || temp.contains("TVB") || temp.contains("ATV") || temp.contains("HKTV") || temp.contains("Viu TV")) {
+            int start = index + 1;
+            index = title.indexOf(']', start);
+            if (index < 0) {
+                index = title.length();
+            }
+            temp = title.substring(start, index);
+            if (temp.startsWith("[")) {
+                temp = temp.substring(1);
+            }
+        }
+        return temp;
     }
 
     private int getPage(int fid) {
