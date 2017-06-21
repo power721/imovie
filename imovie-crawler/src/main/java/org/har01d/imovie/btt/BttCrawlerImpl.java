@@ -83,21 +83,20 @@ public class BttCrawlerImpl implements BttCrawler {
                         continue;
                     }
                     movie.setTitle(element.select("a.subject_link").text());
-                    String name = getName(movie.getTitle());
-                    movie.setName(name);
+                    movie.setName(getName(movie.getTitle()));
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
-//                        String str = matcher.group(3);
-//                        String name = str;
-//                        if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
-//                            name = matcher.group(4);
-//                        }
-//                        name = getName(name);
+                        String str = matcher.group(3);
+                        String name = str;
+                        if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
+                            name = matcher.group(4);
+                        }
+                        name = getName(name);
                         logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
 
                         String y = matcher.group(1);
-//                        movie.setTitle(text);
-//                        movie.setName(name);
+                        movie.setTitle(text);
+                        movie.setName(name);
                         if (y.matches("\\d{4}")) {
                             movie.setYear(Integer.valueOf(y));
                         }
@@ -105,12 +104,12 @@ public class BttCrawlerImpl implements BttCrawler {
                     } else {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
-//                            String name = getName(matcher.group(3));
+                            String name = getName(matcher.group(3));
                             logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
 
                             String y = matcher.group(1);
-//                            movie.setName(name);
-//                            movie.setTitle(text);
+                            movie.setName(name);
+                            movie.setTitle(text);
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
