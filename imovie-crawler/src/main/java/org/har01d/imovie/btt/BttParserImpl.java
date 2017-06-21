@@ -1743,7 +1743,7 @@ public class BttParserImpl implements BttParser {
             String href = element.attr("href");
             if (href.startsWith("attach-dialog-fid-") && element.parent().parent().text().contains("0 金币")) {
                 String title = element.text();
-                if (title.toLowerCase().endsWith(".jpg")) {
+                if (title.toLowerCase().endsWith(".jpg") || title.toLowerCase().endsWith(".png")) {
                     continue;
                 }
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
