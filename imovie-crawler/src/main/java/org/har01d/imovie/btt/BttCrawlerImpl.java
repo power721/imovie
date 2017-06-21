@@ -34,7 +34,7 @@ public class BttCrawlerImpl implements BttCrawler {
         .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] (?:\\[连载] )?(?:\\[打包] )?(?:\\[全集] )?(?:\\[合集] )?\\[[^]]+](.*)$");
 
     private static final Pattern SUBJECT_PATTERN3 = Pattern
-        .compile("^\\[([^]]+)] \\[([^]]+)] \\[([^]]+)] \\[[^]]+] \\[[^]]+](.*)[0-9.]+[GM]B$");
+        .compile("^\\[([^]]+)] \\[([^]]+)] \\[([^]]+)] \\[[^]]+] \\[[^]]+](.*) [0-9.]+[GM]B$");
 
     private static final Pattern NUMBER = Pattern.compile("(\\d+)");
 
