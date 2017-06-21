@@ -132,7 +132,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }, 0, 5, TimeUnit.HOURS);
 
             bttCrawler.crawler();
-            executorService.shutdown();
         }
     }
 

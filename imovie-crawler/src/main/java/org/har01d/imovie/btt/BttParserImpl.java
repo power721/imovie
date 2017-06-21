@@ -259,12 +259,14 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎中 文 名") + 6;
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎英文片名") + 6;
@@ -319,6 +321,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎片　 　名") + 6;
@@ -379,6 +382,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("◎译 名")) { // http://btbtt.co/thread-index-fid-1183-tid-4092435.htm
             int start = text.indexOf("◎国 家") + 4;
@@ -421,6 +425,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎片 名") + 4;
@@ -469,6 +474,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎片     名") + 8;
@@ -523,6 +529,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎片 　　名") + 6;
@@ -571,6 +578,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎英文片名") + 5;
@@ -613,6 +621,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("@ 译.........名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4139697.htm
             int start = text.indexOf("@ 类.........别：") + 14;
@@ -649,6 +658,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("@", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("【译 名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4172432.htm
             int start = text.indexOf("【国 家】：") + 6;
@@ -691,6 +701,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("【剧 名】：")) { // http://btbtt.co/thread-index-fid-1183-tid-4172432.htm
             int start = text.indexOf("【国 家】：") + 6;
@@ -751,6 +762,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("【英 名】：") + 6;
@@ -799,6 +811,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("【中文译名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4172508.htm
             int start = text.indexOf("【国　　家】") + 6;
@@ -835,6 +848,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("【译  名】")) { // http://btbtt.co/thread-index-fid-1183-tid-4141657.htm
             int start = text.indexOf("【國  家】") + 6;
@@ -871,6 +885,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("【片  名】") + 6;
@@ -913,6 +928,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("【片　　名】") + 6;
@@ -955,6 +971,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("【", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("【英文片名】：") + 7;
@@ -1015,6 +1032,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("[", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("中文片名：")) { // http://btbtt.co/thread-index-fid-951-tid-4236792.htm
             int start = text.indexOf("国家：") + 3;
@@ -1057,6 +1075,7 @@ public class BttParserImpl implements BttParser {
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("片名：")) { // http://btbtt.co/thread-index-fid-951-tid-4356775.htm
             int start = text.indexOf("制片国家/地区：") + 8;
@@ -1099,6 +1118,7 @@ public class BttParserImpl implements BttParser {
             end = getNextToken2(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
         } else if (text.contains("别名：")) { // http://btbtt.co/thread-index-fid-1183-tid-4140915.htm
             int start = text.indexOf("地区：") + 3;
@@ -1141,6 +1161,7 @@ public class BttParserImpl implements BttParser {
             end = getNextToken3(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("英文：") + 3;
@@ -1183,6 +1204,7 @@ public class BttParserImpl implements BttParser {
             end = getNextToken4(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("片　　名") + 4;
@@ -1231,6 +1253,7 @@ public class BttParserImpl implements BttParser {
             end = getNextToken5(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues4(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("外文名：") + 4;
@@ -1363,12 +1386,14 @@ public class BttParserImpl implements BttParser {
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues2(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("剧名:") + 3;
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues2(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("又名:") + 3;
