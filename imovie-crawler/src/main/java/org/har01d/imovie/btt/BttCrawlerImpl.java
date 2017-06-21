@@ -36,6 +36,9 @@ public class BttCrawlerImpl implements BttCrawler {
     private static final Pattern SUBJECT_PATTERN3 = Pattern
         .compile("^\\[([^]]+)] \\[([^]]+)] \\[([^]]+)] \\[[^]]+] \\[[^]]+](.*) [0-9.]+[GM]B$");
 
+    private static final Pattern SUBJECT_PATTERN4 = Pattern
+        .compile("^\\[([^]]+)] \\[(\\d+)] \\[([^]]+)] \\[[^]]+] \\[([^]]+)].*$");
+
     private static final Pattern NUMBER = Pattern.compile("(\\d+)");
 
     @Value("${url.btt.page}")
@@ -138,6 +141,21 @@ public class BttCrawlerImpl implements BttCrawler {
                                 movie.setYear(Integer.valueOf(y));
                             }
                             movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
+                            matched = true;
+                        }
+                    }
+
+                    if (!matched) {
+                        matcher = SUBJECT_PATTERN4.matcher(text);
+                        if (matcher.find()) {
+                            name = getName(matcher.group(4).trim());
+                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+
+                            String y = matcher.group(2);
+                            movie.setName(name);
+                            movie.setYear(Integer.valueOf(y));
+                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(1))));
+                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(3))));
                             matched = true;
                         }
                     }
