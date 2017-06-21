@@ -32,6 +32,10 @@ public class BttCrawlerImpl implements BttCrawler {
 
     private static final Pattern SUBJECT_PATTERN2 = Pattern
         .compile("^\\[([^]]+)] \\[[^]]+] \\[([^]]+)] (?:\\[连载] )?(?:\\[打包] )?(?:\\[全集] )?(?:\\[合集] )?\\[[^]]+](.*)$");
+
+    private static final Pattern SUBJECT_PATTERN3 = Pattern
+        .compile("^\\[([^]]+)] \\[([^]]+)] \\[([^]]+)] \\[[^]]+] \\[[^]]+](.*)[0-9.]+[GM]B$");
+
     private static final Pattern NUMBER = Pattern.compile("(\\d+)");
 
     @Value("${url.btt.page}")
@@ -50,11 +54,11 @@ public class BttCrawlerImpl implements BttCrawler {
     public void crawler() throws InterruptedException {
         ScheduledExecutorService executorService = Executors
             .newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
-        executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
+//        executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
 //        executorService.submit(() -> work(981));
         executorService.scheduleWithFixedDelay(() -> work(1183), 0, 60, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 60, TimeUnit.MINUTES);
+//        executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
+//        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 60, TimeUnit.MINUTES);
     }
 
     private void work(int fid) {
@@ -83,38 +87,63 @@ public class BttCrawlerImpl implements BttCrawler {
                         continue;
                     }
                     movie.setTitle(element.select("a.subject_link").text());
-                    movie.setName(getName(movie.getTitle()));
+                    String name = getName(movie.getTitle());
+                    movie.setName(name);
+                    boolean matched = false;
                     Matcher matcher = SUBJECT_PATTERN.matcher(text);
                     if (matcher.find()) {
-                        String str = matcher.group(3);
-                        String name = str;
+                        String str = matcher.group(3).trim();
+                        name = str;
                         if (str.contains("BT") || str.contains("下载") || str.contains("网盘")) {
-                            name = matcher.group(4);
+                            name = matcher.group(4).trim();
                         }
                         name = getName(name);
                         logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
 
                         String y = matcher.group(1);
-                        movie.setTitle(text);
                         movie.setName(name);
                         if (y.matches("\\d{4}")) {
                             movie.setYear(Integer.valueOf(y));
                         }
                         movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
-                    } else {
-                        matcher = SUBJECT_PATTERN2.matcher(text);
+                        matched = true;
+                    }
+
+                    if (!matched) {
+                        matcher = SUBJECT_PATTERN3.matcher(text);
                         if (matcher.find()) {
-                            String name = getName(matcher.group(3));
+                            name = getName(matcher.group(4).trim());
                             logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
 
                             String y = matcher.group(1);
                             movie.setName(name);
-                            movie.setTitle(text);
+                            if (y.matches("\\d{4}")) {
+                                movie.setYear(Integer.valueOf(y));
+                            }
+                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(3))));
+                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(2))));
+                            matched = true;
+                        }
+                    }
+
+                    if (!matched) {
+                        matcher = SUBJECT_PATTERN2.matcher(text);
+                        if (matcher.find()) {
+                            name = getName(matcher.group(3).trim());
+                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+
+                            String y = matcher.group(1);
+                            movie.setName(name);
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
                             movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
+                            matched = true;
                         }
+                    }
+
+                    if (!matched) {
+                        logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
                     }
 
                     try {

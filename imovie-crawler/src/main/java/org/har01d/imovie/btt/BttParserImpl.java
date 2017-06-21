@@ -247,6 +247,7 @@ public class BttParserImpl implements BttParser {
             end = text.indexOf("◎", start);
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues(text.substring(start, end)));
+                movie.setName(fixName(getOne(movie.getAliases())));
             }
 
             start = text.indexOf("◎片　　名") + 6;
@@ -1742,7 +1743,7 @@ public class BttParserImpl implements BttParser {
             String href = element.attr("href");
             if (href.startsWith("attach-dialog-fid-") && element.parent().parent().text().contains("0 金币")) {
                 String title = element.text();
-                if (title.endsWith(".jpg")) {
+                if (title.toLowerCase().endsWith(".jpg")) {
                     continue;
                 }
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
