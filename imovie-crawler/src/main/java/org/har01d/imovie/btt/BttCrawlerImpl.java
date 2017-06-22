@@ -231,6 +231,9 @@ public class BttCrawlerImpl implements BttCrawler {
     private String getName(String title) {
         if (title.startsWith("[")) {
             int index = title.indexOf(']');
+            if (index < 1) {
+                index = title.length();
+            }
             String temp = title.substring(1, index);
             temp = fixName(title, index, temp);
             temp = fixName(title, index, temp);
