@@ -59,9 +59,9 @@ public class BttCrawlerImpl implements BttCrawler {
             .newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
         executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
 //        executorService.submit(() -> work(981));
-        executorService.scheduleWithFixedDelay(() -> work(1183), 0, 60, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 60, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
     }
 
     private void work(int fid) {
