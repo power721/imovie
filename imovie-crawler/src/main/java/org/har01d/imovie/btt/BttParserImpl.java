@@ -1719,7 +1719,7 @@ public class BttParserImpl implements BttParser {
                 }
 
                 if (uri.contains("pan.baidu.com")) {
-                    resources.add(service.saveResource(uri, original, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, fixUrl(original), StringUtils.truncate(title, 120)));
                 } else {
                     resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
                 }
@@ -1747,7 +1747,7 @@ public class BttParserImpl implements BttParser {
                     continue;
                 }
                 String uri = siteUrl + href.replace("-dialog-", "-download-");
-                Resource resource = service.findResource(uri);
+                Resource resource = service.findResource(fixUrl(uri));
                 if (resource != null) {
                     resources.add(resource);
                     continue;
@@ -1791,6 +1791,10 @@ public class BttParserImpl implements BttParser {
     private boolean isResource(String uri) {
         return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
             || uri.startsWith("ftp://") || uri.contains("pan.baidu.com");
+    }
+
+    private String fixUrl(String url) {
+        return url.replace(".pw/", ".co/").replace(".net/", ".co/").replace(".top/", ".co/");
     }
 
     private Set<Category> getCategories(Set<String> names) {
