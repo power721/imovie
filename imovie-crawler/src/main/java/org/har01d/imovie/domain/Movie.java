@@ -85,7 +85,7 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    private transient Date sourceTime;
+    private transient Date sourceTime = new Date();
 
     public Integer getId() {
         return id;

@@ -58,13 +58,14 @@ public class BttCrawlerImpl implements BttCrawler {
         ScheduledExecutorService executorService = Executors
             .newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
         executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
-//        executorService.submit(() -> work(981));
         executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(() -> work(981), 0, 60, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
     }
 
     private void work(int fid) {
+        int zero = 0;
         int error = 0;
         int total = 0;
         int page = getPage(fid);
@@ -175,6 +176,11 @@ public class BttCrawlerImpl implements BttCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             service.save(new Source(fixPageUrl(pageUrl), movie.getSourceTime()));
+                            if (movie.getRes().isEmpty()) {
+                                zero++;
+                            } else {
+                                zero = 0;
+                            }
                             count++;
                             total++;
                         } else {
@@ -190,6 +196,12 @@ public class BttCrawlerImpl implements BttCrawler {
                 error = 0;
                 if (full != null && count == 0) {
                     break;
+                }
+                if (full != null && zero > 80) {
+                    full = service.saveConfig("btt_crawler_" + fid, "full");
+                    page = 1;
+                    error = 0;
+                    continue;
                 }
                 page++;
                 savePage(fid, page);
