@@ -92,7 +92,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     String text = element.text();
                     Movie movie = new Movie();
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
-                    if (service.findSource(pageUrl) != null) {
+                    if (service.findSource(fixPageUrl(pageUrl)) != null) {
                         error = 0;
                         continue;
                     }
@@ -174,7 +174,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
+                            service.save(new Source(fixPageUrl(pageUrl), movie.getSourceTime()));
                             count++;
                             total++;
                         } else {
@@ -205,6 +205,10 @@ public class BttCrawlerImpl implements BttCrawler {
 
         savePage(fid, 1);
         logger.info("===== {}: get {} movies =====", fid, total);
+    }
+
+    private String fixPageUrl(String url) {
+        return url.replace(".pw/", ".co/").replace(".net/", ".co/").replace(".top/", ".co/");
     }
 
     private Integer getNumber(String text) {
