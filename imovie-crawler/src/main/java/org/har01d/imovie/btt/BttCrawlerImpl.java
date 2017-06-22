@@ -65,12 +65,17 @@ public class BttCrawlerImpl implements BttCrawler {
     }
 
     private void work(int fid) {
+        int error = 0;
         int total = 0;
         int page = getPage(fid);
         Config full = service.getConfig("btt_crawler_" + fid);
         while (true) {
             String url = String.format(baseUrl, fid, page);
             try {
+                if (error >= 5) {
+                    Thread.sleep(error * 30 * 1000L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("td.subject");
@@ -78,6 +83,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 if (page > last || elements.size() == 0) {
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
+                    error = 0;
                     continue;
                 }
 
@@ -87,6 +93,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     Movie movie = new Movie();
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
                     if (service.findSource(pageUrl) != null) {
+                        error = 0;
                         continue;
                     }
                     movie.setTitle(element.select("a.subject_link").text());
@@ -176,15 +183,21 @@ public class BttCrawlerImpl implements BttCrawler {
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("Parse page failed: " + pageUrl, e);
+                        error++;
                     }
                 }
 
+                error = 0;
                 if (full != null && count == 0) {
                     break;
                 }
                 page++;
                 savePage(fid, page);
             } catch (IOException e) {
+                service.publishEvent(url, e.getMessage());
+                logger.error("Get HTML failed: " + url, e);
+                error++;
+            } catch (InterruptedException e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }
