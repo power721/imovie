@@ -26,5 +26,7 @@ public interface MovieExcerpt {
 
     String getImdbScore();
 
+    int getEpisode();
+
     Date getCreatedTime();
 }

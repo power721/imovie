@@ -91,6 +91,9 @@
         <router-link :to="'/movies/' + movie.id" class="header">
           {{ movie.title }}
         </router-link>
+        <div class="ui blue circular label" v-if="movie.episode">
+          {{ movie.episode }}
+        </div>
         <div class="ui label" v-if="movie.resourcesSize">
           {{ movie.resourcesSize }}
         </div>
