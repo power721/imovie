@@ -86,48 +86,48 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     rs05Crawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 3, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     rarBtCrawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 5, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btttCrawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 5, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btaCrawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 5, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btdyCrawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 5, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btPanCrawler.crawler();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("", e);
                 }
             }, 0, 5, TimeUnit.HOURS);
 

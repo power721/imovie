@@ -1,6 +1,5 @@
 package org.har01d.imovie.btt;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -206,13 +205,10 @@ public class BttCrawlerImpl implements BttCrawler {
                 }
                 page++;
                 savePage(fid, page);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
                 error++;
-            } catch (InterruptedException e) {
-                service.publishEvent(url, e.getMessage());
-                logger.error("Get HTML failed: " + url, e);
             }
         }
 
