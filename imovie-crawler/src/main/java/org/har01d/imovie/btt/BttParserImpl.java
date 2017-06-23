@@ -1764,7 +1764,7 @@ public class BttParserImpl implements BttParser {
                     }
                     logger.info("convert {} to {}", title, magnet);
                 }
-                resources.add(service.saveResource(magnet, uri, title));
+                resources.add(service.saveResource(magnet, fixUrl(uri), title));
             }
         }
     }
