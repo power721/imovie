@@ -97,9 +97,9 @@ public class BttParserImpl implements BttParser {
             service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
             Set<Resource> resources = movie.getRes();
             Elements elements = doc.select("div.post p");
-            findResource(elements.text(), resources);
-            findResource(url, doc, resources);
-            findAttachments(doc, resources);
+            findResource(elements.text(), resources, movie.getName());
+            findResource(url, doc, resources, movie.getName());
+            findAttachments(doc, resources, movie.getName());
             logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
@@ -107,10 +107,10 @@ public class BttParserImpl implements BttParser {
         Set<Resource> resources = m.getRes();
         int size = resources.size();
         Elements elements = doc.select("div.post p");
-        findResource(elements.text(), resources);
+        findResource(elements.text(), resources, m.getName());
 
-        findResource(url, doc, resources);
-        findAttachments(doc, resources);
+        findResource(url, doc, resources, m.getName());
+        findAttachments(doc, resources, m.getName());
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);
@@ -1698,7 +1698,7 @@ public class BttParserImpl implements BttParser {
         return null;
     }
 
-    private void findResource(String original, Document doc, Set<Resource> resources) {
+    private void findResource(String original, Document doc, Set<Resource> resources, String name) {
         Elements elements = doc.select(".post a");
         for (Element element : elements) {
             String uri = element.attr("href");
@@ -1717,6 +1717,9 @@ public class BttParserImpl implements BttParser {
                         title = title.substring(index);
                     }
                 }
+                if (!title.contains(name)) {
+                    title = name + "-" + title;
+                }
 
                 if (uri.contains("pan.baidu.com")) {
                     resources.add(service.saveResource(uri, fixUrl(original), StringUtils.truncate(title, 120)));
@@ -1727,17 +1730,25 @@ public class BttParserImpl implements BttParser {
         }
     }
 
-    private void findResource(String text, Set<Resource> resources) {
+    private void findResource(String text, Set<Resource> resources, String name) {
         for (String magnet : UrlUtils.findMagnet(text)) {
-            resources.add(service.saveResource(magnet, StringUtils.truncate(magnet, 100)));
+            String title = magnet;
+            if (!title.contains(name)) {
+                title = name + "-" + title;
+            }
+            resources.add(service.saveResource(magnet, StringUtils.truncate(title, 100)));
         }
 
         for (String ed2k : UrlUtils.findED2K(text)) {
-            resources.add(service.saveResource(ed2k, StringUtils.truncate(ed2k, 100)));
+            String title = ed2k;
+            if (!title.contains(name)) {
+                title = name + "-" + title;
+            }
+            resources.add(service.saveResource(ed2k, StringUtils.truncate(title, 100)));
         }
     }
 
-    private void findAttachments(Document doc, Set<Resource> resources) {
+    private void findAttachments(Document doc, Set<Resource> resources, String name) {
         Elements elements = doc.select(".attachlist a");
         for (Element element : elements) {
             String href = element.attr("href");
@@ -1761,6 +1772,9 @@ public class BttParserImpl implements BttParser {
                     String fileSize = StringUtils.convertFileSize(info.getTotalLength());
                     if (!title.contains(fileSize)) {
                         title = title + " " + fileSize;
+                    }
+                    if (!title.contains(name)) {
+                        title = name + "-" + title;
                     }
                     logger.info("convert {} to {}", title, magnet);
                 }
