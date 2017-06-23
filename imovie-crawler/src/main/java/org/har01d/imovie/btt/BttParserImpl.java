@@ -107,10 +107,10 @@ public class BttParserImpl implements BttParser {
         Set<Resource> resources = m.getRes();
         int size = resources.size();
         Elements elements = doc.select("div.post p");
-        findResource(elements.text(), resources, m.getName());
+        findResource(elements.text(), resources, null);
 
-        findResource(url, doc, resources, m.getName());
-        findAttachments(doc, resources, m.getName());
+        findResource(url, doc, resources, null);
+        findAttachments(doc, resources, null);
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);
@@ -1717,7 +1717,7 @@ public class BttParserImpl implements BttParser {
                         title = title.substring(index);
                     }
                 }
-                if (!title.contains(name)) {
+                if (name != null && !title.contains(name)) {
                     title = name + "-" + title;
                 }
 
@@ -1733,7 +1733,7 @@ public class BttParserImpl implements BttParser {
     private void findResource(String text, Set<Resource> resources, String name) {
         for (String magnet : UrlUtils.findMagnet(text)) {
             String title = magnet;
-            if (!title.contains(name)) {
+            if (name != null && !title.contains(name)) {
                 title = name + "-" + title;
             }
             resources.add(service.saveResource(magnet, StringUtils.truncate(title, 100)));
@@ -1741,7 +1741,7 @@ public class BttParserImpl implements BttParser {
 
         for (String ed2k : UrlUtils.findED2K(text)) {
             String title = ed2k;
-            if (!title.contains(name)) {
+            if (name != null && !title.contains(name)) {
                 title = name + "-" + title;
             }
             resources.add(service.saveResource(ed2k, StringUtils.truncate(title, 100)));
@@ -1773,7 +1773,7 @@ public class BttParserImpl implements BttParser {
                     if (!title.contains(fileSize)) {
                         title = title + " " + fileSize;
                     }
-                    if (!title.contains(name)) {
+                    if (name != null && !title.contains(name)) {
                         title = name + "-" + title;
                     }
                     logger.info("convert {} to {}", title, magnet);
