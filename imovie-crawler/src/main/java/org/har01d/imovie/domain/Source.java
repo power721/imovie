@@ -1,6 +1,7 @@
 package org.har01d.imovie.domain;
 
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Source {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    @Column(columnDefinition = "BIT(1) DEFAULT 1")
     private boolean completed = true;
 
     public Source() {
