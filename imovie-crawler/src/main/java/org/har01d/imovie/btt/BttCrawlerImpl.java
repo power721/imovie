@@ -197,8 +197,10 @@ public class BttCrawlerImpl implements BttCrawler {
                 if (full != null && count == 0) {
                     break;
                 }
-                if (full != null && zero > 80) {
-                    full = service.saveConfig("btt_crawler_" + fid, "full");
+                if (zero > 80) {
+                    if (full == null) {
+                        full = service.saveConfig("btt_crawler_" + fid, "full");
+                    }
                     page = 1;
                     error = 0;
                     continue;
