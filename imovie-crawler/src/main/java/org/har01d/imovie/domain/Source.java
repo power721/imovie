@@ -24,7 +24,7 @@ public class Source {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(columnDefinition = "BIT(1) DEFAULT 1")
+    @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean completed = true;
 
     public Source() {
