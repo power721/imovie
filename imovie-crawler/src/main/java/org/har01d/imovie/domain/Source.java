@@ -23,6 +23,8 @@ public class Source {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    private boolean completed = true;
+
     public Source() {
     }
 
@@ -30,9 +32,20 @@ public class Source {
         this.uri = uri;
     }
 
+    public Source(String uri, boolean completed) {
+        this.uri = uri;
+        this.completed = completed;
+    }
+
     public Source(String uri, Date createdTime) {
         this.uri = uri;
         this.createdTime = createdTime;
+    }
+
+    public Source(String uri, Date createdTime, boolean completed) {
+        this.uri = uri;
+        this.createdTime = createdTime;
+        this.completed = completed;
     }
 
     public Integer getId() {
@@ -65,5 +78,13 @@ public class Source {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }
