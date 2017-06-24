@@ -64,6 +64,8 @@
             <option value="历史">历史</option>
             <option value="传记">传记</option>
             <option value="家庭">家庭</option>
+            <option value="动画">动画</option>
+            <option value="短片">短片</option>
             <option value="纪录片">纪录片</option>
           </select>
         </div>
@@ -71,7 +73,7 @@
         <div class="field">
           <label>搜索</label>
           <div class="ui icon input">
-            <input type="text" v-model="text" @change="filter" placeholder="Search...">
+            <input type="search" v-model="text" @change="filter" placeholder="Search...">
             <i class="circular search link icon"></i>
           </div>
         </div>
@@ -80,6 +82,9 @@
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
+      <div class="ui input">
+        <input type="number" min="1" class="page" v-model="page" @change="loadData">
+      </div>
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
@@ -144,6 +149,9 @@
   .vue-pagination {
     background: #f9fafb !important;
   }
+  .vue-pagination input.page {
+    width: 100px;
+  }
   .vue-pagination-info {
     margin-top: auto;
     margin-bottom: auto;
@@ -176,6 +184,16 @@ export default {
   },
   created () {
     this.loadData()
+  },
+  computed: {
+    page: {
+      get: function () {
+        return parseInt(this.currentPage) + 1
+      },
+      set: function (newValue) {
+        this.currentPage = newValue - 1
+      }
+    }
   },
   methods: {
     loadData: function () {

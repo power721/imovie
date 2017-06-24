@@ -13,7 +13,7 @@
         <div class="field">
           <label>搜索</label>
           <div class="ui icon input">
-            <input type="text" v-model="text" @change="search" placeholder="Search...">
+            <input type="search" v-model="text" @change="search" placeholder="Search...">
             <i class="circular search link icon"></i>
           </div>
         </div>
@@ -22,6 +22,9 @@
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
+      <div class="ui input">
+        <input type="number" min="1" class="page" v-model="page" @change="loadData">
+      </div>
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
@@ -51,6 +54,9 @@
   </div>
 </template>
 <style>
+  .vue-pagination input.page {
+    width: 100px;
+  }
 </style>
 <script>
 import resourceService from '@/services/ResourceService'
@@ -70,13 +76,23 @@ export default {
       loading: false,
       error: '',
       text: this.$route.query.search || storageService.getItem('searchResource') || '',
-      currentPage: this.$route.query.page || storageService.getItem('resourcePage') || 0,
+      currentPage: this.$route.query.v || storageService.getItem('resourcePage') || 0,
       pagination: null,
       resources: []
     }
   },
   created () {
     this.loadData()
+  },
+  computed: {
+    page: {
+      get: function () {
+        return parseInt(this.currentPage) + 1
+      },
+      set: function (newValue) {
+        this.currentPage = newValue - 1
+      }
+    }
   },
   methods: {
     loadData: function () {
