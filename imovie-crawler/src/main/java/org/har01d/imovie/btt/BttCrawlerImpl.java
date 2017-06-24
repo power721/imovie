@@ -73,7 +73,8 @@ public class BttCrawlerImpl implements BttCrawler {
             String url = String.format(baseUrl, fid, page);
             try {
                 if (error >= 5) {
-                    Thread.sleep(error * 30 * 1000L);
+                    logger.warn("{}: sleep {} seconds", fid, error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
                 }
 
                 String html = HttpUtils.getHtml(url);
@@ -81,6 +82,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 Elements elements = doc.select("td.subject");
                 int last = getNumber(doc.select("div.page a.checked").text());
                 if (page > last || elements.size() == 0) {
+                    logger.info("get last page");
                     full = service.saveConfig("btt_crawler_" + fid, "full");
                     page = 1;
                     error = 0;
@@ -93,6 +95,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     Movie movie = new Movie();
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
                     if (service.findSource(fixPageUrl(pageUrl)) != null) {
+                        logger.info("skip {}", pageUrl);
                         error = 0;
                         continue;
                     }
@@ -108,7 +111,7 @@ public class BttCrawlerImpl implements BttCrawler {
                             name = matcher.group(4).trim();
                         }
                         name = getName(name);
-                        logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+                        logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 1);
 
                         String y = matcher.group(1);
                         movie.setName(name);
@@ -123,7 +126,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         matcher = SUBJECT_PATTERN3.matcher(text);
                         if (matcher.find()) {
                             name = getName(matcher.group(4).trim());
-                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+                            logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 3);
 
                             String y = matcher.group(1);
                             movie.setName(name);
@@ -140,7 +143,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
                             name = getName(matcher.group(3).trim());
-                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+                            logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 2);
 
                             String y = matcher.group(1);
                             movie.setName(name);
@@ -156,7 +159,7 @@ public class BttCrawlerImpl implements BttCrawler {
                         matcher = SUBJECT_PATTERN4.matcher(text);
                         if (matcher.find()) {
                             name = getName(matcher.group(4).trim());
-                            logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+                            logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 4);
 
                             String y = matcher.group(2);
                             movie.setName(name);
@@ -168,7 +171,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     }
 
                     if (!matched) {
-                        logger.info(fid + "-" + page + "-" + total + "-" + count + " " + name + ": " + pageUrl);
+                        logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 0);
                     }
 
                     try {
@@ -201,6 +204,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     if (full == null) {
                         full = service.saveConfig("btt_crawler_" + fid, "full");
                     }
+                    logger.warn("too many empty resource, stopping...");
                     page = 1;
                     error = 0;
                     continue;
