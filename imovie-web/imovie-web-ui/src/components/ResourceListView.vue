@@ -30,7 +30,7 @@
       <div class="content">
         <div class="header">
           <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
-          <a v-if="resource.original" :href="resource.original" title="资源原始地址" target="_blank">
+          <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
             &nbsp;&nbsp;<i class="small external icon"></i>
           </a>
         </div>
@@ -107,7 +107,7 @@ export default {
       storageService.setItem('searchResource', this.text)
       this.loadData()
     },
-    getIconClass (uri) {
+    getIconClass: function (uri) {
       if (uri.startsWith('magnet:?')) {
         return 'magnet'
       }
@@ -115,6 +115,12 @@ export default {
         return 'cloud download'
       }
       return 'download'
+    },
+    fixBtbtt: function (uri) {
+      if (uri.startsWith('http://btbtt.co/')) {
+        return uri.replace('http://btbtt.co/', 'http://btbtt.pw/')
+      }
+      return uri
     },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size

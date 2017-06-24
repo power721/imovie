@@ -141,10 +141,7 @@ public class BttParserImpl implements BttParser {
             return m;
         }
 
-        String imdb = getImdbUrl(html);
-        if (imdb == null) {
-            imdb = getImdbUrl(text);
-        }
+        String imdb = UrlUtils.getImdbUrl(html);
         if (imdb != null) {
             Movie m = service.findByImdb(imdb);
             if (m != null) {
@@ -1614,55 +1611,6 @@ public class BttParserImpl implements BttParser {
         }
 
         return service.findBestMatchedMovie(movies, movie);
-    }
-
-    private String getImdbUrl(String html) {
-        int index = html.indexOf("imdb.com/title/");
-        if (index > 0) {
-            String text = html.substring(index - "https://www.".length(), index + 40);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        index = html.indexOf("www.imdb.cn/title/");
-        if (index > 0) {
-            String text = html.substring(index - "https://".length(), index + 40);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        index = html.indexOf("IMDb链接");
-        if (index > 0) {
-            String text = html.substring(index + 6, index + 24);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        index = html.indexOf("IMDB 链 接");
-        if (index > 0) {
-            String text = html.substring(index + 8, index + 25);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        index = html.indexOf("@ I..M..D..B：");
-        if (index > 0) {
-            String text = html.substring(index + 13, index + 28);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        return null;
     }
 
     private Movie searchByImdb(Movie movie, String url) {
