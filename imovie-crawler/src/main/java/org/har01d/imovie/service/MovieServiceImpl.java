@@ -118,6 +118,33 @@ public class MovieServiceImpl implements MovieService {
             if (category.isPresent()) {
                 categories.add(category.get());
             } else {
+                if ("愛情 Romance".equals(name)) {
+                    name = "愛情";
+                } else if ("Western".equals(name)) {
+                    name = "西部";
+                } else if ("傳記 Biography".equals(name)) {
+                    name = "传记";
+                } else if ("喜劇 Comedy".equals(name) || "Comedy".equals(name)) {
+                    name = "喜剧";
+                } else if ("Family".equals(name)) {
+                    name = "家庭";
+                } else if ("動作 Action".equals(name)) {
+                    name = "动作";
+                } else if ("動畫 Animation".equals(name)) {
+                    name = "动画";
+                } else if ("劇情 Drama".equals(name) || "Drama".equals(name)) {
+                    name = "剧情";
+                } else if ("Talk-Show".equals(name)) {
+                    name = "脱口秀";
+                } else if ("悬念".equals(name)) {
+                    name = "悬疑";
+                } else if ("紀錄片 Documentary".equals(name)) {
+                    name = "纪录片";
+                } else if ("惊栗".equals(name)) {
+                    name = "惊悚";
+                } else if ("Adult".equals(name)) {
+                    name = "情色";
+                }
                 Category c = new Category(name);
                 categoryRepository.save(c);
                 categories.add(c);
