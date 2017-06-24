@@ -49,6 +49,13 @@ public class BttttParserImpl implements BttttParser {
             }
         }
 
+        if (m == null) {
+            String imdb = UrlUtils.getImdbUrl(html);
+            if (imdb != null) {
+                m = service.findByImdb(imdb);
+            }
+        }
+
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();

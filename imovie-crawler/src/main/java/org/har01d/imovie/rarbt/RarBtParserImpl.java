@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -60,6 +59,9 @@ public class RarBtParserImpl implements RarBtParser {
 
         Movie m = null;
         String dbUrl = movie.getDbUrl();
+        if (dbUrl == null) {
+            dbUrl = UrlUtils.getDbUrl(html);
+        }
         if (dbUrl != null) {
             m = service.findByDbUrl(dbUrl);
             if (m == null) {
@@ -68,10 +70,9 @@ public class RarBtParserImpl implements RarBtParser {
         }
 
         if (m == null) {
-            String imdb = getImdbUrl(html);
+            String imdb = UrlUtils.getImdbUrl(html);
             if (imdb != null) {
                 m = service.findByImdb(imdb);
-                movie.setImdbUrl(imdb);
             }
         }
 
@@ -123,19 +124,6 @@ public class RarBtParserImpl implements RarBtParser {
             }
         }
         return resources;
-    }
-
-    private String getImdbUrl(String html) {
-        int index = html.indexOf("imdb:");
-        if (index > 0) {
-            String text = html.substring(index + 5, index + 24);
-            Matcher matcher = UrlUtils.IMDB.matcher(text);
-            if (matcher.find()) {
-                return "http://www.imdb.com/title/" + matcher.group(1);
-            }
-        }
-
-        return null;
     }
 
     private TorrentFile convertTorrent(String uri, String title) {
