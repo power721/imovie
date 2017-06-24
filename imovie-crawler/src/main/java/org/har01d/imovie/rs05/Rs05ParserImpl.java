@@ -7,6 +7,8 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
+import org.har01d.imovie.douban.DouBanParser;
+import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class Rs05ParserImpl implements Rs05Parser {
@@ -33,11 +36,25 @@ public class Rs05ParserImpl implements Rs05Parser {
     @Autowired
     private BasicCookieStore cookieStore;
 
+    @Autowired
+    private DouBanParser douBanParser;
+
+    @Autowired
+    private MovieService service;
+
     @Override
+    @Transactional
     public Movie parse(String url, Movie movie) throws IOException {
+        String dbUrl = movie.getDbUrl();
+        Movie m = service.findByDbUrl(dbUrl);
+        if (m == null) {
+            m = douBanParser.parse(dbUrl);
+        }
+
         String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
-        Set<Resource> resources = movie.getRes();
+
+        Set<Resource> resources = m.getRes();
         int size = resources.size();
 
         for (Element element : doc.select(".movie-txt a")) {
@@ -56,10 +73,10 @@ public class Rs05ParserImpl implements Rs05Parser {
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), movie.getName());
 
-        if (movie.getId() != null) {
-            movieRepository.save(movie);
+        if (m.getId() != null) {
+            movieRepository.save(m);
         }
-        return movie;
+        return m;
     }
 
     private Resource findResource(String original, Element element) {

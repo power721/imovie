@@ -32,7 +32,7 @@ public class Movie {
 
     private Integer year;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Region> regions;
 
     @Column(columnDefinition = "TEXT")
@@ -42,28 +42,28 @@ public class Movie {
 
     private String cover;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Resource> resources = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Category> categories;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> aliases = new LinkedHashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Person> directors;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Person> editors;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Person> actors;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private Set<Language> languages;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Column(columnDefinition = "TEXT")
     private Set<String> snapshots;
 

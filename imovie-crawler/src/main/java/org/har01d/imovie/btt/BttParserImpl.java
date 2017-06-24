@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BttParserImpl implements BttParser {
@@ -77,6 +78,7 @@ public class BttParserImpl implements BttParser {
     private MovieService service;
 
     @Override
+    @Transactional
     public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);

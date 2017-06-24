@@ -9,7 +9,6 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
@@ -32,9 +31,6 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
 
     @Autowired
     private Rs05Parser parser;
-
-    @Autowired
-    private DouBanParser douBanParser;
 
     @Autowired
     private MovieService service;
@@ -77,34 +73,23 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                         continue;
                     }
 
-                    Movie movie = service.findByDbUrl(dbUrl);
-                    if (movie == null) {
-                        try {
-                            movie = douBanParser.parse(dbUrl);
-                            service.save(movie);
-                        } catch (Exception e) {
-                            service.publishEvent(dbUrl, e.getMessage());
-                            logger.error("Parse page failed: " + title, e);
-                        }
-                    }
-
-                    if (movie != null) {
-                        try {
-                            parser.parse(pageUrl, movie);
+                    Movie movie = new Movie();
+                    movie.setName(title);
+                    movie.setDbUrl(dbUrl);
+                    try {
+                        movie = parser.parse(pageUrl, movie);
+                        if (movie != null) {
                             service.save(new Source(pageUrl, getSourceTime(element)));
                             count++;
                             total++;
-                        } catch (Exception e) {
-                            service.publishEvent(pageUrl, e.getMessage());
-                            logger.error("Parse page failed: " + title, e);
+                        } else {
+                            service.save(new Source(pageUrl, getSourceTime(element), false));
+                            logger.warn("Cannot find movie {} from {}", title, pageUrl);
+                            service.publishEvent(pageUrl, "Cannot find movie: " + title);
                         }
-                    } else {
-                        movie = new Movie();
-                        movie.setName(title);
-                        parser.parse(pageUrl, movie);
-                        service.save(new Source(pageUrl, getSourceTime(element)));
-                        logger.warn("Cannot find movie {} from {}", title, pageUrl);
-                        service.publishEvent(pageUrl, "Cannot find movie: " + title);
+                    } catch (Exception e) {
+                        service.publishEvent(pageUrl, e.getMessage());
+                        logger.error("Parse page failed: " + title, e);
                     }
                 }
 

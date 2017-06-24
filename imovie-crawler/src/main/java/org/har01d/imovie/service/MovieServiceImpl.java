@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MovieServiceImpl implements MovieService {
@@ -190,16 +191,19 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional
     public List<Movie> findByName(String name) {
         return movieRepository.findByNameStartsWith(name);
     }
 
     @Override
+    @Transactional
     public Movie findByDbUrl(String url) {
         return movieRepository.findFirstByDbUrl(url);
     }
 
     @Override
+    @Transactional
     public Movie findByImdb(String url) {
         return movieRepository.findFirstByImdbUrl(url);
     }
