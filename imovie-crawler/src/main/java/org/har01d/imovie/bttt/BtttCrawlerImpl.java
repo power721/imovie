@@ -72,6 +72,8 @@ public class BtttCrawlerImpl implements BtttCrawler {
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
+                        } else {
+                            service.save(new Source(pageUrl, getSourceTime(element.select(".tt span").text()), false));
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());

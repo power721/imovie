@@ -64,6 +64,8 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
+                        } else {
+                            service.save(new Source(pageUrl, false));
                         }
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
