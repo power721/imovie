@@ -18,6 +18,7 @@ import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.xyw.XywCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,6 +62,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private BtPanCrawler btPanCrawler;
 
     @Autowired
+    private XywCrawler xywCrawler;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
@@ -82,7 +86,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             updateImdbTop250();
 
             ScheduledExecutorService executorService = Executors
-                .newScheduledThreadPool(6, new MyThreadFactory("Crawler"));
+                .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     rs05Crawler.crawler();
@@ -126,6 +130,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btPanCrawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 5, TimeUnit.HOURS);
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    xywCrawler.crawler();
                 } catch (Exception e) {
                     logger.error("", e);
                 }

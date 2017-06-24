@@ -1,6 +1,10 @@
-package org.har01d.imovie.btapple;
+package org.har01d.imovie.xyw;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Category;
+import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
@@ -15,6 +20,7 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,12 +34,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BtaParserImple implements BtaParser {
+public class XywParserImpl implements XywParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(BtaParser.class);
-    private static final Pattern EP = Pattern.compile("集数  \\( (\\d+) \\)");
+    private static final Logger logger = LoggerFactory.getLogger(XywParserImpl.class);
+    private static final Pattern EP = Pattern.compile("共有(\\d+)集");
 
-    @Value("${url.btapple.site}")
+    @Value("${url.xyw}")
     private String baseUrl;
 
     @Autowired
@@ -74,17 +80,18 @@ public class BtaParserImple implements BtaParser {
             m = searchByName(movie);
         }
 
+        String resUri = url.replace(".html", "").replace("/tv/", "/videos/resList/").replace("/movie/", "/videos/resList/");
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(getResource(doc));
+            resources.addAll(getResource(resUri, null));
 
-            logger.info("[BtApple] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+            logger.info("[xyw] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
             return m;
         } else {
-            getResource(doc);
+            getResource(resUri, movie.getName());
         }
 
         logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
@@ -92,47 +99,71 @@ public class BtaParserImple implements BtaParser {
         return null;
     }
 
-    private Set<Resource> getResource(Document doc) {
+    private Set<Resource> getResource(String resUri, String name) {
         Set<Resource> resources = new HashSet<>();
-        Elements elements = doc.select(".related table td a");
-        for (Element element : elements) {
-            String uri = baseUrl + element.attr("href");
-            String title = element.text();
-            getResource(uri, title, resources);
+        try {
+            String html = HttpUtils.getHtml(resUri);
+            Document doc = Jsoup.parse(html);
+            Elements elements = doc.select(".tab-content a");
+            for (Element element : elements) {
+                String uri = element.attr("href");
+                if (isResource(uri)) {
+                    String title = element.text();
+                    if (name != null && !title.contains(name)) {
+                        title = name + "-" +title;
+                    }
+                    resources.add(service.saveResource(uri, title));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return resources;
     }
 
     private void getMovie(Document doc, Movie movie) {
-        Elements elements = doc.select("ul.detail li");
+        Elements elements = doc.select(".movie-info table.table-striped tr");
         for (Element element : elements) {
             String text = element.text();
-            if (text.contains("又名: ")) {
-                movie.setAliases(getValues(text.replace("又名: ", "").trim()));
-            } else if (text.contains("地区: ")) {
-                movie.setRegions(getRegions(getValues(text.replace("地区: ", "").trim())));
-            } else if (text.contains("类型: ")) {
-                movie.setCategories(getCategories(getValues(text.replace("类型: ", "").trim())));
-            } else if (text.contains("imdb: ")) {
-                movie.setImdbUrl(UrlUtils.getImdbUrl(text));
-            } else if (text.contains("豆 瓣: ")) {
-                movie.setDbUrl(UrlUtils.getDbUrl(element.select("div a").attr("href")));
-            } else if (text.contains("导演: ")) {
+            if (text.contains("又名")) {
+                movie.setAliases(getValues(text.replace("又名", "").trim()));
+            } else if (text.contains("地区")) {
+                movie.setRegions(getRegions(getValues(text.replace("地区", "").trim())));
+            } else if (text.contains("类型")) {
+                movie.setCategories(getCategories(getValues(text.replace("类型", "").trim())));
+            } else if (text.contains("语言")) {
+                movie.setLanguages(getLanguages(getValues(text.replace("语言", "").trim())));
+            } else if (text.contains("上映时间")) {
+                movie.setReleaseDate(getValue(text.replace("上映时间", "").trim(), 120));
+            } else if (text.contains("片长")) {
+                movie.setRunningTime(getValue(text.replace("片长", "").trim(), 120));
+            } else if (text.contains("评分")) {
+                movie.setImdbUrl(UrlUtils.getImdbUrl(element.html()));
+                movie.setDbUrl(UrlUtils.getDbUrl(element.html()));
+            } else if (text.contains("导演")) {
                 movie.setDirectors(getPeople(element));
-            } else if (text.contains("编剧: ")) {
+            } else if (text.contains("编剧")) {
                 movie.setDirectors(getPeople(element));
-            } else if (text.contains("主演: ")) {
+            } else if (text.contains("主演")) {
                 movie.setActors(getPeople(element));
+            } else if (text.contains("其他")) {
+                movie.setEpisode(getEpisode(text));
             }
         }
-        String text = doc.select(".rtitle h1").text();
+        String text = doc.select(".movie-info h1").text();
         movie.setYear(service.getYear(text));
-        movie.setEpisode(getEpisode(text));
+        movie.setTitle(text);
+        movie.setSourceTime(getSourceTime(doc.select(".movie-info a.movie-post").first().nextElementSibling().text()));
+    }
+
+    private String getValue(String text, int len) {
+        text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").trim();
+        return StringUtils.truncate(text, len);
     }
 
     private Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
-        String[] vals = text.split(",");
+        String[] vals = text.split(" / ");
         for (String val : vals) {
             val = val.trim();
             if (!val.isEmpty()) {
@@ -141,6 +172,16 @@ public class BtaParserImple implements BtaParser {
         }
 
         return values;
+    }
+
+    private Date getSourceTime(String text) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return df.parse(text.replace("最后更新：", ""));
+        } catch (ParseException e) {
+            logger.warn("get time failed.", e);
+        }
+        return new Date();
     }
 
     private int getEpisode(String text) {
@@ -164,6 +205,20 @@ public class BtaParserImple implements BtaParser {
         return categories;
     }
 
+    private Set<Language> getLanguages(Set<String> names) {
+        Set<Language> languages = new HashSet<>();
+        for (String name : names) {
+            if ("国语".equals(name) || "普通话".equals(name)) {
+                name = "汉语普通话";
+            } else if ("国粤".equals(name)) {
+                name = "粤语";
+            }
+            Language l = new Language(name);
+            languages.add(l);
+        }
+        return languages;
+    }
+
     private Set<Region> getRegions(Set<String> names) {
         Set<Region> regions = new HashSet<>();
         for (String name : names) {
@@ -175,7 +230,10 @@ public class BtaParserImple implements BtaParser {
 
     private Set<Person> getPeople(Element element) {
         Set<Person> people = new HashSet<>();
-        for (Element a : element.select("div a")) {
+        for (Element a : element.select("td a")) {
+            if ("显示全部".equals(a.text())) {
+                continue;
+            }
             Person p = new Person(a.text());
             people.add(p);
         }
@@ -215,31 +273,9 @@ public class BtaParserImple implements BtaParser {
         return null;
     }
 
-    private void getResource(String uri, String title, Set<Resource> resources) {
-        try {
-            String html = HttpUtils.getHtml(uri);
-            Document doc = Jsoup.parse(html);
-            String original = null;
-            for (Element element : doc.select(".rinfo .tdown a")) {
-                String href = element.attr("href");
-                if (isResource(href)) {
-                    if (original != null) {
-                        resources.add(service.saveResource(href, original, title));
-                    } else {
-                        resources.add(service.saveResource(href, title));
-                    }
-                } else if (href.startsWith("/d_")) {
-                    original = baseUrl + href;
-                }
-            }
-        } catch (IOException e) {
-            logger.error("[BtApple] get resource failed: " + uri, e);
-            service.publishEvent(uri, "get resource failed: " + uri);
-        }
-    }
-
     private boolean isResource(String uri) {
-        return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://");
+        return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
+            || uri.contains("pan.baidu.com");
     }
 
 }

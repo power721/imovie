@@ -24,11 +24,12 @@ logging:
 url:
   rs05: http://www.rs05.com/movie/?p=
   btpan: http://www.btpan.com
+  xyw: http://www.xunyingwang.com
   douban: https://movie.douban.com
   btt:
-    site: http://btbtt.co/
-    page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
-    thread: http://btbtt.co/thread-index-fid-%d-tid-%d.htm
+    site: http://btbtt.pw/
+    page: http://btbtt.pw/forum-index-fid-%d-page-%d.htm
+    thread: http://btbtt.pw/thread-index-fid-%d-tid-%d.htm
   rarbt:
     site: http://www.rarbt.com
     page: http://www.rarbt.com/index.php/index/index/p/%d.html
