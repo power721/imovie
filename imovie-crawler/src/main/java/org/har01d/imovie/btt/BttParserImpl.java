@@ -3,6 +3,7 @@ package org.har01d.imovie.btt;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -120,11 +121,11 @@ public class BttParserImpl implements BttParser {
     }
 
     private Date getSourceTime(Document doc) {
+        String text = doc.select("div.bg2.border b").first().text();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            String text = doc.select("div.bg2.border b").first().text();
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return df.parse(text);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             logger.warn("get time failed.", e);
         }
         return new Date();
