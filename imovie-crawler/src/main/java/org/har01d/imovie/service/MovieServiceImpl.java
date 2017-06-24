@@ -161,6 +161,19 @@ public class MovieServiceImpl implements MovieService {
             if (language.isPresent()) {
                 languages.add(language.get());
             } else {
+                if ("普通话".equals(name)) {
+                    name = "汉语普通话";
+                } else if ("国语".equals(name) || "國語".equals(name)) {
+                    name = "汉语普通话";
+                } else if ("普通话/国语".equals(name)) {
+                    name = "汉语普通话";
+                } else if ("中文".equals(name)) {
+                    name = "汉语普通话";
+                } else if ("汉语".equals(name)) {
+                    name = "汉语普通话";
+                } else if ("英文".equals(name) || "英語".equals(name) || "English".equals(name)) {
+                    name = "英语";
+                }
                 Language l = new Language(name);
                 languageRepository.save(l);
                 languages.add(l);

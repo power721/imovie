@@ -53,6 +53,7 @@
             <option value="科幻">科幻</option>
             <option value="奇幻">奇幻</option>
             <option value="冒险">冒险</option>
+            <option value="动画">动画</option>
             <option value="战争">战争</option>
             <option value="悬疑">悬疑</option>
             <option value="惊悚">惊悚</option>
@@ -60,12 +61,11 @@
             <option value="犯罪">犯罪</option>
             <option value="音乐">音乐</option>
             <option value="歌舞">歌舞</option>
-            <option value="情色">情色</option>
             <option value="历史">历史</option>
             <option value="传记">传记</option>
             <option value="家庭">家庭</option>
-            <option value="动画">动画</option>
             <option value="短片">短片</option>
+            <option value="情色">情色</option>
             <option value="纪录片">纪录片</option>
           </select>
         </div>
