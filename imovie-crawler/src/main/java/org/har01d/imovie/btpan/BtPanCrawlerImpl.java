@@ -1,6 +1,7 @@
 package org.har01d.imovie.btpan;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -33,17 +34,23 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
+        int error = 0;
         int page = getPage();
         Config full = service.getConfig("btpan_crawler");
         while (true) {
             String url = baseUrl + "/?page=" + page;
             try {
+                if (error >= 5) {
+                    logger.warn("[btpan] sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.content .item .title a");
                 if (elements.size() == 0) {
                     full = service.saveConfig("btpan_crawler", "full");
                     page = 1;
+                    error = 0;
                     continue;
                 }
                 logger.info("[btpan] {}: {} movies", page, elements.size());
@@ -67,7 +74,9 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
                         } else {
                             service.save(new Source(pageUrl, false));
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[btpan] Parse page failed: " + pageUrl, e);
                     }
@@ -79,6 +88,7 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
                 page++;
                 savePage(page);
             } catch (IOException e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("[btpan] Get HTML failed: " + url, e);
             }
