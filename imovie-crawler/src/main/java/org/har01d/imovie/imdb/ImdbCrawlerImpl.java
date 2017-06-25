@@ -41,7 +41,7 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         }
 
         int page = getPage();
-        while (true) {
+        while (page <= 100) {
             String url = baseUrl + page;
             try {
                 String html = HttpUtils.getHtml(url);
