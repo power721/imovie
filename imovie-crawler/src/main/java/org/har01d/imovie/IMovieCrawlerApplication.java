@@ -2,6 +2,7 @@ package org.har01d.imovie;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,8 @@ import org.har01d.imovie.btpan.BtPanCrawler;
 import org.har01d.imovie.btt.BttCrawler;
 import org.har01d.imovie.bttt.BtttCrawler;
 import org.har01d.imovie.domain.Config;
+import org.har01d.imovie.domain.Imdb;
+import org.har01d.imovie.domain.ImdbRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
@@ -73,6 +76,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private DouBanService douBanService;
+
+    @Autowired
+    private ImdbRepository repository;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -149,7 +155,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             executorService.submit(() -> {
                 try {
-                    imdbCrawler.crawler();
+//                    imdbCrawler.crawler();
+                    updateImdb();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
@@ -192,4 +199,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             logger.warn("parse page failed: " + url, e);
         }
     }
+
+    private void updateImdb() {
+        List<Imdb> imdbList = repository.findAll();
+        for (Imdb imdb : imdbList) {
+            Movie movie = service.findByImdb("http://www.imdb.com/title/" + imdb.getId());
+            if (movie != null) {
+                movie.setImdbScore(imdb.getRating());
+                service.save(movie);
+            }
+        }
+    }
+
 }
