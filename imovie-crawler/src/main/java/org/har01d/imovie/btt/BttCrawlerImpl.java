@@ -96,7 +96,6 @@ public class BttCrawlerImpl implements BttCrawler {
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
                     if (service.findSource(fixPageUrl(pageUrl)) != null) {
                         logger.info("skip {}", pageUrl);
-                        error = 0;
                         continue;
                     }
                     movie.setTitle(element.select("a.subject_link").text());
@@ -260,6 +259,9 @@ public class BttCrawlerImpl implements BttCrawler {
             index = title.indexOf(']', start);
             if (index < 0) {
                 index = title.length();
+            }
+            if (start < 0 || start >= index) {
+                return temp;
             }
             temp = title.substring(start, index);
             if (temp.startsWith("[")) {
