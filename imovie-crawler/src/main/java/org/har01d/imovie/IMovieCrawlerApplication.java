@@ -155,7 +155,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             executorService.submit(() -> {
                 try {
-//                    imdbCrawler.crawler();
+                    imdbCrawler.crawler();
                     updateImdb();
                 } catch (Exception e) {
                     logger.error("", e);

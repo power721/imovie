@@ -1,6 +1,8 @@
 package org.har01d.imovie.imdb;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
@@ -32,23 +34,41 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     @Autowired
     private MovieService service;
 
+    private Map<String, String> sort = new HashMap<>();
+
+    public ImdbCrawlerImpl() {
+        sort.put("pop", "");
+        sort.put("rating", "user_rating,desc");
+        sort.put("vote", "num_votes,desc");
+        sort.put("alpha1", "alpha,asc");
+        sort.put("alpha2", "alpha,desc");
+        sort.put("gross", "boxoffice_gross_us,desc");
+        sort.put("runtime", "runtime,desc");
+    }
+
     @Override
     public void crawler() throws InterruptedException {
-        Config full = service.getConfig("imdb_crawler");
+        for (String type : sort.keySet()) {
+            work(type);
+        }
+    }
+
+    private void work(String type) {
+        Config full = service.getConfig("imdb_crawler_" + type);
         if (full != null) {
-            logger.info("ignore ImdbCrawler");
+            logger.info("ignore ImdbCrawler " + type);
             return;
         }
 
-        int page = getPage();
+        int page = getPage(type);
         while (page <= 100) {
-            String url = baseUrl + page;
+            String url = baseUrl + page + "&sort=" + sort.get(type);
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select(".lister-list .lister-item .lister-col-wrapper");
                 if (elements.size() == 0) {
-                    service.saveConfig("imdb_crawler", "full");
+                    service.saveConfig("imdb_crawler_" + type, "full");
                     break;
                 }
 
@@ -62,11 +82,15 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
                     repository.save(new Imdb(imdb, rating));
                 }
                 page++;
-                savePage(page);
+                savePage(type, page);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
-                logger.error("[xyw] Get HTML failed: " + url, e);
+                logger.error("[imdb] Get HTML failed: " + url, e);
             }
+        }
+
+        if (page > 100) {
+            service.saveConfig("imdb_crawler_" + type, "full");
         }
     }
 
@@ -78,8 +102,8 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return null;
     }
 
-    private int getPage() {
-        String key = "imdb_page";
+    private int getPage(String type) {
+        String key = "imdb_page_" + type;
         Config config = service.getConfig(key);
         if (config == null) {
             return 1;
@@ -88,8 +112,8 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void savePage(int page) {
-        service.saveConfig("imdb_page", String.valueOf(page));
+    private void savePage(String type, int page) {
+        service.saveConfig("imdb_page_" + type, String.valueOf(page));
     }
 
 }
