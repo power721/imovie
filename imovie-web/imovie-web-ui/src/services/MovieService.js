@@ -6,7 +6,11 @@ export default {
     if (params.name && params.category && params.category !== 'all') {
       uri = '/api/movies/search/search/'
     } else if (params.name) {
-      uri = '/api/movies/search/by-name/'
+      if (/^tt\d+$/.test(params.name)) {
+        uri = '/api/movies/search/by-imdb/'
+      } else {
+        uri = '/api/movies/search/by-name/'
+      }
     } else if (params.category && params.category !== 'all') {
       uri = '/api/movies/search/by-category/'
     }

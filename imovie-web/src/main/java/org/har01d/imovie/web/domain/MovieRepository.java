@@ -37,6 +37,6 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     Page<Movie> findByRegions_Name(@Param("region") String region, Pageable pageable);
 
     @RestResource(path = "by-imdb", rel = "by-imdb")
-    Page<Movie> findByByImdbUrlContaining(@Param("imdb") String imdb, Pageable pageable);
+    Page<Movie> findByImdbUrlContaining(@Param("name") String imdb, Pageable pageable);
 
 }
