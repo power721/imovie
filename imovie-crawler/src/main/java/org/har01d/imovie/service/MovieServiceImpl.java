@@ -1,6 +1,7 @@
 package org.har01d.imovie.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +81,6 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     public void fixDuplicateMovies() {
-        // TODO: fix foreign key constraint fails
         Set<String> dbUrls = movieRepository.findDuplicated();
         for (String dbUrl : dbUrls) {
             List<Movie> movies = movieRepository.findByDbUrl(dbUrl);
@@ -92,11 +92,17 @@ public class MovieServiceImpl implements MovieService {
                     m = movie;
                 } else {
                     m.getRes().addAll(movie.getRes());
+                    movie.setActors(Collections.emptySet());
+                    movie.setEditors(Collections.emptySet());
+                    movie.setDirectors(Collections.emptySet());
+                    movie.setCategories(Collections.emptySet());
+                    movie.setLanguages(Collections.emptySet());
+                    movie.setResources(Collections.emptySet());
                     deleted.add(movie);
                 }
             }
             movieRepository.save(m);
-            logger.info("update movie {}: {}", m.getId(), m.getName());
+            logger.info("update movie {}: {} Resources: {}", m.getId(), m.getName(), m.getRes().size());
 
             for (Movie movie : deleted) {
                 movieRepository.delete(movie);
