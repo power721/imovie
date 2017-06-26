@@ -40,6 +40,7 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         "Romance", "Sci-Fi", "Short", "Sport", "Thriller", "War", "Western"};
 
     public ImdbCrawlerImpl() {
+        sort.put("pop", "");
         sort.put("rating", "user_rating,desc");
         sort.put("vote", "num_votes,desc");
         sort.put("alpha1", "alpha,asc");
