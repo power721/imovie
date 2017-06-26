@@ -52,11 +52,13 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     public void crawler() throws InterruptedException {
         for (String type : sort.keySet()) {
             work(type, null);
+            service.saveConfig("imdb_crawler_" + type, "full");
         }
 
         for (String genre : genres) {
             work("pop", genre);
         }
+        service.saveConfig("imdb_crawler_pop", "full");
     }
 
     private void work(String type, String genre) {
@@ -97,10 +99,6 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
                 service.publishEvent(url, e.getMessage());
                 logger.error("[imdb] Get HTML failed: " + url, e);
             }
-        }
-
-        if (page > 100) {
-            service.saveConfig("imdb_crawler_" + type, "full");
         }
     }
 
