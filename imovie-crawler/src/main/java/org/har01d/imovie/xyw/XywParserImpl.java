@@ -50,7 +50,7 @@ public class XywParserImpl implements XywParser {
 
     @Override
     @Transactional
-    public synchronized Movie parse(String url, Movie movie) throws IOException {
+    public Movie parse(String url, Movie movie) throws IOException {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 

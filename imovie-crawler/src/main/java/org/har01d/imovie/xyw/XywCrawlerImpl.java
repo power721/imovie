@@ -1,8 +1,9 @@
 package org.har01d.imovie.xyw;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -35,10 +36,9 @@ public class XywCrawlerImpl implements XywCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(1, new MyThreadFactory("xyw"));
-        executorService.submit(() -> work("movie"));
-//        executorService.submit(() -> work("tv"));
-//        executorService.shutdown();
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new MyThreadFactory("xyw"));
+        executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
+//        executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
     }
 
     private void work(String type) {

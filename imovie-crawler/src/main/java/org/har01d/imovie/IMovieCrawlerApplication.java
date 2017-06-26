@@ -94,7 +94,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
             updateImdbTop250();
-            service.fixDuplicateMovies();
+//            service.fixDuplicateMovies();
 
             ScheduledExecutorService executorService = Executors
                 .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
@@ -146,13 +146,13 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }, 0, 5, TimeUnit.HOURS);
 
-            executorService.scheduleWithFixedDelay(() -> {
+            executorService.submit(() -> {
                 try {
                     xywCrawler.crawler();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
-            }, 0, 5, TimeUnit.HOURS);
+            });
 
 //            executorService.submit(() -> {
 //                try {
