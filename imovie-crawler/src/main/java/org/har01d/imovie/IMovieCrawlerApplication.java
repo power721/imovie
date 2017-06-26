@@ -78,7 +78,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private DouBanService douBanService;
 
     @Autowired
-    private ImdbRepository repository;
+    private ImdbRepository imdbRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -94,6 +94,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
             updateImdbTop250();
+//            service.fixDuplicateMovies();
 
             ScheduledExecutorService executorService = Executors
                 .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
@@ -153,14 +154,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }, 0, 5, TimeUnit.HOURS);
 
-            executorService.submit(() -> {
-                try {
-                    imdbCrawler.crawler();
-                    updateImdb();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            });
+//            executorService.submit(() -> {
+//                try {
+//                    imdbCrawler.crawler();
+//                    updateImdb();
+//                } catch (Exception e) {
+//                    logger.error("", e);
+//                }
+//            });
 
             bttCrawler.crawler();
         }
@@ -201,7 +202,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     }
 
     private void updateImdb() {
-        List<Imdb> imdbList = repository.findAll();
+        List<Imdb> imdbList = imdbRepository.findAll();
         for (Imdb imdb : imdbList) {
             Movie movie = service.findByImdb("http://www.imdb.com/title/" + imdb.getId());
             if (movie != null) {

@@ -35,10 +35,10 @@ public class XywCrawlerImpl implements XywCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("xyw"));
+        ExecutorService executorService = Executors.newFixedThreadPool(1, new MyThreadFactory("xyw"));
         executorService.submit(() -> work("movie"));
 //        executorService.submit(() -> work("tv"));
-        executorService.shutdown();
+//        executorService.shutdown();
     }
 
     private void work(String type) {

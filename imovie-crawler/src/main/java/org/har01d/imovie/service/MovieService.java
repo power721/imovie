@@ -14,8 +14,12 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.Source;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface MovieService {
+
+    @Transactional
+    void fixDuplicateMovies();
 
     Integer getYear(String yearStr);
 
