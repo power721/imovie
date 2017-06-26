@@ -35,9 +35,11 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     private MovieService service;
 
     private Map<String, String> sort = new HashMap<>();
+    private String[] genres = new String[]{"", "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+        "Documentary", "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror", "Music", "Musical", "Mystery",
+        "Romance", "Sci-Fi", "Short", "Sport", "Thriller", "War", "Western"};
 
     public ImdbCrawlerImpl() {
-        sort.put("pop", "");
         sort.put("rating", "user_rating,desc");
         sort.put("vote", "num_votes,desc");
         sort.put("alpha1", "alpha,asc");
@@ -49,11 +51,15 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     @Override
     public void crawler() throws InterruptedException {
         for (String type : sort.keySet()) {
-            work(type);
+            work(type, null);
+        }
+
+        for (String genre : genres) {
+            work("pop", genre);
         }
     }
 
-    private void work(String type) {
+    private void work(String type, String genre) {
         Config full = service.getConfig("imdb_crawler_" + type);
         if (full != null) {
             logger.info("ignore ImdbCrawler " + type);
@@ -63,6 +69,10 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         int page = getPage(type);
         while (page <= 100) {
             String url = baseUrl + page + "&sort=" + sort.get(type);
+            if (genre != null) {
+                url = url + "&genres=" + genre;
+            }
+
             try {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);

@@ -154,14 +154,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             });
 
-//            executorService.submit(() -> {
-//                try {
-//                    imdbCrawler.crawler();
-//                    updateImdb();
-//                } catch (Exception e) {
-//                    logger.error("", e);
-//                }
-//            });
+            executorService.submit(() -> {
+                try {
+                    imdbCrawler.crawler();
+                    updateImdb();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            });
 
             bttCrawler.crawler();
         }
@@ -202,6 +202,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     }
 
     private void updateImdb() {
+        if (service.getConfig("imdb") != null) {
+            return;
+        }
+
         List<Imdb> imdbList = imdbRepository.findAll();
         for (Imdb imdb : imdbList) {
             Movie movie = service.findByImdb("http://www.imdb.com/title/" + imdb.getId());
@@ -210,6 +214,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 service.save(movie);
             }
         }
+
+        service.saveConfig("imdb", "full");
     }
 
 }
