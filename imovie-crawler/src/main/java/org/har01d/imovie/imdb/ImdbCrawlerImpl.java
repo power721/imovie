@@ -42,26 +42,19 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     public ImdbCrawlerImpl() {
         sort.put("pop", "");
         sort.put("rating", "user_rating,desc");
-        sort.put("vote", "num_votes,desc");
-        sort.put("alpha1", "alpha,asc");
-        sort.put("alpha2", "alpha,desc");
-        sort.put("gross", "boxoffice_gross_us,desc");
-        sort.put("runtime", "runtime,desc");
+//        sort.put("vote", "num_votes,desc");
+//        sort.put("alpha1", "alpha,asc");
+//        sort.put("alpha2", "alpha,desc");
+//        sort.put("gross", "boxoffice_gross_us,desc");
+//        sort.put("runtime", "runtime,desc");
     }
 
     @Override
     public void crawler() throws InterruptedException {
         for (String type : sort.keySet()) {
-            Config full = service.getConfig("imdb_crawler_" + type);
-            if (full != null) {
-                logger.info("ignore ImdbCrawler " + type);
-                continue;
-            }
-
             for (String genre : genres) {
                 work(type, genre);
             }
-            service.saveConfig("imdb_crawler_" + type, "full");
         }
     }
 
