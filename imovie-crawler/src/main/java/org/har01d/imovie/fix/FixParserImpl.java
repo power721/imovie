@@ -91,7 +91,7 @@ public class FixParserImpl implements FixParser {
 
     private Set<Resource> findResource(Document doc, String name, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
-        Elements elements = doc.select("div.content-box div a");
+        Elements elements = doc.select("div.content-box a");
         for (Element element : elements) {
             String uri = element.attr("href");
             if (isResource(uri)) {
