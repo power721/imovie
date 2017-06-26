@@ -79,8 +79,8 @@
         </div>
         <div class="item" v-if="movie.imdbUrl">
           <div class="content">
-            <div class="header">IMDb链接</div>
-            <div class="description"><a :href="movie.imdbUrl" target="_blank">{{ movie.imdbUrl | imdb }}</a>
+            <div class="header">IMDb评分</div>
+            <div class="description"><a :href="movie.imdbUrl" target="_blank">{{ movie.imdbScore || '0.0' }}</a>
             </div>
           </div>
         </div>
