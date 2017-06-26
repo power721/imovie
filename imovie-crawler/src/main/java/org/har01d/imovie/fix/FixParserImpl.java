@@ -38,7 +38,7 @@ public class FixParserImpl implements FixParser {
     private Pattern NUMBER = Pattern.compile("(\\d+)");
     private static final String[] TOKENS = new String[]{"导演:", "编剧:", "主演:", "类型:", "制片国家/地区:", "语言:",
         "上映日期:", "日期:", "上映时间:", "片长:", "又名:", "IMDb链接:", "官方网站:", "首播:", "季数:", "集数:", "单集片长:"
-        , "【剧集简介】", "【剧情简介】"};
+        , "【剧集简介】", "【剧情简介】", "【资源下载】"};
 
     @Value("${url.fix}")
     private String baseUrl;
@@ -169,9 +169,9 @@ public class FixParserImpl implements FixParser {
             movie.setRunningTime(getValue(text.substring(start, end), 120));
         }
 
-        start = text.indexOf("IMDb链接:") + 7;
+        start = text.indexOf("IMDb") + 4;
         end = getNextToken(text, start);
-        if (start > 6 && end > start) {
+        if (start > 3 && end > start) {
             movie.setImdbUrl(UrlUtils.getImdbUrl(text.substring(start, end)));
         }
 
