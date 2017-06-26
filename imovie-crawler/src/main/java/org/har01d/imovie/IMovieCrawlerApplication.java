@@ -16,6 +16,7 @@ import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.fix.FixCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
@@ -70,6 +71,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private ImdbCrawler imdbCrawler;
+
+    @Autowired
+    private FixCrawler fixCrawler;
 
     @Autowired
     private MovieService service;
@@ -162,6 +166,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                     logger.error("", e);
                 }
             });
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    fixCrawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 6, TimeUnit.HOURS);
 
             bttCrawler.crawler();
         }
