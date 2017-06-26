@@ -33,10 +33,14 @@ public class XywCrawlerImpl implements XywCrawler {
 
     @Autowired
     private MovieService service;
+    private ScheduledExecutorService executorService;
+
+    public XywCrawlerImpl() {
+        executorService = Executors.newScheduledThreadPool(1, new MyThreadFactory("xyw"));
+    }
 
     @Override
     public void crawler() throws InterruptedException {
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new MyThreadFactory("xyw"));
         executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
 //        executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
     }

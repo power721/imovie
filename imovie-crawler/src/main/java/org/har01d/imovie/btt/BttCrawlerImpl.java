@@ -51,11 +51,14 @@ public class BttCrawlerImpl implements BttCrawler {
 
     @Autowired
     private MovieService service;
+    private ScheduledExecutorService executorService;
+
+    public BttCrawlerImpl() {
+        executorService = Executors.newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
+    }
 
     @Override
     public void crawler() throws InterruptedException {
-        ScheduledExecutorService executorService = Executors
-            .newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
         executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);

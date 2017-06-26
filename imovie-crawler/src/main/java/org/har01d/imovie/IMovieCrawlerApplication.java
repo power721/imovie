@@ -94,7 +94,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
             updateImdbTop250();
-//            service.fixDuplicateMovies();
+            service.fixDuplicateMovies();
 
             ScheduledExecutorService executorService = Executors
                 .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
