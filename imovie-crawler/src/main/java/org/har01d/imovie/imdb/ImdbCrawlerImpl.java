@@ -71,6 +71,7 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
             if (genre != null) {
                 url = url + "&genres=" + genre;
             }
+            logger.info("get imdb for {}-{}", type, genre);
 
             try {
                 String html = HttpUtils.getHtml(url);
