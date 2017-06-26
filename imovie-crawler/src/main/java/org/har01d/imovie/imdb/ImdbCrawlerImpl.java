@@ -51,24 +51,21 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     @Override
     public void crawler() throws InterruptedException {
         for (String type : sort.keySet()) {
-            work(type, null);
+            Config full = service.getConfig("imdb_crawler_" + type);
+            if (full != null) {
+                logger.info("ignore ImdbCrawler " + type);
+                continue;
+            }
+
+            for (String genre : genres) {
+                work(type, genre);
+            }
             service.saveConfig("imdb_crawler_" + type, "full");
         }
-
-        for (String genre : genres) {
-            work("pop", genre);
-        }
-        service.saveConfig("imdb_crawler_pop", "full");
     }
 
     private void work(String type, String genre) {
-        Config full = service.getConfig("imdb_crawler_" + type);
-        if (full != null) {
-            logger.info("ignore ImdbCrawler " + type);
-            return;
-        }
-
-        int page = getPage(type);
+        int page = getPage(type, genre);
         while (page <= 100) {
             String url = baseUrl + page + "&sort=" + sort.get(type);
             if (genre != null) {
@@ -94,7 +91,7 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
                     repository.save(new Imdb(imdb, rating));
                 }
                 page++;
-                savePage(type, page);
+                savePage(type, page, genre);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("[imdb] Get HTML failed: " + url, e);
@@ -110,8 +107,8 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return null;
     }
 
-    private int getPage(String type) {
-        String key = "imdb_page_" + type;
+    private int getPage(String type, String genre) {
+        String key = "imdb_page_" + type + "_" + genre;
         Config config = service.getConfig(key);
         if (config == null) {
             return 1;
@@ -120,8 +117,8 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void savePage(String type, int page) {
-        service.saveConfig("imdb_page_" + type, String.valueOf(page));
+    private void savePage(String type, int page, String genre) {
+        service.saveConfig("imdb_page_" + type + "_" + genre, String.valueOf(page));
     }
 
 }
