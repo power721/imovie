@@ -64,6 +64,8 @@ public class BttCrawlerImpl implements BttCrawler {
         executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
 //        executorService.scheduleWithFixedDelay(() -> work(981), 0, 60, TimeUnit.MINUTES);
         executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
+        executorService.awaitTermination(5L, TimeUnit.DAYS);
+        executorService.shutdown();
     }
 
     private void work(int fid) {

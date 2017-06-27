@@ -1,6 +1,5 @@
 package org.har01d.imovie.xyw;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +42,8 @@ public class XywCrawlerImpl implements XywCrawler {
     public void crawler() throws InterruptedException {
         executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
         executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
+        executorService.awaitTermination(3L, TimeUnit.DAYS);
+        executorService.shutdown();
     }
 
     private void work(String type) {
@@ -96,7 +97,7 @@ public class XywCrawlerImpl implements XywCrawler {
                 }
                 page++;
                 savePage(type, page);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("[xyw] Get HTML failed: " + url, e);
             }

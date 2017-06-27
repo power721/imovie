@@ -94,7 +94,7 @@ public class XywParserImpl implements XywParser {
             getResource(resUri, movie.getName());
         }
 
-        logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
+        logger.warn("[xyw] Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
         service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
         return null;
     }
@@ -119,7 +119,7 @@ public class XywParserImpl implements XywParser {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("[xyw] get resource failed", e);
         }
         return resources;
     }
@@ -271,7 +271,7 @@ public class XywParserImpl implements XywParser {
             return service.findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
             service.publishEvent(text, e.getMessage());
-            logger.error("search movie from DouBan failed: " + text, e);
+            logger.error("[xyw] search movie from DouBan failed: " + text, e);
         }
         return null;
     }
