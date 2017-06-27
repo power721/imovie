@@ -70,6 +70,7 @@ public class XywCrawlerImpl implements XywCrawler {
                         pageUrl = baseUrl + pageUrl;
                     }
                     if (service.findSource(pageUrl) != null) {
+                        logger.info("skip {}", pageUrl);
                         continue;
                     }
 
