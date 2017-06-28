@@ -42,24 +42,26 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
     public ImdbCrawlerImpl() {
         sort.put("pop", "");
         sort.put("rating", "user_rating,desc");
-//        sort.put("vote", "num_votes,desc");
+        sort.put("vote", "num_votes,desc");
 //        sort.put("alpha1", "alpha,asc");
 //        sort.put("alpha2", "alpha,desc");
-//        sort.put("gross", "boxoffice_gross_us,desc");
+        sort.put("gross", "boxoffice_gross_us,desc");
 //        sort.put("runtime", "runtime,desc");
     }
 
     @Override
     public void crawler() throws InterruptedException {
         for (String type : sort.keySet()) {
-            for (String genre : genres) {
-                work(type, genre);
+            int i = getIndex(type);
+            for (; i < genres.length; ++i) {
+                work(type, genres[i]);
+                saveIndex(type, i + 1);
             }
         }
     }
 
     private void work(String type, String genre) {
-        int page = getPage(type, genre);
+        int page = getPage(type);
         while (page <= 100) {
             String url = baseUrl + page + "&sort=" + sort.get(type);
             if (genre != null) {
@@ -72,7 +74,6 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select(".lister-list .lister-item .lister-col-wrapper");
                 if (elements.size() == 0) {
-                    service.saveConfig("imdb_crawler_" + type, "full");
                     break;
                 }
 
@@ -86,12 +87,13 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
                     repository.save(new Imdb(imdb, rating));
                 }
                 page++;
-                savePage(type, page, genre);
+                savePage(type, page);
             } catch (IOException e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("[imdb] Get HTML failed: " + url, e);
             }
         }
+        savePage(type, 1);
     }
 
     private String getImdb(String imdb) {
@@ -102,8 +104,8 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return null;
     }
 
-    private int getPage(String type, String genre) {
-        String key = "imdb_page_" + type + "_" + genre;
+    private int getPage(String type) {
+        String key = "imdb_page_" + type;
         Config config = service.getConfig(key);
         if (config == null) {
             return 1;
@@ -112,8 +114,22 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    private void savePage(String type, int page, String genre) {
-        service.saveConfig("imdb_page_" + type + "_" + genre, String.valueOf(page));
+    private void savePage(String type, int page) {
+        service.saveConfig("imdb_page_" + type, String.valueOf(page));
+    }
+
+    private int getIndex(String type) {
+        String key = "imdb_index_" + type;
+        Config config = service.getConfig(key);
+        if (config == null) {
+            return 0;
+        }
+
+        return Integer.valueOf(config.getValue());
+    }
+
+    private void saveIndex(String type, int index) {
+        service.saveConfig("imdb_index_" + type, String.valueOf(index));
     }
 
 }
