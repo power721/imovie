@@ -3,7 +3,9 @@
     <header class="header">
       <div class="ui menu">
         <div class="ui container">
-          <router-link class="item header" to="/" exact>电影</router-link>
+          <router-link class="item header" to="/" exact>首页</router-link>
+          <router-link class="item" to="/movies">电影</router-link>
+          <router-link class="item" to="/episodes">剧集</router-link>
           <router-link class="item" to="/resources">资源</router-link>
         </div>
       </div>

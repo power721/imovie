@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 export default {
-  getMovies (params, cb) {
+  getAllMovies (params, cb) {
     var uri = '/api/movies/'
     if (params.name && params.category && params.category !== 'all') {
       uri = '/api/movies/search/search/'
@@ -13,6 +13,32 @@ export default {
       }
     } else if (params.category && params.category !== 'all') {
       uri = '/api/movies/search/by-category/'
+    }
+    return Vue.http.get(uri, {params: params})
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
+  },
+
+  getMovies (params, cb) {
+    var uri = '/api/movies/search/by-movie'
+    params.episode = 0
+    if (params.name && params.category && params.category !== 'all') {
+      uri = '/api/movies/search/search-movie/'
+    } else if (params.name) {
+      if (/^tt\d+$/.test(params.name)) {
+        uri = '/api/movies/search/by-movie-imdb/'
+      } else {
+        uri = '/api/movies/search/by-movie-name/'
+      }
+    } else if (params.category && params.category !== 'all') {
+      uri = '/api/movies/search/by-movie-category/'
     }
     return Vue.http.get(uri, {params: params})
     .then(({data}) => {

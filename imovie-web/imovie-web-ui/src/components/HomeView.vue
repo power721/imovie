@@ -174,10 +174,10 @@ export default {
     return {
       loading: false,
       error: '',
-      text: this.$route.query.search || storageService.getItem('searchMovie') || '',
-      sort: this.$route.query.sort || storageService.getItem('sortMovie') || '',
-      category: this.$route.query.category || storageService.getItem('movieCategory') || 'all',
-      currentPage: this.$route.query.page || storageService.getItem('moviePage') || 0,
+      text: this.$route.query.search || storageService.getItem('search') || '',
+      sort: this.$route.query.sort || storageService.getItem('sort') || '',
+      category: this.$route.query.category || storageService.getItem('category') || 'all',
+      currentPage: this.$route.query.page || storageService.getItem('page') || 0,
       pagination: null,
       movies: []
     }
@@ -199,9 +199,9 @@ export default {
     loadData: function () {
       this.error = this.movies = null
       this.loading = true
-      storageService.setItem('moviePage', this.currentPage)
+      storageService.setItem('page', this.currentPage)
       let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
-      movieService.getMovies(params, (success, data) => {
+      movieService.getAllMovies(params, (success, data) => {
         this.loading = false
         if (success) {
           this.fireEvent('load-success', data)
@@ -221,9 +221,9 @@ export default {
     },
     filter: function () {
       this.currentPage = 0
-      storageService.setItem('sortMovie', this.sort)
-      storageService.setItem('searchMovie', this.text)
-      storageService.setItem('movieCategory', this.category)
+      storageService.setItem('sort', this.sort)
+      storageService.setItem('search', this.text)
+      storageService.setItem('category', this.category)
       this.loadData()
     },
     getPaginationData: function (pagination) {

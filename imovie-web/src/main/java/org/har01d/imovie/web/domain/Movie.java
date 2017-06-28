@@ -72,7 +72,7 @@ public class Movie {
 
     private String runningTime;
 
-    private int episode;
+    private Integer episode;
 
     private String imdbUrl;
     private String imdbScore;
