@@ -37,6 +37,10 @@ logging:
     org.power.oj: DEBUG
     org.springframework:
       security: DEBUG
+management:
+  security:
+    enabled: false
+  context-path: /manage
 
 ---
 spring:
