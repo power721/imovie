@@ -23,14 +23,15 @@ export default new Router({
       component: MovieListView
     },
     {
+      path: '/movies/:id',
+      alias: '/episodes/:id',
+      name: 'MovieDetail',
+      component: MovieDetail
+    },
+    {
       path: '/episodes',
       name: 'EpisodeListView',
       component: EpisodeListView
-    },
-    {
-      path: '/movies/:id',
-      name: 'MovieDetail',
-      component: MovieDetail
     },
     {
       path: '/resources',

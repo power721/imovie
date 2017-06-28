@@ -89,11 +89,11 @@
     </div>
 
     <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
-      <router-link :to="'/movies/' + movie.id" class="ui small image">
+      <router-link :to="'/episodes/' + movie.id" class="ui small image">
         <img :src="movie.thumb">
       </router-link>
       <div class="content">
-        <router-link :to="'/movies/' + movie.id" class="header">
+        <router-link :to="'/episodes/' + movie.id" class="header">
           {{ movie.title }}
         </router-link>
         <div class="ui blue circular label" v-if="movie.episode">
