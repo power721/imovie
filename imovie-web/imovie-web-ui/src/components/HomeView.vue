@@ -89,11 +89,11 @@
     </div>
 
     <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
-      <router-link :to="'/movies/' + movie.id" class="ui small image">
+      <router-link :to="getLink(movie)" class="ui small image">
         <img :src="movie.thumb">
       </router-link>
       <div class="content">
-        <router-link :to="'/movies/' + movie.id" class="header">
+        <router-link :to="getLink(movie)" class="header">
           {{ movie.title }}
         </router-link>
         <div class="ui blue circular label" v-if="movie.episode">
@@ -263,6 +263,13 @@ export default {
       if (page !== this.currentPage && (page >= 0 && page < this.pagination.totalPages)) {
         this.currentPage = page
         this.loadData()
+      }
+    },
+    getLink: function (movie) {
+      if (movie.episode) {
+        return '/episodes/' + movie.id
+      } else {
+        return '/movies/' + movie.id
       }
     }
   }
