@@ -9,6 +9,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.har01d.imovie.domain.Config;
+import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class DouBanServiceImpl implements DouBanService {
 
     @Autowired
     private MovieService service;
+
+    @Autowired
+    private DouBanParser parser;
 
     @Autowired
     private BasicCookieStore cookieStore;
@@ -103,6 +107,7 @@ public class DouBanServiceImpl implements DouBanService {
         BasicCookieStore cookieStore1 = HttpUtils.post4Cookie("https://accounts.douban.com/login?source=movie", params);
         List<Cookie> cookies = cookieStore1.getCookies();
         for (Cookie cookie : cookies) {
+            logger.info("cookie {}: {}", cookie.getName(), cookie.getValue());
             if (TOKEN_KEY.equals(cookie.getName())) {
                 service.saveConfig(TOKEN_KEY, cookie.getValue());
                 cookieStore.addCookie(cookie);
@@ -112,7 +117,10 @@ public class DouBanServiceImpl implements DouBanService {
                 cookieStore.addCookie(cookie);
             }
         }
-        logger.warn("Login to DouBan failed, user: " + user.getValue());
+
+        if (!isLogin) {
+            logger.warn("Login to DouBan failed, user: " + user.getValue());
+        }
     }
 
     @Override
