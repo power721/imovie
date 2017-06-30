@@ -97,7 +97,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             douBanService.tryLogin();
-            updateImdbTop250();
+//            updateImdbTop250();
             service.fixDuplicateMovies();
 
             ScheduledExecutorService executorService = Executors
