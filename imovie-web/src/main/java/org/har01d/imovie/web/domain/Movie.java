@@ -241,11 +241,11 @@ public class Movie {
         this.runningTime = runningTime;
     }
 
-    public int getEpisode() {
+    public Integer getEpisode() {
         return episode;
     }
 
-    public void setEpisode(int episode) {
+    public void setEpisode(Integer episode) {
         this.episode = episode;
     }
 

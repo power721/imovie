@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -450,8 +451,8 @@ public class MovieServiceImpl implements MovieService {
                 }
             }
 
-            if (movie.getEpisode() != 0 && m.getEpisode() != 0) {
-                if (m.getEpisode() == movie.getEpisode()) {
+            if (movie.getEpisode() != null && m.getEpisode() != null && movie.getEpisode() > 0) {
+                if (Objects.equals(m.getEpisode(), movie.getEpisode())) {
                     match++;
                 }
             }
