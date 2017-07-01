@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="imovies@localhost">
-  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.0">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.2">
     <root id="1"/>
     <schema id="2" parent="1" name="imovies">
       <Current>1</Current>
@@ -52,6 +52,7 @@
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="38" parent="16" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -65,6 +66,7 @@
       <DataType>text|0</DataType>
     </column>
     <key id="41" parent="17" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>name</ColNames>
       <Primary>1</Primary>
     </key>
@@ -87,6 +89,7 @@
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="46" parent="18" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -100,6 +103,7 @@
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="49" parent="19" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>uri</ColNames>
       <Primary>1</Primary>
     </key>
@@ -113,6 +117,7 @@
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="52" parent="20" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -127,6 +132,7 @@
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="55" parent="21" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -155,7 +161,6 @@
     <column id="61" parent="22" name="episode">
       <Position>6</Position>
       <DataType>int(11)|0</DataType>
-      <NotNull>1</NotNull>
     </column>
     <column id="62" parent="22" name="imdb_score">
       <Position>7</Position>
@@ -198,6 +203,7 @@
       <DataType>int(11)|0</DataType>
     </column>
     <key id="72" parent="22" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -215,6 +221,7 @@
       <ColNames>actors_id</ColNames>
     </index>
     <key id="76" parent="23" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>act_movies_id
 actors_id</ColNames>
       <Primary>1</Primary>
@@ -263,6 +270,7 @@ actors_id</ColNames>
       <ColNames>categories_id</ColNames>
     </index>
     <key id="86" parent="25" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>movies_id
 categories_id</ColNames>
       <Primary>1</Primary>
@@ -293,6 +301,7 @@ categories_id</ColNames>
       <ColNames>directors_id</ColNames>
     </index>
     <key id="92" parent="26" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>direct_movies_id
 directors_id</ColNames>
       <Primary>1</Primary>
@@ -323,6 +332,7 @@ directors_id</ColNames>
       <ColNames>editors_id</ColNames>
     </index>
     <key id="98" parent="27" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>edit_movies_id
 editors_id</ColNames>
       <Primary>1</Primary>
@@ -353,6 +363,7 @@ editors_id</ColNames>
       <ColNames>languages_id</ColNames>
     </index>
     <key id="104" parent="28" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>movies_id
 languages_id</ColNames>
       <Primary>1</Primary>
@@ -383,6 +394,7 @@ languages_id</ColNames>
       <ColNames>regions_id</ColNames>
     </index>
     <key id="110" parent="29" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>movies_id
 regions_id</ColNames>
       <Primary>1</Primary>
@@ -413,6 +425,7 @@ regions_id</ColNames>
       <ColNames>resources_id</ColNames>
     </index>
     <key id="116" parent="30" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>movies_id
 resources_id</ColNames>
       <Primary>1</Primary>
@@ -458,6 +471,7 @@ resources_id</ColNames>
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="125" parent="32" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -472,6 +486,7 @@ resources_id</ColNames>
       <DataType>varchar(255)|0</DataType>
     </column>
     <key id="128" parent="33" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -494,6 +509,7 @@ resources_id</ColNames>
       <DataType>text|0</DataType>
     </column>
     <key id="133" parent="34" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
@@ -521,6 +537,7 @@ resources_id</ColNames>
       <DefaultExpression>&apos;1&apos;</DefaultExpression>
     </column>
     <key id="139" parent="35" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>

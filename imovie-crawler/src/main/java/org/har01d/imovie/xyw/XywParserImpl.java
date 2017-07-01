@@ -109,6 +109,9 @@ public class XywParserImpl implements XywParser {
                 String uri = element.attr("href");
                 if (isResource(uri)) {
                     String title = element.text();
+                    if (title.toUpperCase().contains("SIS001") || title.contains("第一会所") || title.contains("第一會所")) {
+                        continue;
+                    }
                     if (uri.contains("pan.baidu.com")) {
                         title = element.parent().text();
                     }
