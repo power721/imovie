@@ -1,8 +1,8 @@
 package org.har01d.imovie.btapple;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -46,11 +46,17 @@ public class BtaCrawlerImpl implements BtaCrawler {
 
     private void work(int id, String type) {
         int total = 0;
+        int error = 0;
         int page = getPage(type);
         Config full = service.getConfig("bta_crawler_" + type);
         while (true) {
             String url = String.format(baseUrl, type, id, page);
             try {
+                if (error >= 5) {
+                    logger.warn("[BtApple] sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .info a");
@@ -81,7 +87,9 @@ public class BtaCrawlerImpl implements BtaCrawler {
                         } else {
                             service.save(new Source(pageUrl, false));
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[BtApple] Parse page failed: " + pageUrl, e);
                     }
@@ -92,7 +100,8 @@ public class BtaCrawlerImpl implements BtaCrawler {
                 }
                 page++;
                 savePage(type, page);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("[BtApple] Get HTML failed: " + url, e);
             }

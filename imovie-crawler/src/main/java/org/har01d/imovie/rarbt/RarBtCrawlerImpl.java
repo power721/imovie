@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -41,11 +42,17 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
+        int error = 0;
         int page = getPage();
         Config full = service.getConfig("rarbt_crawler");
         while (true) {
             String url = String.format(baseUrl, page);
             try {
+                if (error >= 5) {
+                    logger.warn("sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.ml .item .title");
@@ -80,7 +87,9 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                         } else {
                             service.save(new Source(pageUrl, getSourceTime(element.select(".tt span").text()), false));
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("Parse page failed: " + pageUrl, e);
                     }
@@ -91,7 +100,8 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                 }
                 page++;
                 savePage(page);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }

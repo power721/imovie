@@ -48,11 +48,17 @@ public class XywCrawlerImpl implements XywCrawler {
 
     private void work(String type) {
         int total = 0;
+        int error = 0;
         int page = getPage(type);
         Config full = service.getConfig("xyw_crawler_" + type);
         while (true) {
             String url = baseUrl + "/" + type + "/?page=" + page;
             try {
+                if (error >= 5) {
+                    logger.warn("sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .movie-item .meta h1 a");
@@ -87,7 +93,9 @@ public class XywCrawlerImpl implements XywCrawler {
                         } else {
                             service.save(new Source(pageUrl, false));
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[xyw] Parse page failed: " + pageUrl, e);
                     }
@@ -99,6 +107,7 @@ public class XywCrawlerImpl implements XywCrawler {
                 page++;
                 savePage(type, page);
             } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("[xyw] Get HTML failed: " + url, e);
             }

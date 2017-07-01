@@ -1,10 +1,10 @@
 package org.har01d.imovie.rs05;
 
-import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -41,11 +41,17 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
+        int error = 0;
         int page = getPage();
         Config full = service.getConfig("rs05_crawler");
         while (true) {
             String url = baseUrl + page;
             try {
+                if (error >= 5) {
+                    logger.warn("sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("#movielist li");
@@ -87,7 +93,9 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                             logger.warn("Cannot find movie {} from {}", title, pageUrl);
                             service.publishEvent(pageUrl, "Cannot find movie: " + title);
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("Parse page failed: " + title, e);
                     }
@@ -96,11 +104,8 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 if (full != null && count == 0) {
                     break;
                 }
-            } catch (SocketTimeoutException e) {
-                service.publishEvent(url, e.getMessage());
-                logger.error("Get HTML failed: " + url, e);
-                break;
             } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
             }

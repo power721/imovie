@@ -193,6 +193,7 @@ public class BttCrawlerImpl implements BttCrawler {
                             zero++;
                             service.save(new Source(fixPageUrl(pageUrl), false));
                         }
+                        error = 0;
                     } catch (Exception e) {
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("Parse page failed: " + pageUrl, e);
@@ -200,7 +201,6 @@ public class BttCrawlerImpl implements BttCrawler {
                     }
                 }
 
-                error = 0;
                 if (full != null && count == 0) {
                     break;
                 }

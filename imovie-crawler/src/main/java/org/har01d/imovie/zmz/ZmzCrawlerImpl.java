@@ -1,6 +1,5 @@
 package org.har01d.imovie.zmz;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Config;
@@ -38,11 +37,17 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
+        int error = 0;
         int page = getPage();
         Config full = service.getConfig("zmz_crawler");
         while (true) {
             String url = baseUrl + page;
             try {
+                if (error >= 5) {
+                    logger.warn("sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.resource-showlist ul li .fl-info");
@@ -93,7 +98,9 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                         source.setCompleted(completed);
                         source.setUpdatedTime(new Date());
                         service.save(source);
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[zmz] Parse page failed: " + pageUrl, e);
                     }
@@ -104,7 +111,8 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                 }
                 page++;
                 savePage(page);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("[zmz] Get HTML failed: " + url, e);
             }

@@ -69,7 +69,6 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                 for (Element element : elements) {
                     String pageUrl = siteUrl + element.attr("href");
                     if (service.findSource(pageUrl) != null) {
-                        error = 0;
                         continue;
                     }
 
