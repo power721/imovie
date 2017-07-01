@@ -102,6 +102,11 @@ public class MovieServiceImpl implements MovieService {
                     deleted.add(movie);
                 }
             }
+
+            if (m == null) {
+                continue;
+            }
+
             movieRepository.save(m);
             logger.info("update movie {}: {} Resources: {}", m.getId(), m.getName(), m.getRes().size());
 
@@ -381,7 +386,8 @@ public class MovieServiceImpl implements MovieService {
                 }
             }
 
-            if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null) {
+            if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null && !m
+                .getCategories().isEmpty()) {
                 if (m.getCategories().containsAll(movie.getCategories())) {
                     match++;
                 } else if (movie.getCategories().containsAll(m.getCategories())) {
@@ -461,6 +467,10 @@ public class MovieServiceImpl implements MovieService {
                 maxMatch = match;
                 best = m;
             }
+        }
+
+        if (best != null) {
+            logger.info("find best matched movie {} for {}, match: {}", best.getName(), movie.getName(), maxMatch);
         }
         return best;
     }

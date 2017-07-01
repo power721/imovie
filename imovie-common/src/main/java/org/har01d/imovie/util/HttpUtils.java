@@ -127,6 +127,8 @@ public final class HttpUtils {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity, encoding) : null;
             } else if (status >= 500 && status <= 599) {
+                HttpEntity entity = response.getEntity();
+                LOGGER.debug(EntityUtils.toString(entity, encoding));
                 throw new IOException("Unexpected response status: " + status);
             } else {
                 throw new HttpResponseException(status, "Unexpected response status: " + status);

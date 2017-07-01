@@ -86,7 +86,7 @@ public class DouBanParserImpl implements DouBanParser {
         movie.setCover(getCover(thumb));
         movie.setDbScore(dbScore);
         movie.setDbUrl(url);
-        movie.setSynopsis(StringUtils.truncate(findSynopsis(synopsis), 65530));
+        movie.setSynopsis(StringUtils.truncate(findSynopsis(synopsis), 30000));
 
         Set<String> snapshots = new HashSet<>();
         for (Element element : content.select("#related-pic img")) {

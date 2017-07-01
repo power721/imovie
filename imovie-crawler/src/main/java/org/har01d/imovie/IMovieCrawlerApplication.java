@@ -24,6 +24,7 @@ import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.xyw.XywCrawler;
+import org.har01d.imovie.zmz.ZmzCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -74,6 +75,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private FixCrawler fixCrawler;
+
+    @Autowired
+    private ZmzCrawler zmzCrawler;
 
     @Autowired
     private MovieService service;
@@ -174,6 +178,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                     logger.error("", e);
                 }
             }, 0, 6, TimeUnit.HOURS);
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    zmzCrawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 1, TimeUnit.HOURS);
 
             bttCrawler.crawler();
         }
