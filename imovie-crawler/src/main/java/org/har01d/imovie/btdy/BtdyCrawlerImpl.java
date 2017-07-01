@@ -1,6 +1,6 @@
 package org.har01d.imovie.btdy;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -35,12 +35,18 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        int error = 0;
         int total = 0;
         int page = getPage();
         Config full = service.getConfig("btdy_crawler");
         while (true) {
             String url = String.format(baseUrl, page);
             try {
+                if (error >= 5) {
+                    logger.warn("sleep {} seconds", error * 30L);
+                    TimeUnit.SECONDS.sleep(error * 30L);
+                }
+
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
 
@@ -63,6 +69,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                 for (Element element : elements) {
                     String pageUrl = siteUrl + element.attr("href");
                     if (service.findSource(pageUrl) != null) {
+                        error = 0;
                         continue;
                     }
 
@@ -78,7 +85,9 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                         } else {
                             service.save(new Source(pageUrl, false));
                         }
+                        error = 0;
                     } catch (Exception e) {
+                        error++;
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[btbtdy] Parse page failed: " + pageUrl, e);
                     }
@@ -89,7 +98,8 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                 }
                 page++;
                 savePage(page);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                error++;
                 service.publishEvent(url, e.getMessage());
                 logger.error("[btbtdy] Get HTML failed: " + url, e);
             }
