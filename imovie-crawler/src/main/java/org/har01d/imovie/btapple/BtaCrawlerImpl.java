@@ -1,5 +1,6 @@
 package org.har01d.imovie.btapple;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -70,8 +71,13 @@ public class BtaCrawlerImpl implements BtaCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String pageUrl = siteUrl + element.attr("href");
-                    if (service.findSource(pageUrl) != null) {
-                        continue;
+                    Source source = service.findSource(pageUrl);
+                    if (source != null) {
+                        long time = System.currentTimeMillis();
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
                     }
 
                     Movie movie = new Movie();
@@ -81,12 +87,18 @@ public class BtaCrawlerImpl implements BtaCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             logger.info("[BtApple] {}-{}-{} find movie {}", page, total, count, movie.getName());
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
+                            if (source == null) {
+                                source = new Source(pageUrl, movie.getSourceTime());
+                            }
                             count++;
                             total++;
                         } else {
-                            service.save(new Source(pageUrl, false));
+                            if (source == null) {
+                                source = new Source(pageUrl, false);
+                            }
                         }
+                        source.setUpdatedTime(new Date());
+                        service.save(source);
                         error = 0;
                     } catch (Exception e) {
                         error++;
