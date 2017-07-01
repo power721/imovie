@@ -14,7 +14,7 @@
           <label>搜索</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="search" placeholder="Search...">
-            <i class="circular search link icon"></i>
+            <i class="circular search link icon" @click="search"></i>
           </div>
         </div>
       </div>
@@ -28,11 +28,11 @@
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
-    <div v-for="resource in resources" class="item resource">
+    <div v-for="resource in resources" class="item resource" :data-id="resource.id">
       <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
       <div class="content">
         <div class="header">
-          <a :href="resource.uri" target="_blank" title="点击下载资源">{{ resource.title || resource.uri }}</a>
+          <a :href="resource.uri" target="_blank" :title="'点击下载资源 ' + resource.id">{{ resource.title || resource.uri }}</a>
           <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
             &nbsp;&nbsp;<i class="small external icon"></i>
           </a>

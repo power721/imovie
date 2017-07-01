@@ -74,7 +74,7 @@
           <label>搜索</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="filter" placeholder="Search...">
-            <i class="circular search link icon"></i>
+            <i class="circular search link icon" @click="filter"></i>
           </div>
         </div>
       </div>
