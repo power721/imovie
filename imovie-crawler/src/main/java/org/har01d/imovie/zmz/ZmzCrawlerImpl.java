@@ -80,7 +80,7 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                     }
 
                     Movie movie = new Movie();
-                    if (source.getMovieId() != null) {
+                    if (source != null && source.getMovieId() != null) {
                         movie = service.findById(source.getMovieId());
                     }
 
