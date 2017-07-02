@@ -58,28 +58,32 @@ public class ZmzParserImpl implements ZmzParser {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 
-        getMovie(doc, movie);
-        movie.setImdbUrl(UrlUtils.getImdbUrl(html));
-
         Movie m = null;
-        String imdb = movie.getImdbUrl();
-        if (imdb != null) {
-            m = service.findByImdb(imdb);
-        }
+        if (movie.getId() == null) {
+            getMovie(doc, movie);
+            movie.setImdbUrl(UrlUtils.getImdbUrl(html));
 
-        if (m == null) {
-            m = searchByImdb(movie);
-        }
-
-        if (m == null) {
-            m = searchByName(movie);
-        }
-
-        if (m == null) {
-            String name = getOne(movie.getAliases());
-            if (name != null) {
-                m = searchMovie(movie, name);
+            String imdb = movie.getImdbUrl();
+            if (imdb != null) {
+                m = service.findByImdb(imdb);
             }
+
+            if (m == null) {
+                m = searchByImdb(movie);
+            }
+
+            if (m == null) {
+                m = searchByName(movie);
+            }
+
+            if (m == null) {
+                String name = getOne(movie.getAliases());
+                if (name != null) {
+                    m = searchMovie(movie, name);
+                }
+            }
+        } else {
+            m = movie;
         }
 
         String uri = doc.select("div.view-res-list p a").attr("href");

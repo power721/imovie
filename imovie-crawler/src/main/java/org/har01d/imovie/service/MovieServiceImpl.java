@@ -295,6 +295,12 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional
+    public Movie findById(Integer id) {
+        return movieRepository.findOne(id);
+    }
+
+    @Override
     public Source findSource(String url) {
         return sourceRepository.findFirstByUri(url);
     }

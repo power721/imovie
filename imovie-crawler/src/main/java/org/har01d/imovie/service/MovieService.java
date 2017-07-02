@@ -49,6 +49,8 @@ public interface MovieService {
 
     Movie findByImdb(String url);
 
+    Movie findById(Integer id);
+
     Source findSource(String url);
 
     Config saveConfig(String name, String value);

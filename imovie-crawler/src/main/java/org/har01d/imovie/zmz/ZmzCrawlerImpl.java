@@ -80,6 +80,10 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                     }
 
                     Movie movie = new Movie();
+                    if (source.getMovieId() != null) {
+                        movie = service.findById(source.getMovieId());
+                    }
+
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
@@ -88,6 +92,7 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                             if (source == null) {
                                 source = new Source(pageUrl, getSourceTime(element));
                             }
+                            source.setMovieId(movie.getId());
                             count++;
                             total++;
                         } else {
