@@ -59,11 +59,11 @@ public class FixCrawlerImpl implements FixCrawler {
                     String pageUrl = element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-                        long time = System.currentTimeMillis();
-                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
+//                        long time = System.currentTimeMillis();
+//                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
                             logger.info("skip {}", pageUrl);
                             continue;
-                        }
+//                        }
                     }
 
                     Movie movie = new Movie();
