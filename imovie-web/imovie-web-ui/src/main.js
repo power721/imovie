@@ -14,6 +14,7 @@ import * as filters from './filters'
 
 require('semantic-ui/dist/semantic.css')
 require('semantic-ui/dist/semantic.js')
+require('nprogress/nprogress.css')
 
 Vue.config.productionTip = false
 
@@ -46,6 +47,7 @@ Vue.http.interceptors.push((request, next) => {
 
   next((response) => {
     NProgress.done()
+    NProgress.remove()
   })
 })
 
