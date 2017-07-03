@@ -23,7 +23,7 @@
               <input type="password" name="password" v-model="creds.password" placeholder="Password">
             </div>
           </div>
-          <div class="ui fluid large teal submit button">Login</div>
+          <div class="ui fluid large teal submit button">{{ $t("message.login") }}</div>
         </div>
         <div class="ui error message">
         </div>

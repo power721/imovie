@@ -32,7 +32,7 @@
               <input type="password" name="confirmPassword" v-model="user.confirmPassword" placeholder="Confirm Password">
             </div>
           </div>
-          <div class="ui fluid large teal submit button">Sign up</div>
+          <div class="ui fluid large teal submit button">{{ $t("message.signup") }}</div>
         </div>
         <div class="ui error message">
         </div>

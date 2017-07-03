@@ -97,7 +97,7 @@
       <!--</div>-->
 
       <template v-if="isNotEmpty(movie.res)">
-        <div class="ui horizontal divider">资源</div>
+        <div class="ui horizontal divider">{{ $t("message.resource") }}</div>
         <div class="ui relaxed divided list">
           <div class="item" :data-id="resource.id" v-for="resource in movie.res">
             <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>

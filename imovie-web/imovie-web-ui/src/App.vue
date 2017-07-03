@@ -3,16 +3,16 @@
     <header class="header">
       <div class="ui menu">
         <div class="ui container">
-          <router-link class="item header" to="/" exact>首页</router-link>
-          <router-link class="item" to="/movies">电影</router-link>
-          <router-link class="item" to="/episodes">剧集</router-link>
-          <router-link class="item" to="/resources">资源</router-link>
+          <router-link class="item header" to="/" exact>{{ $t("message.index") }}</router-link>
+          <router-link class="item" to="/movies">{{ $t("message.movie") }}</router-link>
+          <router-link class="item" to="/episodes">{{ $t("message.episode") }}</router-link>
+          <router-link class="item" to="/resources">{{ $t("message.resource") }}</router-link>
           <div class="right menu">
             <div class="item" v-if="!user.authenticated">
-              <router-link to="/login">登录</router-link>
+              <router-link to="/login">{{ $t("message.login") }}</router-link>
             </div>
             <div class="item" v-if="!user.authenticated">
-              <router-link to="/signup">注册</router-link>
+              <router-link to="/signup">{{ $t("message.signup") }}</router-link>
             </div>
             <div class="item" v-if="user.authenticated">
               <router-link :to="'/users/' + user.name">
@@ -20,7 +20,13 @@
               </router-link>
             </div>
             <div class="item" v-if="user.authenticated">
-              <a href="#" @click.prevent="logout">注销</a>
+              <a href="#" @click.prevent="logout">{{ $t("message.logout") }}</a>
+            </div>
+            <div class="item">
+              <select v-model="locale" class="ui compact dropdown" id="locale">
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+              </select>
             </div>
           </div>
         </div>
@@ -37,15 +43,25 @@
 
 <script>
 import auth from '@/services/Auth'
+import storageService from '@/services/StorageService'
+import $ from 'jquery'
 
 export default {
   name: 'app',
   mounted () {
     this.user = auth.user
+    $('#locale').dropdown()
   },
   data () {
     return {
-      user: {}
+      user: {},
+      locale: storageService.getItem('locale') || 'zh'
+    }
+  },
+  watch: {
+    locale (val) {
+      this.$i18n.locale = val
+      storageService.setItem('locale', val)
     }
   },
   methods: {

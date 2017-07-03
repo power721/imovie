@@ -11,7 +11,7 @@
     <div class="ui form">
       <div class="inline fields">
         <div class="field">
-          <label>搜索</label>
+          <label>{{ $t("message.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="search" placeholder="Search...">
             <i class="circular search link icon" @click="search"></i>

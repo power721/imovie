@@ -10,7 +10,7 @@
 
     <div class="ui form">
       <div class="inline fields">
-        <label>排序</label>
+        <label>{{ $t("message.sort") }}</label>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
@@ -43,7 +43,7 @@
         </div>
 
         <div class="field">
-          <label>类型</label>
+          <label>{{ $t("message.category") }}</label>
           <select class="ui dropdown" v-model="category" @change="filter">
             <option value="all">默认</option>
             <option value="剧情">剧情</option>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="field">
-          <label>搜索</label>
+          <label>{{ $t("message.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="filter" placeholder="Search...">
             <i class="circular search link icon" @click="filter"></i>

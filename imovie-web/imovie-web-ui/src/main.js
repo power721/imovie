@@ -3,9 +3,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import VueI18n from 'vue-i18n'
 import NProgress from 'nprogress'
 import App from './App'
 import auth from './services/Auth'
+import storageService from './services/StorageService'
+import messages from './services/messages'
 import router from './router'
 import * as filters from './filters'
 
@@ -16,6 +19,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueRouter)
 Vue.use(VueResource)
+Vue.use(VueI18n)
 
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
@@ -47,10 +51,17 @@ Vue.http.interceptors.push((request, next) => {
 
 auth.checkAuth()
 
+const i18n = new VueI18n({
+  locale: storageService.getItem('locale') || 'en',
+  fallbackLocale: 'en',
+  messages
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  i18n,
   template: '<App/>',
   components: {App}
 })
