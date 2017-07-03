@@ -3,7 +3,18 @@ server:
   contextPath:
 
 security:
-  ignored: /**
+  oauth2:
+    client:
+      client-id: client
+      client-secret: secret
+    resource:
+      id: sbo
+    authorization:
+      checkTokenAccess: isAuthenticated()
+      jwt:
+        key-store: classpath:jwt.jks
+        password: changeme
+        alias: auth
 
 spring:
 # JACKSON

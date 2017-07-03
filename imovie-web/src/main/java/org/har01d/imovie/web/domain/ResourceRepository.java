@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     @RestResource(path = "search", rel = "search")
-    Page<Resource> findByTitleContainingOrUriContaining(@Param("text") String text1, @Param("text") String text2, Pageable pageable);
+    Page<Resource> findByTitleContainingOrUriContaining(@Param("text") String text1, @Param("text") String text2,
+        Pageable pageable);
 
 }

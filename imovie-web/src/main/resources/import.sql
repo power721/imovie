@@ -1,0 +1,2 @@
+INSERT INTO imovies.account (id, credentials_expired, enabled, expired, locked, password, role, username) VALUES
+  (1, FALSE, TRUE, FALSE, FALSE, '$2a$10$zW5ptJuqfPqafCupwG1j9.r8X79hdRAuBneVB5sb77VBD3SN/Kj9G', 'ROLE_ADMIN', 'admin');

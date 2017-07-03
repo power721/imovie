@@ -15,8 +15,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @SpringBootApplication
+@EnableAuthorizationServer
+@EnableResourceServer
 public class IMovieWebApplication {
 
     public static void main(String[] args) {
@@ -33,6 +37,7 @@ public class IMovieWebApplication {
 
     @Configuration
     public class MyRepositoryRestConfiguration extends RepositoryRestConfigurerAdapter {
+
         @Override
         public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
             config
