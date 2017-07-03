@@ -47,7 +47,6 @@ Vue.http.interceptors.push((request, next) => {
 
   next((response) => {
     NProgress.done()
-    NProgress.remove()
   })
 })
 
