@@ -7,6 +7,22 @@
           <router-link class="item" to="/movies">电影</router-link>
           <router-link class="item" to="/episodes">剧集</router-link>
           <router-link class="item" to="/resources">资源</router-link>
+          <div class="right menu">
+            <div class="item" v-if="!user.authenticated">
+              <router-link to="/login">登录</router-link>
+            </div>
+            <div class="item" v-if="!user.authenticated">
+              <router-link to="/signup">注册</router-link>
+            </div>
+            <div class="item" v-if="user.authenticated">
+              <router-link :to="'/users/' + user.name">
+                {{ user.name }}
+              </router-link>
+            </div>
+            <div class="item" v-if="user.authenticated">
+              <a href="#" @click.prevent="logout">注销</a>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -20,8 +36,23 @@
 </template>
 
 <script>
+import auth from '@/services/Auth'
+
 export default {
-  name: 'app'
+  name: 'app',
+  mounted () {
+    this.user = auth.user
+  },
+  data () {
+    return {
+      user: {}
+    }
+  },
+  methods: {
+    logout () {
+      auth.logout()
+    }
+  }
 }
 </script>
 

@@ -13,5 +13,12 @@ export default {
     } else {
       return this.data[key]
     }
+  },
+  removeItem (key) {
+    if (typeof Storage !== 'undefined') {
+      localStorage.removeItem(key)
+    } else {
+      delete this.data[key]
+    }
   }
 }
