@@ -2,10 +2,10 @@ package org.har01d.imovie.zmz;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ZmzCrawlerImpl implements ZmzCrawler {
+public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(ZmzCrawler.class);
 
@@ -31,15 +31,12 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
     @Autowired
     private ZmzParser parser;
 
-    @Autowired
-    private MovieService service;
-
     @Override
     public void crawler() throws InterruptedException {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config full = service.getConfig("zmz_crawler");
+        Config crawler = service.getConfig("zmz_crawler");
         while (true) {
             String url = baseUrl + page;
             try {
@@ -52,7 +49,7 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.resource-showlist ul li .fl-info");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("zmz_crawler", "full");
+                    crawler = service.saveConfig("zmz_crawler", String.valueOf(System.currentTimeMillis()));
                     page = 1;
                     continue;
                 }
@@ -111,7 +108,7 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -123,22 +120,14 @@ public class ZmzCrawlerImpl implements ZmzCrawler {
             }
         }
 
+        updateCrawlerTime(crawler);
         savePage(1);
         logger.info("[zmz] ===== get {} movies =====", total);
     }
 
-    private int getPage() {
-        String key = "zmz_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("zmz_page", String.valueOf(page));
+    @Override
+    protected String getPageKey() {
+        return "zmz_page";
     }
 
     private Date getSourceTime(Element element) {

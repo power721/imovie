@@ -267,6 +267,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Config save(Config config) {
+        return configRepository.save(config);
+
+    }
+    @Override
     public void delete(Explorer explorer) {
         explorerRepository.delete(explorer);
     }

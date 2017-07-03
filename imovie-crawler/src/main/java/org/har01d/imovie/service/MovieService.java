@@ -39,6 +39,8 @@ public interface MovieService {
 
     Explorer save(Explorer explorer);
 
+    Config save(Config config);
+
     void delete(Explorer explorer);
 
     Page<Explorer> findExplorers(String type, Pageable pageable);
