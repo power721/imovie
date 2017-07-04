@@ -1,5 +1,5 @@
 <template>
-  <div class="ui container divided items" id="resources">
+  <div class="ui container" id="resources">
     <div class="ui hidden divider"></div>
     <div class="ui active dimmer" v-if="loading">
       <div class="ui loader"></div>
@@ -11,7 +11,7 @@
     <div class="ui form">
       <div class="inline fields">
         <div class="field">
-          <label>{{ $t("message.search") }}</label>
+          <label>{{ $t("token.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="search" placeholder="Search...">
             <i class="circular search link icon" @click="search"></i>
@@ -28,19 +28,21 @@
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
-    <div v-for="resource in resources" class="item resource" :data-id="resource.id">
-      <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
-      <div class="content">
-        <div class="header">
-          <a :href="resource.uri" target="_blank" :title="'点击下载资源 ' + resource.id">{{ resource.title || resource.uri }}</a>
-          <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
-            &nbsp;&nbsp;<i class="small external icon"></i>
-          </a>
-        </div>
-        <div class="extra" v-if="resource._embedded && resource._embedded.movies">
-          <router-link :to="'/movies/' + movie.id" v-for="movie in resource._embedded.movies" class="ui right floated">
-            {{ movie.title }}
-          </router-link>
+    <div class="ui divided items resource-list">
+      <div v-for="resource in resources" class="item resource" :data-id="resource.id">
+        <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
+        <div class="content">
+          <div class="header">
+            <a :href="resource.uri" target="_blank" :title="'点击下载资源 ' + resource.id">{{ resource.title || resource.uri }}</a>
+            <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
+              &nbsp;&nbsp;<i class="small external icon"></i>
+            </a>
+          </div>
+          <div class="extra" v-if="resource._embedded && resource._embedded.movies">
+            <router-link :to="'/movies/' + movie.id" v-for="movie in resource._embedded.movies" class="ui right floated">
+              {{ movie.title }}
+            </router-link>
+          </div>
         </div>
       </div>
     </div>

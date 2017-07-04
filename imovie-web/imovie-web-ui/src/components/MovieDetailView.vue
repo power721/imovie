@@ -13,73 +13,73 @@
       <div class="ui items">
         <div class="item" v-if="isNotEmpty(movie._embedded.directors)">
           <div class="content">
-            <div class="header">导演</div>
+            <div class="header">{{ $tc("token.director", movie._embedded.directors.length) }}</div>
             <div class="description">{{ movie._embedded.directors | join }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie._embedded.editors)">
           <div class="content">
-            <div class="header">编剧</div>
+            <div class="header">{{ $tc("token.editor", movie._embedded.editors.length) }}</div>
             <div class="description">{{ movie._embedded.editors | join }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie._embedded.actors)">
           <div class="content">
-            <div class="header">主演</div>
+            <div class="header">{{ $tc("token.actor", movie._embedded.actors.length) }}</div>
             <div class="description">{{ movie._embedded.actors | join }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie._embedded.categories)">
           <div class="content">
-            <div class="header">类型</div>
+            <div class="header">{{ $tc("token.category", movie._embedded.categories.length) }}</div>
             <div class="description">{{ movie._embedded.categories | join }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie._embedded.regions)">
           <div class="content">
-            <div class="header">制片国家/地区</div>
+            <div class="header">{{ $tc("token.region", movie._embedded.regions.length) }}</div>
             <div class="description">{{ movie._embedded.regions | join }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie._embedded.languages)">
           <div class="content">
-            <div class="header">语言</div>
+            <div class="header">{{ $tc("token.language", movie._embedded.languages.length) }}</div>
             <div class="description">{{ movie._embedded.languages | join }}</div>
           </div>
         </div>
         <div class="item" v-if="movie.releaseDate">
           <div class="content">
-            <div class="header">上映日期</div>
+            <div class="header">{{ $t("token.releaseDate") }}</div>
             <div class="description">{{ movie.releaseDate }}</div>
           </div>
         </div>
         <div class="item" v-if="movie.runningTime">
           <div class="content">
-            <div class="header">片长</div>
+            <div class="header">{{ $t("token.runningTime") }}</div>
             <div class="description">{{ movie.runningTime }}</div>
           </div>
         </div>
         <div class="item" v-if="movie.episode">
           <div class="content">
-            <div class="header">集数</div>
+            <div class="header">{{ $t("token.episode") }}</div>
             <div class="description">{{ movie.episode }}</div>
           </div>
         </div>
         <div class="item" v-if="isNotEmpty(movie.aliases)">
           <div class="content">
-            <div class="header">又名</div>
+            <div class="header">{{ $tc("token.alias", movie.aliases.length) }}</div>
             <div class="description">{{ movie.aliases | join }}</div>
           </div>
         </div>
         <div class="item">
           <div class="content">
-            <div class="header">豆瓣评分</div>
+            <div class="header">{{ $t("token.dbScore") }}</div>
             <div class="description"><a :href="movie.dbUrl" target="_blank">{{ movie.dbScore || '0.0' }}</a></div>
           </div>
         </div>
         <div class="item" v-if="movie.imdbUrl">
           <div class="content">
-            <div class="header">IMDb评分</div>
+            <div class="header">{{ $t("token.imdbScore") }}</div>
             <div class="description"><a :href="movie.imdbUrl" target="_blank">{{ movie.imdbScore || '0.0' }}</a>
             </div>
           </div>
@@ -87,8 +87,8 @@
       </div>
 
       <div class="ui message">
-        <div class="header">剧情简介</div>
-        <p>{{ movie.synopsis || '暂无介绍' }}</p>
+        <div class="header">{{ $t("token.synopsis") }}</div>
+        <p>{{ movie.synopsis || $t("message.noIntro") }}</p>
       </div>
 
       <!--<div class="ui horizontal divider">剧照</div>-->
@@ -97,7 +97,7 @@
       <!--</div>-->
 
       <template v-if="isNotEmpty(movie.res)">
-        <div class="ui horizontal divider">{{ $t("message.resource") }}</div>
+        <div class="ui horizontal divider">{{ $tc("token.resource", movie.res.length) }}</div>
         <div class="ui relaxed divided list">
           <div class="item" :data-id="resource.id" v-for="resource in movie.res">
             <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>

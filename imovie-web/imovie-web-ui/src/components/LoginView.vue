@@ -23,7 +23,7 @@
               <input type="password" name="password" v-model="creds.password" placeholder="Password">
             </div>
           </div>
-          <div class="ui fluid large teal submit button">{{ $t("message.login") }}</div>
+          <div class="ui fluid large teal submit button">{{ $t("token.login") }}</div>
         </div>
         <div class="ui error message">
         </div>
@@ -33,7 +33,7 @@
         Or
       </div>
       <div class="ui message">
-        New to us? <router-link to="/signup">Signup</router-link>
+        New to us? <router-link to="/signup">{{ $t("token.signup") }}</router-link>
       </div>
     </div>
   </div>

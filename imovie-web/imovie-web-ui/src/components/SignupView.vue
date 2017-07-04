@@ -32,7 +32,7 @@
               <input type="password" name="confirmPassword" v-model="user.confirmPassword" placeholder="Confirm Password">
             </div>
           </div>
-          <div class="ui fluid large teal submit button">{{ $t("message.signup") }}</div>
+          <div class="ui fluid large teal submit button">{{ $t("token.signup") }}</div>
         </div>
         <div class="ui error message">
         </div>
@@ -42,7 +42,7 @@
         Or
       </div>
       <div class="ui message">
-        Have an account? <router-link to="/login">Login</router-link>
+        Have an account? <router-link to="/login">{{ $t("token.login") }}</router-link>
       </div>
     </div>
   </div>

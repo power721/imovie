@@ -3,16 +3,16 @@
     <header class="header">
       <div class="ui menu">
         <div class="ui container">
-          <router-link class="item header" to="/" exact>{{ $t("message.index") }}</router-link>
-          <router-link class="item" to="/movies">{{ $t("message.movie") }}</router-link>
-          <router-link class="item" to="/episodes">{{ $t("message.episode") }}</router-link>
-          <router-link class="item" to="/resources">{{ $t("message.resource") }}</router-link>
+          <router-link class="item header" to="/" exact>{{ $t("token.index") }}</router-link>
+          <router-link class="item" to="/movies">{{ $tc("token.movie", 5) }}</router-link>
+          <router-link class="item" to="/episodes">{{ $t("token.episodes") }}</router-link>
+          <router-link class="item" to="/resources">{{ $tc("token.resource", 5) }}</router-link>
           <div class="right menu">
             <div class="item" v-if="!user.authenticated">
-              <router-link to="/login">{{ $t("message.login") }}</router-link>
+              <router-link to="/login">{{ $t("token.login") }}</router-link>
             </div>
             <div class="item" v-if="!user.authenticated">
-              <router-link to="/signup">{{ $t("message.signup") }}</router-link>
+              <router-link to="/signup">{{ $t("token.signup") }}</router-link>
             </div>
             <div class="item" v-if="user.authenticated">
               <router-link :to="'/users/' + user.name">
@@ -20,7 +20,7 @@
               </router-link>
             </div>
             <div class="item" v-if="user.authenticated">
-              <a href="#" @click.prevent="logout">{{ $t("message.logout") }}</a>
+              <a href="#" @click.prevent="logout">{{ $t("token.logout") }}</a>
             </div>
             <div class="item">
               <select v-model="locale" class="ui compact dropdown" id="locale">

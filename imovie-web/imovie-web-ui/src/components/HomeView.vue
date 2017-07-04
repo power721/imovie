@@ -1,5 +1,5 @@
 <template>
-  <div class="ui container divided items" id="movies">
+  <div class="ui container" id="movies">
     <div class="ui hidden divider"></div>
     <div class="ui active dimmer" v-if="loading">
       <div class="ui loader"></div>
@@ -10,41 +10,41 @@
 
     <div class="ui form">
       <div class="inline fields">
-        <label>{{ $t("message.sort") }}</label>
+        <label>{{ $t("token.sort") }}</label>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
-            <label>添加时间</label>
+            <label>{{ $t("token.createdTime") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="filter">
-            <label>更新时间</label>
+            <label>{{ $t("token.updatedTime") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="filter">
-            <label>上映时间</label>
+            <label>{{ $t("token.releaseDate") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
-            <label>豆瓣评分</label>
+            <label>{{ $t("token.dbScore") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
             <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="filter">
-            <label>IMDB评分</label>
+            <label>{{ $t("token.imdbScore") }}</label>
           </div>
         </div>
 
         <div class="field">
-          <label>{{ $t("message.category") }}</label>
-          <select class="ui dropdown" v-model="category" @change="filter">
+          <label>{{ $t("token.category") }}</label>
+          <select class="ui dropdown" id="category" v-model="category" @change="filter">
             <option value="all">默认</option>
             <option value="剧情">剧情</option>
             <option value="爱情">爱情</option>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="field">
-          <label>{{ $t("message.search") }}</label>
+          <label>{{ $t("token.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="filter" placeholder="Search...">
             <i class="circular search link icon" @click="filter"></i>
@@ -88,29 +88,31 @@
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
-    <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
-      <router-link :to="getLink(movie)" class="ui small image">
-        <img :src="movie.thumb">
-      </router-link>
-      <div class="content">
-        <router-link :to="getLink(movie)" class="header">
-          {{ movie.title }}
+    <div class="ui divided items movie-list">
+      <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
+        <router-link :to="getLink(movie)" class="ui small image">
+          <img :src="movie.thumb">
         </router-link>
-        <div class="ui blue circular label" v-if="movie.episode">
-          {{ movie.episode }}
-        </div>
-        <div class="ui label" v-if="movie.resourcesSize">
-          {{ movie.resourcesSize }}
-        </div>
-        <div class="description">
-          <p>{{ movie.synopsis || '暂无介绍' | truncate }}</p>
-        </div>
-        <div class="extra">
-          <div>
-            <span class="date">{{ movie.createdTime | date }}</span>
-            <span class="category">{{ movie.categories | join }}</span>
-            <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB：{{ movie.imdbScore || '0.0' }}</a>
-            <a :href="movie.dbUrl" target="_blank" class="dou">豆瓣：{{ movie.dbScore || '0.0' }}</a>
+        <div class="content">
+          <router-link :to="getLink(movie)" class="header">
+            {{ movie.title }}
+          </router-link>
+          <div class="ui blue circular label" v-if="movie.episode">
+            {{ movie.episode }}
+          </div>
+          <div class="ui label" v-if="movie.resourcesSize">
+            {{ movie.resourcesSize }}
+          </div>
+          <div class="description">
+            <p>{{ movie.synopsis || $t("message.noIntro") | truncate }}</p>
+          </div>
+          <div class="extra">
+            <div>
+              <span class="date">{{ movie.createdTime | date }}</span>
+              <span class="category">{{ movie.categories | join }}</span>
+              <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB：{{ movie.imdbScore || '0.0' }}</a>
+              <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}：{{ movie.dbScore || '0.0' }}</a>
+            </div>
           </div>
         </div>
       </div>
@@ -125,7 +127,7 @@
   </div>
 </template>
 <style>
-  #movies>.movie>.content>.description {
+  #movies>.movie-list>.movie>.content>.description {
     min-height: 150px;
     text-align: left;
   }
