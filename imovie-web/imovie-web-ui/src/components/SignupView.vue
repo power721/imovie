@@ -93,10 +93,10 @@ export default {
           password: {
             rules: [
               {
-                type: 'minLength[6]'
+                type: 'minLength[8]'
               },
               {
-                type: 'regExp[/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,}$/]',
+                type: 'regExp[/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/]',
                 prompt: 'Password must contain 1 letter, 1 digital, 1 special char'
               }
             ]
@@ -118,7 +118,7 @@ export default {
         } else {
           var errors = {}
           data.errors.forEach(entry => {
-            errors[entry.field] = entry.field + ' ' + entry.error
+            errors[entry.field] = entry.error || entry.defaultMessage
             $('#signup-form').form('add prompt', entry.field)
           })
           $('#signup-form').form('add errors', errors)

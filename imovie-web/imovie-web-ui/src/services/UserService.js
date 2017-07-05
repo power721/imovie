@@ -16,7 +16,7 @@ export default {
   },
 
   signup (userInfo, cb) {
-    Vue.http.post('/users', userInfo)
+    Vue.http.post('/api/users/signup', userInfo)
     .then(({data}) => {
       if (cb) cb(true, data)
     }, ({data}) => {
