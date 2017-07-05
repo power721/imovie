@@ -1,6 +1,7 @@
 package org.har01d.imovie.web;
 
 import org.har01d.imovie.web.domain.Category;
+import org.har01d.imovie.web.domain.Config;
 import org.har01d.imovie.web.domain.Language;
 import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.Person;
@@ -41,7 +42,8 @@ public class IMovieWebApplication {
         @Override
         public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
             config
-                .exposeIdsFor(Movie.class, Category.class, Language.class, Person.class, Region.class, Resource.class);
+                .exposeIdsFor(Movie.class, Category.class, Language.class, Person.class, Region.class, Resource.class,
+                    Config.class);
         }
     }
 

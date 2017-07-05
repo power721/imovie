@@ -8,7 +8,10 @@ export default {
   user: {
     name: '',
     authorities: [],
-    authenticated: false
+    authenticated: false,
+    isAdmin: function () {
+      return this.authenticated && this.authorities.length === 1 && this.authorities[0] === 'ROLE_ADMIN'
+    }
   },
 
   loggedIn () {

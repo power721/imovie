@@ -7,6 +7,7 @@
           <router-link class="item" to="/movies">{{ $tc("token.movie", 5) }}</router-link>
           <router-link class="item" to="/episodes">{{ $t("token.episodes") }}</router-link>
           <router-link class="item" to="/resources">{{ $tc("token.resource", 5) }}</router-link>
+          <router-link class="item" to="/configs" v-if="user.isAdmin()">{{ $tc("token.config", 5) }}</router-link>
           <div class="right menu">
             <div class="item" v-if="!user.authenticated">
               <router-link to="/login">{{ $t("token.login") }}</router-link>
