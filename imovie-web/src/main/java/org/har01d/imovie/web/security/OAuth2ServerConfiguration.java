@@ -42,7 +42,8 @@ public class OAuth2ServerConfiguration extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         // @formatter:off
         http.authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/users/signup").anonymous()
+            .antMatchers(HttpMethod.POST, "/api/users/account").anonymous()
+            .antMatchers(HttpMethod.PUT, "/api/users/account").fullyAuthenticated()
             .antMatchers(HttpMethod.POST, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")
             .antMatchers(HttpMethod.PUT, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")
             .antMatchers(HttpMethod.DELETE, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")

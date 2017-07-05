@@ -13,11 +13,11 @@ import javax.validation.Payload;
 
 @Target({TYPE, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = {UniqueEmailValidator.class, ChangeEmailValidator.class})
+@Constraint(validatedBy = ValidPasswordValidator.class)
 @Documented
-public @interface UniqueEmail {
+public @interface ValidPassword {
 
-    String message() default "{validation.constraints.UniqueEmail.message}";
+    String message() default "{validation.constraints.ValidPassword.message}";
 
     Class<?>[] groups() default {};
 
