@@ -8,10 +8,8 @@ export default {
   user: {
     name: '',
     authorities: [],
-    authenticated: false,
-    isAdmin: function () {
-      return this.authenticated && this.authorities.length === 1 && this.authorities[0] === 'ROLE_ADMIN'
-    }
+    isAdmin: false,
+    authenticated: false
   },
 
   loggedIn () {
@@ -47,12 +45,14 @@ export default {
     if (Date.now() >= data.exp * 1000) {
       this.user.name = ''
       this.user.authorities = []
+      this.user.isAdmin = false
       this.user.authenticated = false
       storageService.removeItem('jwt-token')
       console.log('access token expired')
     } else {
       this.user.name = data.user_name
       this.user.authorities = data.authorities
+      this.user.isAdmin = data.authorities.length === 1 && data.authorities[0] === 'ROLE_ADMIN'
       this.user.authenticated = true
     }
   },
@@ -67,6 +67,7 @@ export default {
     if (this.user.authenticated && token) {
       this.user.name = ''
       this.user.authorities = []
+      this.user.isAdmin = false
       this.user.authenticated = false
 
       storageService.removeItem('jwt-token')
