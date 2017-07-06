@@ -60,7 +60,7 @@ import userService from '@/services/UserService'
 import $ from 'jquery'
 
 export default {
-  name: 'EditUserView',
+  name: 'UserView',
   data () {
     return {
       loading: false,

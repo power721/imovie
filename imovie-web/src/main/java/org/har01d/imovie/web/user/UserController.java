@@ -44,7 +44,7 @@ public class UserController {
         return userRepository.findByUsername(name);
     }
 
-    @PostMapping("/users/account")
+    @PostMapping("/users")
     public @ResponseBody User signup(@Valid @RequestBody AccountDTO accountDTO) {
         User user = new User();
         user.setUsername(accountDTO.getUsername());
@@ -54,7 +54,7 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    @PutMapping("/users/account")
+    @PutMapping("/users")
     public @ResponseBody User updateAccount(@Valid @RequestBody UserDTO userDTO, Principal principal) {
         User user = userRepository.findByUsername(principal.getName());
 
