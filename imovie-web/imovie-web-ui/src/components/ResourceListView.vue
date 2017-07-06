@@ -39,7 +39,7 @@
             </a>
           </div>
           <div class="extra" v-if="resource._embedded && resource._embedded.movies">
-            <router-link :to="'/movies/' + movie.id" v-for="movie in resource._embedded.movies" class="ui right floated">
+            <router-link :to="getLink(movie)" v-for="movie in resource._embedded.movies" class="ui right floated">
               {{ movie.title }}
             </router-link>
           </div>
@@ -177,6 +177,13 @@ export default {
       if (page !== this.currentPage && (page >= 0 && page < this.pagination.totalPages)) {
         this.currentPage = page
         this.loadData()
+      }
+    },
+    getLink: function (movie) {
+      if (movie.episode) {
+        return '/episodes/' + movie.id
+      } else {
+        return '/movies/' + movie.id
       }
     }
   }
