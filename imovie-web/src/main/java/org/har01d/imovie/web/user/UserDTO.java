@@ -12,14 +12,13 @@ import org.hibernate.validator.constraints.NotBlank;
  * for user update
  */
 @UniqueEmail(message = "Email already exists")
-@ValidPassword
+@ValidPassword(message = "Password is invalid")
 @Data
 public class UserDTO {
 
     @NotBlank
     private String oldPassword;
 
-    @Size(min = 8, max = 255)
     private String password;
 
     @NotBlank

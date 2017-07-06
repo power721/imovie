@@ -3,11 +3,11 @@ import Vue from 'vue'
 
 export default {
   getAll () {
-    return Vue.http.get('/users')
+    return Vue.http.get('/api/users')
   },
 
   getUser (username, cb) {
-    return Vue.http.get('/users/' + username)
+    return Vue.http.get('/api/users/' + username)
     .then(({data}) => {
       if (cb) cb(true, data)
     }, ({data}) => {

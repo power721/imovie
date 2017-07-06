@@ -26,7 +26,8 @@ export default {
       runningTime: 'Running Time',
       episode: 'Episode',
       alias: 'Alias | Aliases',
-      synopsis: 'Synopsis'
+      synopsis: 'Synopsis',
+      update: 'Update'
     },
     message: {
       noIntro: 'No details.',
@@ -60,7 +61,8 @@ export default {
       runningTime: '片长',
       episode: '集数',
       alias: '又名',
-      synopsis: '剧情简介'
+      synopsis: '剧情简介',
+      update: '更新'
     },
     message: {
       noIntro: '暂无介绍',

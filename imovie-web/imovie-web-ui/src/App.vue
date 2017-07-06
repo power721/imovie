@@ -16,7 +16,7 @@
               <router-link to="/signup">{{ $t("token.signup") }}</router-link>
             </div>
             <div class="item" v-if="user.authenticated">
-              <router-link :to="'/users/' + user.name">
+              <router-link to="/users/edit">
                 {{ user.name }}
               </router-link>
             </div>

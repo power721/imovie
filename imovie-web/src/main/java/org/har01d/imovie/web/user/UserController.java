@@ -9,7 +9,9 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +37,11 @@ public class UserController {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.validator = validator;
+    }
+
+    @GetMapping("/users/{name}")
+    public @ResponseBody User getUser(@PathVariable String name) {
+        return userRepository.findByUsername(name);
     }
 
     @PostMapping("/users/account")
