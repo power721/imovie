@@ -16,5 +16,17 @@ export default {
         cb(false, data)
       }
     })
+  },
+  deleteResource (id, cb) {
+    return Vue.http.delete('/api/resources/' + id)
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
   }
 }

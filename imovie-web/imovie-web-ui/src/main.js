@@ -52,6 +52,18 @@ Vue.http.interceptors.push((request, next) => {
 
 auth.checkAuth()
 
+const shared = {
+  user: auth.user
+}
+shared.install = function () {
+  Object.defineProperty(Vue.prototype, '$auth', {
+    get () {
+      return shared
+    }
+  })
+}
+Vue.use(shared)
+
 const i18n = new VueI18n({
   locale: storageService.getItem('locale') || 'en',
   fallbackLocale: 'en',

@@ -43,25 +43,25 @@ public class Movie {
 
     private String cover;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Resource> resources;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Category> categories;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> aliases = new LinkedHashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> directors;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> editors;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> actors;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Language> languages;
 
     @ElementCollection(fetch = FetchType.EAGER)

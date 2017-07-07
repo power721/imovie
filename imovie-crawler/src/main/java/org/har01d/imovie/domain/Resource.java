@@ -1,6 +1,7 @@
 package org.har01d.imovie.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,13 +22,12 @@ public class Resource {
     @Column(columnDefinition = "TEXT")
     private String uri;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String original;
 
     private String title;
 
-    @ManyToMany(mappedBy = "resources", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "resources", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> movies;
 
     public Resource() {

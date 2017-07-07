@@ -1,6 +1,7 @@
 package org.har01d.imovie.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +19,7 @@ public class Language {
     @NotNull
     private String name;
 
-    @ManyToMany(mappedBy = "languages")
+    @ManyToMany(mappedBy = "languages", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> movies;
 
     public Language() {

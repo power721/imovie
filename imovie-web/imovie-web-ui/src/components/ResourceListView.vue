@@ -37,6 +37,7 @@
             <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
               &nbsp;&nbsp;<i class="small external icon"></i>
             </a>
+            <a v-if="$auth.user.isAdmin" @click="deleteResource(resource.id)"><i class="small red remove icon"></i></a>
           </div>
           <div class="extra" v-if="resource._embedded && resource._embedded.movies">
             <router-link :to="getLink(movie)" v-for="movie in resource._embedded.movies" class="ui right floated">
@@ -66,6 +67,7 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
+import $ from 'jquery'
 
 export default {
   name: 'ResourceListView',
@@ -185,6 +187,15 @@ export default {
       } else {
         return '/movies/' + movie.id
       }
+    },
+    deleteResource: function (id) {
+      resourceService.deleteResource(id, (success, data) => {
+        if (success) {
+          $('div[data-id=' + id + ']').remove()
+        } else {
+          console.log('delete ' + id + ' failed: ' + data)
+        }
+      })
     }
   }
 }

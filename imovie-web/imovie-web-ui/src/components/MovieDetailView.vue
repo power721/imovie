@@ -107,6 +107,7 @@
                 <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
                   &nbsp;&nbsp;<i class="small external icon"></i>
                 </a>
+                <a v-if="$auth.user.isAdmin" @click="deleteResource(resource.id)"><i class="small red remove icon"></i></a>
               </div>
             </div>
           </div>
@@ -124,6 +125,8 @@
 </style>
 <script>
 import movieService from '@/services/MovieService'
+import resourceService from '@/services/ResourceService'
+import $ from 'jquery'
 
 export default {
   name: 'MovieDetail',
@@ -170,6 +173,15 @@ export default {
     },
     isNotEmpty (array) {
       return typeof array !== 'undefined' && array !== null && array.length !== null && array.length > 0
+    },
+    deleteResource: function (id) {
+      resourceService.deleteResource(id, (success, data) => {
+        if (success) {
+          $('div[data-id=' + id + ']').remove()
+        } else {
+          console.log('delete ' + id + ' failed: ' + data)
+        }
+      })
     }
   }
 }

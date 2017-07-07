@@ -1,6 +1,7 @@
 package org.har01d.imovie.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,13 +19,13 @@ public class Person {
     @NotNull
     private String name;
 
-    @ManyToMany(mappedBy = "directors")
+    @ManyToMany(mappedBy = "directors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> directMovies;
 
-    @ManyToMany(mappedBy = "editors")
+    @ManyToMany(mappedBy = "editors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> editMovies;
 
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "actors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> actMovies;
 
     public Person() {

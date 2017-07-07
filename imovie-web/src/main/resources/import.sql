@@ -1,1 +1,1 @@
-INSERT INTO imovies.user (id, credentials_expired, enabled, expired, locked, password, role, username, email) VALUES (1, false, true, false, false, '$2a$10$zW5ptJuqfPqafCupwG1j9.r8X79hdRAuBneVB5sb77VBD3SN/Kj9G', 'ROLE_ADMIN', 'admin', 'admin@admin.local');
+INSERT INTO user (id, credentials_expired, enabled, expired, locked, password, role, username, email) VALUES (1, false, true, false, false, '$2a$10$zW5ptJuqfPqafCupwG1j9.r8X79hdRAuBneVB5sb77VBD3SN/Kj9G', 'ROLE_ADMIN', 'admin', 'admin@admin.local');

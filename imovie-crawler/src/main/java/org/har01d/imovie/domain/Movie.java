@@ -42,25 +42,25 @@ public class Movie {
 
     private String cover;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Resource> resources = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Category> categories;
 
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> aliases = new LinkedHashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> directors;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> editors;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> actors;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Language> languages;
 
     @ElementCollection(fetch = FetchType.LAZY)

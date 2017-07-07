@@ -1,6 +1,7 @@
 package org.har01d.imovie.web.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ public class Resource {
 
     private String title;
 
-    @ManyToMany(mappedBy = "resources")
+    @ManyToMany(mappedBy = "resources", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> movies;
 
     public Resource() {
@@ -85,25 +86,6 @@ public class Resource {
 
     public void setMovies(List<Movie> movies) {
         this.movies = movies;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Resource resource = (Resource) o;
-
-        return uri.equals(resource.uri);
-    }
-
-    @Override
-    public int hashCode() {
-        return uri.hashCode();
     }
 
     @Override
