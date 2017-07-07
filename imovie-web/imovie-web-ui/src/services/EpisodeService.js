@@ -25,5 +25,18 @@ export default {
         cb(false, data)
       }
     })
+  },
+
+  deleteMovie (id, cb) {
+    return Vue.http.delete('/api/movies/' + id)
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
   }
 }

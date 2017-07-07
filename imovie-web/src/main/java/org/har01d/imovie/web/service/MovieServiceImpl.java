@@ -1,5 +1,6 @@
 package org.har01d.imovie.web.service;
 
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
@@ -29,6 +30,19 @@ public class MovieServiceImpl implements MovieService {
 
         resourceRepository.delete(resource);
         log.info("delete resource {}: {}", id, resource.getTitle());
+    }
+
+    @Override
+    public void deleteMovie(Integer id) {
+        Movie movie = movieRepository.getOne(id);
+        movie.setActors(Collections.emptySet());
+        movie.setEditors(Collections.emptySet());
+        movie.setDirectors(Collections.emptySet());
+        movie.setCategories(Collections.emptySet());
+        movie.setLanguages(Collections.emptySet());
+        movie.setResources(Collections.emptyList());
+        movieRepository.delete(movie);
+        log.info("delete movie {}: {}", movie.getId(), movie.getName());
     }
 
 }

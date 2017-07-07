@@ -89,7 +89,7 @@
     </div>
 
     <div class="ui divided items movie-list">
-      <div v-for="movie in movies" class="item movie" style="min-height: 225px;">
+      <div v-for="movie in movies" class="item movie" :data-id="movie.id" style="min-height: 225px;">
         <router-link :to="getLink(movie)" class="ui small image">
           <img :src="movie.thumb">
         </router-link>
@@ -103,6 +103,7 @@
           <div class="ui label" v-if="movie.resourcesSize">
             {{ movie.resourcesSize }}
           </div>
+          <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove icon"></i></a>
           <div class="description">
             <p>{{ movie.synopsis || $t("message.noIntro") | truncate }}</p>
           </div>
@@ -110,8 +111,8 @@
             <div>
               <span class="date">{{ movie.createdTime | date }}</span>
               <span class="category">{{ movie.categories | join }}</span>
-              <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB：{{ movie.imdbScore || '0.0' }}</a>
-              <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}：{{ movie.dbScore || '0.0' }}</a>
+              <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB: {{ movie.imdbScore || '0.0' }}</a>
+              <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}: {{ movie.dbScore || '0.0' }}</a>
             </div>
           </div>
         </div>
@@ -141,7 +142,7 @@
   a.imdb {
     color: #f2992e;
     position: absolute;
-    right: 75px;
+    right: 87px;
   }
   a.dou {
     color: #56bc8a;
@@ -165,6 +166,7 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
+import $ from 'jquery'
 
 export default {
   name: 'EpisodeListView',
@@ -273,6 +275,15 @@ export default {
       } else {
         return '/movies/' + movie.id
       }
+    },
+    deleteMovie: function (id) {
+      episodeService.deleteMovie(id, (success, data) => {
+        if (success) {
+          $('div[data-id=' + id + ']').remove()
+        } else {
+          console.log('delete ' + id + ' failed: ' + data)
+        }
+      })
     }
   }
 }

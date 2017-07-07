@@ -1,4 +1,4 @@
-package org.har01d.imovie.web.resource;
+package org.har01d.imovie.web;
 
 import org.har01d.imovie.web.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RepositoryRestController
-public class ResourceController {
+public class CustomRepositoryRestController {
 
     @Autowired
     private MovieService service;
@@ -18,6 +18,12 @@ public class ResourceController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteResource(@PathVariable Integer id) {
         service.deleteResource(id);
+    }
+
+    @DeleteMapping("/movies/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMovie(@PathVariable Integer id) {
+        service.deleteMovie(id);
     }
 
 }

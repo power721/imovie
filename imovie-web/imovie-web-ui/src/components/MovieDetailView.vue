@@ -8,7 +8,10 @@
       {{ error }}
     </div>
     <div v-if="movie" id="movie">
-      <h2>{{ movie.title }}</h2>
+      <h2>
+        {{ movie.title }}
+        <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove link icon"></i></a>
+      </h2>
       <img id="thumb" class="ui image" :src="movie.thumb">
       <div class="ui items">
         <div class="item" v-if="isNotEmpty(movie._embedded.directors)">
@@ -178,6 +181,15 @@ export default {
       resourceService.deleteResource(id, (success, data) => {
         if (success) {
           $('div[data-id=' + id + ']').remove()
+        } else {
+          console.log('delete ' + id + ' failed: ' + data)
+        }
+      })
+    },
+    deleteMovie: function (id) {
+      movieService.deleteMovie(id, (success, data) => {
+        if (success) {
+          this.$router.push('/')
         } else {
           console.log('delete ' + id + ' failed: ' + data)
         }
