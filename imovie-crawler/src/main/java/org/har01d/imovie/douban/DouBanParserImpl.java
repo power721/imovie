@@ -80,8 +80,8 @@ public class DouBanParserImpl implements DouBanParser {
         Element synopsis = content.select(".related-info #link-report").first();
 
         Movie movie = new Movie();
-        movie.setName(name);
-        movie.setTitle(header.text());
+        movie.setName(fixTitle(name));
+        movie.setTitle(fixTitle(header.text()));
         movie.setThumb(thumb);
         movie.setCover(getCover(thumb));
         movie.setDbScore(dbScore);
@@ -167,6 +167,10 @@ public class DouBanParserImpl implements DouBanParser {
                 throw new Error("403 Forbidden", e);
             }
         }
+    }
+
+    private String fixTitle(String text) {
+        return StringUtils.truncate(text, 250);
     }
 
     private String getCover(String url) {
