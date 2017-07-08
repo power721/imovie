@@ -47,6 +47,9 @@ url:
   zmz:
     site: http://www.zimuzu.tv
     page: http://www.zimuzu.tv/fresourcelist?channel=tv&page=
+  btxf:
+    site: http://btxianfeng.com
+    page: http://btxianfeng.com/m/index-%d.html
 file:
   download: /tmp/bt/
 

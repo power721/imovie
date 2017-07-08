@@ -12,6 +12,7 @@ import org.har01d.imovie.btdy.BtdyCrawler;
 import org.har01d.imovie.btpan.BtPanCrawler;
 import org.har01d.imovie.btt.BttCrawler;
 import org.har01d.imovie.bttt.BtttCrawler;
+import org.har01d.imovie.btxf.BtxfCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
@@ -78,6 +79,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private ZmzCrawler zmzCrawler;
+
+    @Autowired
+    private BtxfCrawler btxfCrawler;
 
     @Autowired
     private MovieService service;
@@ -186,6 +190,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                     logger.error("", e);
                 }
             }, 0, 1, TimeUnit.HOURS);
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    btxfCrawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 6, TimeUnit.HOURS);
 
             bttCrawler.crawler();
         }

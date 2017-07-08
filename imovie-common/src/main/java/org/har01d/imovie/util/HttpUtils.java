@@ -266,6 +266,48 @@ public final class HttpUtils {
         }
     }
 
+    public static String get(String url, String referer) throws IOException {
+        String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36";
+        final RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+            .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_MS)
+            .setSocketTimeout(SOCKET_TIMEOUT_MS)
+            .build();
+        List<Header> headers = new ArrayList<>();
+        headers.add(new BasicHeader("Referer", referer));
+        CloseableHttpClient httpClient = HttpClients.custom()
+            .setDefaultRequestConfig(requestConfig)
+            .setDefaultCookieStore(cookieStore)
+            .setDefaultHeaders(headers)
+            .setUserAgent(userAgent)
+            .build();
+        HttpGet httpget = new HttpGet(url);
+
+        LOGGER.info("Executing request {}", httpget.getRequestLine());
+
+        // Create a custom response handler
+        ResponseHandler<String> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else if (status >= 500 && status <= 599) {
+                throw new IOException("Unexpected response status: " + status);
+            } else {
+                throw new HttpResponseException(status, "Unexpected response status: " + status);
+            }
+        };
+
+        try {
+            return httpClient.execute(httpget, responseHandler);
+        } catch (IOException e) {
+            LOGGER.warn("Parse {} failed: {}, retrying...", url, e.getMessage());
+            return httpClient.execute(httpget, responseHandler);
+        } finally {
+            IOUtils.closeQuietly(httpClient);
+        }
+    }
+
     public static String get(String url) throws IOException {
         return get(url, null, null);
     }

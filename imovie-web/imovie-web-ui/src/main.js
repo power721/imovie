@@ -47,6 +47,9 @@ Vue.http.interceptors.push((request, next) => {
 
   next((response) => {
     NProgress.done()
+    if (response.status === 401 && response.body.error === 'invalid_token') {
+      auth.logout()
+    }
   })
 })
 
