@@ -9,7 +9,6 @@ import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,9 +33,6 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
 
     @Autowired
     private BtaParser parser;
-
-    @Autowired
-    private MovieService service;
 
     @Override
     public void crawler() throws InterruptedException {

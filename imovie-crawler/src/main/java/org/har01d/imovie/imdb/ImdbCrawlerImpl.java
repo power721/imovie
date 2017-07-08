@@ -8,7 +8,6 @@ import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
@@ -31,9 +30,6 @@ public class ImdbCrawlerImpl extends AbstractCrawler implements ImdbCrawler {
 
     @Autowired
     private ImdbRepository repository;
-
-    @Autowired
-    private MovieService service;
 
     private Map<String, String> sort = new HashMap<>();
     private String[] genres = new String[]{"", "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",

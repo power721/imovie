@@ -61,7 +61,7 @@ public abstract class AbstractCrawler {
         return service.saveConfig(getPageKey() + "_crawler_" + type, new Date().toString());
     }
 
-    protected String getPageKey() {
+    private String getPageKey() {
         return getClass().getSimpleName().replace("CrawlerImpl", "").toLowerCase();
     }
 

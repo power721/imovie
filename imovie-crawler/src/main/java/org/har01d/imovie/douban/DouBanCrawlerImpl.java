@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Deprecated
 @Service
 public class DouBanCrawlerImpl implements DouBanCrawler {
 

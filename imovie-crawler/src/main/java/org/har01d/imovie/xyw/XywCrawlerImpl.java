@@ -8,7 +8,6 @@ import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,8 +30,6 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
     @Autowired
     private XywParser parser;
 
-    @Autowired
-    private MovieService service;
     private ScheduledExecutorService executorService;
 
     public XywCrawlerImpl() {

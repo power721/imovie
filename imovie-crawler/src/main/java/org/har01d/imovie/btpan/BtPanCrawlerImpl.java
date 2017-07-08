@@ -6,7 +6,6 @@ import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,9 +27,6 @@ public class BtPanCrawlerImpl extends AbstractCrawler implements BtPanCrawler {
 
     @Autowired
     private BtPanParser parser;
-
-    @Autowired
-    private MovieService service;
 
     @Override
     public void crawler() throws InterruptedException {
