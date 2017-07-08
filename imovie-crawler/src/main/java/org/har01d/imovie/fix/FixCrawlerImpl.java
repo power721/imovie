@@ -1,6 +1,7 @@
 package org.har01d.imovie.fix;
 
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FixCrawlerImpl implements FixCrawler {
+public class FixCrawlerImpl extends AbstractCrawler implements FixCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(FixCrawler.class);
 
@@ -35,7 +36,7 @@ public class FixCrawlerImpl implements FixCrawler {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config full = service.getConfig("fix_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = baseUrl + page;
             try {
@@ -48,7 +49,7 @@ public class FixCrawlerImpl implements FixCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div#portfolio-gallery .pg-items .pg-item a");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("fix_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     continue;
                 }
@@ -91,7 +92,7 @@ public class FixCrawlerImpl implements FixCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -103,22 +104,9 @@ public class FixCrawlerImpl implements FixCrawler {
             }
         }
 
+        saveCrawlerConfig();
         savePage(1);
         logger.info("[fix] ===== get {} movies =====", total);
-    }
-
-    private int getPage() {
-        String key = "fix_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("fix_page", String.valueOf(page));
     }
 
 }

@@ -130,6 +130,7 @@ public class ZmzParserImpl implements ZmzParser {
                         if (name != null && !title.contains(name)) {
                             title = name + "-" + title;
                         }
+                        title = title.replace("人人下载器专用链下载 ", "");
                         String uri = (String) links.get("1");
                         if (isResource(uri)) {
                             resources.add(service.saveResource(uri, title));

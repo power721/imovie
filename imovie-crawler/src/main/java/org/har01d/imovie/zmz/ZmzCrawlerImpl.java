@@ -36,7 +36,7 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config crawler = service.getConfig("zmz_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = baseUrl + page;
             try {
@@ -49,7 +49,7 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.resource-showlist ul li .fl-info");
                 if (elements.size() == 0) {
-                    crawler = service.saveConfig("zmz_crawler", String.valueOf(System.currentTimeMillis()));
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     continue;
                 }
@@ -120,14 +120,9 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
             }
         }
 
-        updateCrawlerTime(crawler);
+        saveCrawlerConfig();
         savePage(1);
         logger.info("[zmz] ===== get {} movies =====", total);
-    }
-
-    @Override
-    protected String getPageKey() {
-        return "zmz_page";
     }
 
     private Date getSourceTime(Element element) {

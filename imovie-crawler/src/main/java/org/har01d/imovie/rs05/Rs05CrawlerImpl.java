@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Rs05CrawlerImpl implements Rs05Crawler {
+public class Rs05CrawlerImpl extends AbstractCrawler implements Rs05Crawler {
 
     private static final Logger logger = LoggerFactory.getLogger(Rs05Crawler.class);
 
@@ -43,7 +44,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config full = service.getConfig("rs05_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = baseUrl + page;
             try {
@@ -57,7 +58,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                 Elements elements = doc.select("#movielist li");
                 logger.info("{}: get {} movies", page, elements.size());
                 if (elements.isEmpty()) {
-                    full = service.saveConfig("rs05_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     continue;
                 }
@@ -101,7 +102,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
             } catch (Exception e) {
@@ -113,6 +114,7 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
             savePage(page);
         }
 
+        saveCrawlerConfig();
         savePage(1);
         logger.info("===== get {} movies =====", total);
     }
@@ -126,20 +128,6 @@ public class Rs05CrawlerImpl implements Rs05Crawler {
             logger.warn("get time failed.", e);
         }
         return new Date();
-    }
-
-    private int getPage() {
-        String key = "rs05_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("rs05_page", String.valueOf(page));
     }
 
 }

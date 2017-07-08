@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImdbCrawlerImpl implements ImdbCrawler {
+public class ImdbCrawlerImpl extends AbstractCrawler implements ImdbCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(ImdbCrawlerImpl.class);
 
@@ -102,20 +103,6 @@ public class ImdbCrawlerImpl implements ImdbCrawler {
             return matcher.group(1);
         }
         return null;
-    }
-
-    private int getPage(String type) {
-        String key = "imdb_page_" + type;
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(String type, int page) {
-        service.saveConfig("imdb_page_" + type, String.valueOf(page));
     }
 
     private int getIndex(String type) {

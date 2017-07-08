@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RarBtCrawlerImpl implements RarBtCrawler {
+public class RarBtCrawlerImpl extends AbstractCrawler implements RarBtCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(RarBtCrawler.class);
 
@@ -44,7 +45,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config full = service.getConfig("rarbt_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = String.format(baseUrl, page);
             try {
@@ -57,7 +58,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.ml .item .title");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("rarbt_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     continue;
                 }
@@ -95,7 +96,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -107,6 +108,7 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
             }
         }
 
+        saveCrawlerConfig();
         savePage(1);
         logger.info("===== get {} movies =====", total);
     }
@@ -124,20 +126,6 @@ public class RarBtCrawlerImpl implements RarBtCrawler {
             logger.warn("get time failed.", e);
         }
         return new Date();
-    }
-
-    private int getPage() {
-        String key = "rarbt_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("rarbt_page", String.valueOf(page));
     }
 
 }

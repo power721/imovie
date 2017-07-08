@@ -2,6 +2,7 @@ package org.har01d.imovie.btpan;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BtPanCrawlerImpl implements BtPanCrawler {
+public class BtPanCrawlerImpl extends AbstractCrawler implements BtPanCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BtPanCrawler.class);
 
@@ -36,7 +37,7 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
         int total = 0;
         int error = 0;
         int page = getPage();
-        Config full = service.getConfig("btpan_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = baseUrl + "/?page=" + page;
             try {
@@ -48,7 +49,7 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.content .item .title a");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("btpan_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     error = 0;
                     continue;
@@ -82,7 +83,7 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -94,22 +95,9 @@ public class BtPanCrawlerImpl implements BtPanCrawler {
             }
         }
 
+        saveCrawlerConfig();
         savePage(1);
         logger.info("[btpan] ===== get {} movies =====", total);
-    }
-
-    private int getPage() {
-        String key = "btpan_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("btpan_page", String.valueOf(page));
     }
 
 }

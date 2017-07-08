@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BtaCrawlerImpl implements BtaCrawler {
+public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BtaCrawler.class);
 
@@ -48,8 +49,8 @@ public class BtaCrawlerImpl implements BtaCrawler {
     private void work(int id, String type) {
         int total = 0;
         int error = 0;
-        int page = getPage(type);
-        Config full = service.getConfig("bta_crawler_" + type);
+        int page = getPage(type, 0);
+        Config full = getCrawlerConfig(type);
         while (true) {
             String url = String.format(baseUrl, type, id, page);
             try {
@@ -62,7 +63,7 @@ public class BtaCrawlerImpl implements BtaCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .info a");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("bta_crawler_" + type, "full");
+                    full = saveCrawlerConfig(type);
                     page = 0;
                     continue;
                 }
@@ -119,22 +120,9 @@ public class BtaCrawlerImpl implements BtaCrawler {
             }
         }
 
+        saveCrawlerConfig(type);
         savePage(type, 0);
         logger.info("[BtApple] ===== {}: get {} movies =====", type, total);
-    }
-
-    private int getPage(String type) {
-        String key = "bta_page_" + type;
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 0;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(String type, int page) {
-        service.saveConfig("bta_page_" + type, String.valueOf(page));
     }
 
 }

@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BtttCrawlerImpl implements BtttCrawler {
+public class BtttCrawlerImpl extends AbstractCrawler implements BtttCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BtttCrawler.class);
 
@@ -41,8 +42,8 @@ public class BtttCrawlerImpl implements BtttCrawler {
     public void crawler() throws InterruptedException {
         int total = 0;
         int error = 0;
-        int page = getPage();
-        Config full = service.getConfig("bttt_crawler");
+        int page = getPage(0);
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = String.format(baseUrl, page);
             try {
@@ -55,7 +56,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.ml .item .title");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("bttt_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 0;
                     continue;
                 }
@@ -89,7 +90,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -101,6 +102,7 @@ public class BtttCrawlerImpl implements BtttCrawler {
             }
         }
 
+        saveCrawlerConfig();
         savePage(0);
         logger.info("[bttiantang] ===== get {} movies =====", total);
     }
@@ -113,20 +115,6 @@ public class BtttCrawlerImpl implements BtttCrawler {
             logger.warn("[bttiantang] get time failed.", e);
         }
         return new Date();
-    }
-
-    private int getPage() {
-        String key = "bttt_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 0;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("bttt_page", String.valueOf(page));
     }
 
 }

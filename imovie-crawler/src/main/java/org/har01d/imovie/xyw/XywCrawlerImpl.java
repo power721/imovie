@@ -3,6 +3,7 @@ package org.har01d.imovie.xyw;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -20,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class XywCrawlerImpl implements XywCrawler {
+public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(XywCrawlerImpl.class);
 
@@ -50,7 +51,7 @@ public class XywCrawlerImpl implements XywCrawler {
         int total = 0;
         int error = 0;
         int page = getPage(type);
-        Config full = service.getConfig("xyw_crawler_" + type);
+        Config crawler = getCrawlerConfig(type);
         while (true) {
             String url = baseUrl + "/" + type + "/?page=" + page;
             try {
@@ -63,7 +64,7 @@ public class XywCrawlerImpl implements XywCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .movie-item .meta h1 a");
                 if (elements.size() == 0) {
-                    full = service.saveConfig("xyw_crawler_" + type, "full");
+                    crawler = saveCrawlerConfig(type);
                     page = 1;
                     continue;
                 }
@@ -101,7 +102,7 @@ public class XywCrawlerImpl implements XywCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -113,22 +114,9 @@ public class XywCrawlerImpl implements XywCrawler {
             }
         }
 
+        saveCrawlerConfig(type);
         savePage(type, 1);
         logger.info("[xyw] ===== {}: get {} movies =====", type, total);
-    }
-
-    private int getPage(String type) {
-        String key = "xyw_page_" + type;
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(String type, int page) {
-        service.saveConfig("xyw_page_" + type, String.valueOf(page));
     }
 
 }

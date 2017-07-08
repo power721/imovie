@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BttCrawlerImpl implements BttCrawler {
+public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BttCrawler.class);
     private static final Pattern SUBJECT_PATTERN = Pattern
@@ -72,8 +73,8 @@ public class BttCrawlerImpl implements BttCrawler {
         int zero = 0;
         int error = 0;
         int total = 0;
-        int page = getPage(fid);
-        Config full = service.getConfig("btt_crawler_" + fid);
+        int page = getPage(String.valueOf(fid));
+        Config crawler = getCrawlerConfig(String.valueOf(fid));
         while (true) {
             String url = String.format(baseUrl, fid, page);
             try {
@@ -88,7 +89,7 @@ public class BttCrawlerImpl implements BttCrawler {
                 int last = getNumber(doc.select("div.page a.checked").text());
                 if (page > last || elements.size() == 0) {
                     logger.info("get last page");
-                    full = service.saveConfig("btt_crawler_" + fid, "full");
+                    crawler = saveCrawlerConfig(String.valueOf(fid));
                     page = 1;
                     error = 0;
                     continue;
@@ -201,12 +202,12 @@ public class BttCrawlerImpl implements BttCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 if (zero > 80) {
-                    if (full == null) {
-                        full = service.saveConfig("btt_crawler_" + fid, "full");
+                    if (crawler == null) {
+                        crawler = saveCrawlerConfig(String.valueOf(fid));
                     }
                     logger.warn("too many empty resource, stopping...");
                     page = 1;
@@ -214,7 +215,7 @@ public class BttCrawlerImpl implements BttCrawler {
                     continue;
                 }
                 page++;
-                savePage(fid, page);
+                savePage(String.valueOf(fid), page);
             } catch (Exception e) {
                 service.publishEvent(url, e.getMessage());
                 logger.error("Get HTML failed: " + url, e);
@@ -222,7 +223,8 @@ public class BttCrawlerImpl implements BttCrawler {
             }
         }
 
-        savePage(fid, 1);
+        saveCrawlerConfig(String.valueOf(fid));
+        savePage(String.valueOf(fid), 1);
         logger.info("===== {}: get {} movies =====", fid, total);
     }
 
@@ -274,20 +276,6 @@ public class BttCrawlerImpl implements BttCrawler {
             }
         }
         return temp;
-    }
-
-    private int getPage(int fid) {
-        String key = "btt_page_" + fid;
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int fid, int page) {
-        service.saveConfig("btt_page_" + fid, String.valueOf(page));
     }
 
 }

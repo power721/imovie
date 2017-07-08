@@ -1,6 +1,7 @@
 package org.har01d.imovie.btdy;
 
 import java.util.concurrent.TimeUnit;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BtdyCrawlerImpl implements BtdyCrawler {
+public class BtdyCrawlerImpl extends AbstractCrawler implements BtdyCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(BtdyCrawler.class);
 
@@ -38,7 +39,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
         int error = 0;
         int total = 0;
         int page = getPage();
-        Config full = service.getConfig("btdy_crawler");
+        Config crawler = getCrawlerConfig();
         while (true) {
             String url = String.format(baseUrl, page);
             try {
@@ -57,7 +58,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                     // ignore
                 }
                 if (page > last) {
-                    full = service.saveConfig("btdy_crawler", "full");
+                    crawler = saveCrawlerConfig();
                     page = 1;
                     continue;
                 }
@@ -92,7 +93,7 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;
@@ -104,22 +105,9 @@ public class BtdyCrawlerImpl implements BtdyCrawler {
             }
         }
 
+        saveCrawlerConfig();
         savePage(1);
         logger.info("[btbtdy] ===== get {} movies =====", total);
-    }
-
-    private int getPage() {
-        String key = "btdy_page";
-        Config config = service.getConfig(key);
-        if (config == null) {
-            return 1;
-        }
-
-        return Integer.valueOf(config.getValue());
-    }
-
-    private void savePage(int page) {
-        service.saveConfig("btdy_page", String.valueOf(page));
     }
 
 }
