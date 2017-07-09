@@ -99,7 +99,7 @@
       <!--<img v-for="snapshot in movie.snapshots" :src="snapshot" class="ui image">-->
       <!--</div>-->
 
-      <template v-if="isNotEmpty(movie.res)">
+      <template v-if="isAccessible(movie)">
         <div class="ui horizontal divider">{{ $tc("token.resource", movie.res.length) }}</div>
         <div class="ui relaxed divided list">
           <div class="item" :data-id="resource.id" v-for="resource in movie.res">
@@ -194,6 +194,23 @@ export default {
           console.log('delete ' + id + ' failed: ' + data)
         }
       })
+    },
+    isAccessible: function (movie) {
+      if (!this.$auth.user.authenticated && this.isAdult(movie)) {
+        return false
+      }
+      return this.isNotEmpty(movie.res)
+    },
+    isAdult: function (movie) {
+      if (!movie._embedded.categories) {
+        return false
+      }
+      for (var entry of movie._embedded.categories) {
+        if (entry.name === '情色' || entry.name === '同性') {
+          return true
+        }
+      }
+      return false
     }
   }
 }

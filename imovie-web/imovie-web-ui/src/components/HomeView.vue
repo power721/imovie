@@ -90,7 +90,7 @@
 
     <div class="ui divided items movie-list">
       <div v-for="movie in movies" class="item movie" :data-id="movie.id" style="min-height: 225px;">
-        <router-link :to="getLink(movie)" class="ui small image">
+        <router-link :to="getLink(movie)" class="ui small image" :title="movie.title">
           <img :src="movie.thumb">
         </router-link>
         <div class="content">
@@ -100,7 +100,7 @@
           <div class="ui blue circular label" v-if="movie.episode">
             {{ movie.episode }}
           </div>
-          <div class="ui label" v-if="movie.resourcesSize">
+          <div class="ui label" v-if="$auth.user.authenticated && movie.resourcesSize">
             {{ movie.resourcesSize }}
           </div>
           <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove icon"></i></a>
