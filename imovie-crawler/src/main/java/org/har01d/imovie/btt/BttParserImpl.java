@@ -14,14 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.bittorrent.TorrentFile;
+import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Category;
-import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
-import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -31,13 +28,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BttParserImpl implements BttParser {
+public class BttParserImpl extends AbstractParser implements BttParser {
 
     private static final Logger logger = LoggerFactory.getLogger(BttParser.class);
 
@@ -70,12 +66,6 @@ public class BttParserImpl implements BttParser {
     private File downloadDir;
 
     private AtomicInteger id = new AtomicInteger();
-
-    @Autowired
-    private DouBanParser douBanParser;
-
-    @Autowired
-    private MovieService service;
 
     @Override
     @Transactional
@@ -133,17 +123,14 @@ public class BttParserImpl implements BttParser {
 
     private Movie getMovie(String html, String text, Movie movie) throws IOException {
         String dbUrl = UrlUtils.getDbUrl(html);
-        if (dbUrl != null) {
-            Movie m = service.findByDbUrl(dbUrl);
-            if (m == null) {
-                m = douBanParser.parse(dbUrl);
-            }
+        Movie m = getByDb(dbUrl);
+        if (m != null) {
             return m;
         }
 
         String imdb = UrlUtils.getImdbUrl(html);
         if (imdb != null) {
-            Movie m = service.findByImdb(imdb);
+            m = service.findByImdb(imdb);
             if (m != null) {
                 return m;
             }
@@ -1629,25 +1616,6 @@ public class BttParserImpl implements BttParser {
         return null;
     }
 
-    private Movie searchByName(Movie movie) {
-        if (movie.getName() == null) {
-            return null;
-        }
-
-        return searchMovie(movie, movie.getName());
-    }
-
-    private Movie searchMovie(Movie movie, String text) {
-        try {
-            List<Movie> movies = douBanParser.search(text);
-            return service.findBestMatchedMovie(movies, movie);
-        } catch (Exception e) {
-            service.publishEvent(text, e.getMessage());
-            logger.error("search movie from DouBan failed: " + text, e);
-        }
-        return null;
-    }
-
     private void findResource(String original, Document doc, Set<Resource> resources, String name) {
         Elements elements = doc.select(".post a");
         for (Element element : elements) {
@@ -1752,11 +1720,6 @@ public class BttParserImpl implements BttParser {
         return null;
     }
 
-    private boolean isResource(String uri) {
-        return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
-            || uri.startsWith("ftp://") || uri.contains("pan.baidu.com");
-    }
-
     private String fixUrl(String url) {
         return url.replace(".pw/", ".co/").replace(".net/", ".co/").replace(".top/", ".co/");
     }
@@ -1768,32 +1731,6 @@ public class BttParserImpl implements BttParser {
             categories.add(c);
         }
         return categories;
-    }
-
-    private Set<Language> getLanguages(Set<String> names) {
-        Set<Language> languages = new HashSet<>();
-        for (String name : names) {
-            if ("国语".equals(name) || "普通话".equals(name)) {
-                name = "汉语普通话";
-            } else if ("国粤".equals(name)) {
-                name = "粤语";
-            }
-            Language l = new Language(name);
-            languages.add(l);
-        }
-        return languages;
-    }
-
-    private Set<Region> getRegions(Set<String> names) {
-        Set<Region> regions = new HashSet<>();
-        for (String name : names) {
-//            if ("中国".equals(name)) {
-//                name = "中国大陆";
-//            }
-            Region r = new Region(name);
-            regions.add(r);
-        }
-        return regions;
     }
 
     private Set<Person> getPersons(Set<String> names) {

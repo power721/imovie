@@ -11,14 +11,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Category;
-import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
-import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.json.simple.JSONObject;
@@ -29,13 +26,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ZmzParserImpl implements ZmzParser {
+public class ZmzParserImpl extends AbstractParser implements ZmzParser {
 
     private static final Logger logger = LoggerFactory.getLogger(ZmzParser.class);
     private Pattern DATE = Pattern.compile("(\\d{4})-(\\d{1,2})-(\\d{1,2})");
@@ -43,12 +39,6 @@ public class ZmzParserImpl implements ZmzParser {
 
     @Value("${url.zmz.page}")
     private String baseUrl;
-
-    @Autowired
-    private DouBanParser douBanParser;
-
-    @Autowired
-    private MovieService service;
 
     private JSONParser jsonParser = new JSONParser();
 
@@ -112,6 +102,9 @@ public class ZmzParserImpl implements ZmzParser {
                 String html = HttpUtils.getHtml(resourceUri);
                 Document doc = Jsoup.parse(html);
                 String json = getJson(html);
+                if (json == null) {
+                    return resources;
+                }
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
                 Elements elements = doc.select(".res-item");
 
@@ -251,24 +244,6 @@ public class ZmzParserImpl implements ZmzParser {
         return categories;
     }
 
-    private Set<Language> getLanguages(Set<String> names) {
-        Set<Language> languages = new HashSet<>();
-        for (String name : names) {
-            Language l = new Language(name);
-            languages.add(l);
-        }
-        return languages;
-    }
-
-    private Set<Region> getRegions(Set<String> names) {
-        Set<Region> regions = new HashSet<>();
-        for (String name : names) {
-            Region r = new Region(name);
-            regions.add(r);
-        }
-        return regions;
-    }
-
     private Set<Person> getPeople(Element element) {
         Set<Person> people = new HashSet<>();
         for (Element a : element.select("a")) {
@@ -281,35 +256,13 @@ public class ZmzParserImpl implements ZmzParser {
         return people;
     }
 
-    private Movie searchByImdb(Movie movie) {
-        if (movie.getImdbUrl() == null) {
-            return null;
-        }
-
-        String imdb = movie.getImdbUrl().replace("http://www.imdb.com/title/", "");
-        Movie m = searchMovie(movie, imdb);
-        if (m != null) {
-            return m;
-        }
-
-        return null;
-    }
-
-    private Movie searchByName(Movie movie) {
-        if (movie.getName() == null) {
-            return null;
-        }
-
-        return searchMovie(movie, movie.getName());
-    }
-
-    private Movie searchMovie(Movie movie, String text) {
+    protected Movie searchMovie(Movie movie, String text) {
         try {
             List<Movie> movies = douBanParser.search(text);
             return findBestMatchedMovie(movies, movie);
         } catch (Exception e) {
             service.publishEvent(text, e.getMessage());
-            logger.error("search movie from DouBan failed: " + text, e);
+            logger.error("[zmz] search movie from DouBan failed: " + text, e);
         }
         return null;
     }
@@ -438,11 +391,6 @@ public class ZmzParserImpl implements ZmzParser {
             }
         }
         return null;
-    }
-
-    private boolean isResource(String uri) {
-        return uri != null && (uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
-            || uri.contains("pan.baidu.com"));
     }
 
 }

@@ -7,18 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Category;
-import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
-import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -28,25 +24,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class XywParserImpl implements XywParser {
+public class XywParserImpl extends AbstractParser implements XywParser {
 
     private static final Logger logger = LoggerFactory.getLogger(XywParserImpl.class);
     private static final Pattern EP = Pattern.compile("共有(\\d+)集");
 
     @Value("${url.xyw}")
     private String baseUrl;
-
-    @Autowired
-    private DouBanParser douBanParser;
-
-    @Autowired
-    private MovieService service;
 
     @Override
     @Transactional
@@ -56,14 +45,8 @@ public class XywParserImpl implements XywParser {
 
         getMovie(doc, movie);
 
-        Movie m = null;
         String dbUrl = movie.getDbUrl();
-        if (dbUrl != null) {
-            m = service.findByDbUrl(dbUrl);
-            if (m == null) {
-                m = douBanParser.parse(dbUrl);
-            }
-        }
+        Movie m = getByDb(dbUrl);
 
         if (m == null) {
             String imdb = movie.getImdbUrl();
@@ -211,29 +194,6 @@ public class XywParserImpl implements XywParser {
         return categories;
     }
 
-    private Set<Language> getLanguages(Set<String> names) {
-        Set<Language> languages = new HashSet<>();
-        for (String name : names) {
-            if ("国语".equals(name) || "普通话".equals(name)) {
-                name = "汉语普通话";
-            } else if ("国粤".equals(name)) {
-                name = "粤语";
-            }
-            Language l = new Language(name);
-            languages.add(l);
-        }
-        return languages;
-    }
-
-    private Set<Region> getRegions(Set<String> names) {
-        Set<Region> regions = new HashSet<>();
-        for (String name : names) {
-            Region r = new Region(name);
-            regions.add(r);
-        }
-        return regions;
-    }
-
     private Set<Person> getPeople(Element element) {
         Set<Person> people = new HashSet<>();
         for (Element a : element.select("td a")) {
@@ -244,44 +204,6 @@ public class XywParserImpl implements XywParser {
             people.add(p);
         }
         return people;
-    }
-
-    private Movie searchByImdb(Movie movie) {
-        if (movie.getImdbUrl() == null) {
-            return null;
-        }
-
-        String imdb = movie.getImdbUrl().replace("http://www.imdb.com/title/", "");
-        Movie m = searchMovie(movie, imdb);
-        if (m != null) {
-            return m;
-        }
-
-        return null;
-    }
-
-    private Movie searchByName(Movie movie) {
-        if (movie.getName() == null) {
-            return null;
-        }
-
-        return searchMovie(movie, movie.getName());
-    }
-
-    private Movie searchMovie(Movie movie, String text) {
-        try {
-            List<Movie> movies = douBanParser.search(text);
-            return service.findBestMatchedMovie(movies, movie);
-        } catch (Exception e) {
-            service.publishEvent(text, e.getMessage());
-            logger.error("[xyw] search movie from DouBan failed: " + text, e);
-        }
-        return null;
-    }
-
-    private boolean isResource(String uri) {
-        return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
-            || uri.contains("pan.baidu.com");
     }
 
 }

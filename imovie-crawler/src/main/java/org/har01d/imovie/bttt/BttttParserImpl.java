@@ -3,10 +3,9 @@ package org.har01d.imovie.bttt;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
-import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
@@ -15,24 +14,17 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BttttParserImpl implements BttttParser {
+public class BttttParserImpl extends AbstractParser implements BttttParser {
 
     private static final Logger logger = LoggerFactory.getLogger(BttttParser.class);
 
     @Value("${url.bttt.site}")
     private String baseUrl;
-
-    @Autowired
-    private DouBanParser douBanParser;
-
-    @Autowired
-    private MovieService service;
 
     @Override
     @Transactional
@@ -40,14 +32,8 @@ public class BttttParserImpl implements BttttParser {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 
-        Movie m = null;
         String dbUrl = UrlUtils.getDbUrl(html);
-        if (dbUrl != null) {
-            m = service.findByDbUrl(dbUrl);
-            if (m == null) {
-                m = douBanParser.parse(dbUrl);
-            }
-        }
+        Movie m = getByDb(dbUrl);
 
         if (m == null) {
             String imdb = UrlUtils.getImdbUrl(html);

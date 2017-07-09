@@ -3,12 +3,11 @@ package org.har01d.imovie.rs05;
 import java.io.IOException;
 import java.util.Set;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
-import org.har01d.imovie.douban.DouBanParser;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class Rs05ParserImpl implements Rs05Parser {
+public class Rs05ParserImpl extends AbstractParser implements Rs05Parser {
 
     private static final Logger logger = LoggerFactory.getLogger(Rs05Parser.class);
 
@@ -36,20 +35,11 @@ public class Rs05ParserImpl implements Rs05Parser {
     @Autowired
     private BasicCookieStore cookieStore;
 
-    @Autowired
-    private DouBanParser douBanParser;
-
-    @Autowired
-    private MovieService service;
-
     @Override
     @Transactional
     public Movie parse(String url, Movie movie) throws IOException {
         String dbUrl = movie.getDbUrl();
-        Movie m = service.findByDbUrl(dbUrl);
-        if (m == null) {
-            m = douBanParser.parse(dbUrl);
-        }
+        Movie m = getByDb(dbUrl);
 
         String html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
         Document doc = Jsoup.parse(html);
@@ -121,8 +111,4 @@ public class Rs05ParserImpl implements Rs05Parser {
         return r;
     }
 
-    private boolean isResource(String uri) {
-        return uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
-            || uri.startsWith("ftp://") || uri.contains("pan.baidu.com");
-    }
 }
