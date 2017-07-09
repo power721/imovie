@@ -132,7 +132,7 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
                 }
             } else if (text.contains("年份：")) {
                 movie.setYear(service.getYear(text));
-            }else if (text.contains("评分：")) {
+            } else if (text.contains("评分：")) {
                 movie.setImdbUrl(UrlUtils.getImdbUrl(element.html()));
                 movie.setDbUrl(UrlUtils.getDbUrl(element.html()));
             } else if (text.contains("导演：")) {

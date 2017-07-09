@@ -1296,7 +1296,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             if (start > 20 && end > start) {
                 movie.getAliases().addAll(getValues3(text.substring(start, end)));
             }
-        }  else if (text.contains("制片地区：")) { // http://btbtt.co/thread-index-fid-950-tid-4127966.htm
+        } else if (text.contains("制片地区：")) { // http://btbtt.co/thread-index-fid-950-tid-4127966.htm
             int start = text.indexOf("制片地区：") + 5;
             int end = getNextToken7(text, start);
             if (start > 20 && end > start) {

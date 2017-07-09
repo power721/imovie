@@ -63,7 +63,8 @@ public class XywParserImpl extends AbstractParser implements XywParser {
             m = searchByName(movie);
         }
 
-        String resUri = url.replace(".html", "").replace("/tv/", "/videos/resList/").replace("/movie/", "/videos/resList/");
+        String resUri = url.replace(".html", "").replace("/tv/", "/videos/resList/")
+            .replace("/movie/", "/videos/resList/");
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
@@ -99,7 +100,7 @@ public class XywParserImpl extends AbstractParser implements XywParser {
                         title = element.parent().text();
                     }
                     if (name != null && !title.contains(name)) {
-                        title = name + "-" +title;
+                        title = name + "-" + title;
                     }
                     resources.add(service.saveResource(uri, title));
                 }

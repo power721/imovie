@@ -271,6 +271,7 @@ public class MovieServiceImpl implements MovieService {
         return configRepository.save(config);
 
     }
+
     @Override
     public void delete(Explorer explorer) {
         explorerRepository.delete(explorer);

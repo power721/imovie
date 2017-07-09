@@ -5,6 +5,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Imdb {
+
     @Id
     private String id;
 

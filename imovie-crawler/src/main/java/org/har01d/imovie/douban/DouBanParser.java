@@ -5,6 +5,7 @@ import java.util.List;
 import org.har01d.imovie.domain.Movie;
 
 public interface DouBanParser {
+
     Movie parse(String url) throws IOException;
 
     List<Movie> search(String text) throws IOException;

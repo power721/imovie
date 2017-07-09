@@ -58,8 +58,8 @@ public class FixCrawlerImpl extends AbstractCrawler implements FixCrawler {
                     if (source != null) {
 //                        long time = System.currentTimeMillis();
 //                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
-                            logger.info("skip {}", pageUrl);
-                            continue;
+                        logger.info("skip {}", pageUrl);
+                        continue;
 //                        }
                     }
 
