@@ -378,15 +378,15 @@ public class MovieServiceImpl implements MovieService {
         for (Movie m : movies) {
             int match = 0;
             if (movie.getName().equals(m.getName())) {
-                match += 2;
+                match += 20;
             } else if (m.getName().startsWith(movie.getName())) {
-                match++;
+                match += 10;
             }
 
             if (m.getAliases() != null) {
                 for (String name : m.getAliases()) {
                     if (name.equals(movie.getName())) {
-                        match++;
+                        match += 10;
                         break;
                     }
                 }
@@ -394,88 +394,90 @@ public class MovieServiceImpl implements MovieService {
 
             if (movie.getYear() != null) {
                 if (movie.getYear().equals(m.getYear())) {
-                    match++;
+                    match += 10;
+                } else {
+                    match -= 5;
                 }
             }
 
             if (movie.getCategories() != null && !movie.getCategories().isEmpty() && m.getCategories() != null && !m
                 .getCategories().isEmpty()) {
                 if (m.getCategories().containsAll(movie.getCategories())) {
-                    match++;
+                    match += 5;
                 } else if (movie.getCategories().containsAll(m.getCategories())) {
-                    match++;
+                    match += 5;
                 }
             }
 
             if (movie.getRegions() != null && !movie.getRegions().isEmpty() && m.getRegions() != null) {
                 if (m.getRegions().containsAll(movie.getRegions())) {
-                    match++;
+                    match += 5;
                 }
             }
 
             if (movie.getLanguages() != null && !movie.getLanguages().isEmpty() && m.getLanguages() != null) {
                 if (m.getLanguages().containsAll(movie.getLanguages())) {
-                    match++;
+                    match += 5;
                 }
             }
 
             if (movie.getAliases() != null && !movie.getAliases().isEmpty() && m.getAliases() != null) {
                 if (m.getAliases().containsAll(movie.getAliases())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getDirectors() != null && !movie.getDirectors().isEmpty() && m.getDirectors() != null) {
                 if (m.getDirectors().containsAll(movie.getDirectors())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getEditors() != null && !movie.getEditors().isEmpty() && m.getEditors() != null) {
                 if (m.getEditors().containsAll(movie.getEditors())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getActors() != null && !movie.getActors().isEmpty() && m.getActors() != null) {
                 if (m.getActors().containsAll(movie.getActors())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getReleaseDate() != null && m.getReleaseDate() != null) {
                 if (getDates(m.getReleaseDate()).containsAll(getDates(movie.getReleaseDate()))) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getRunningTime() != null && m.getRunningTime() != null) {
                 if (m.getRunningTime().equals(movie.getRunningTime())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
                 if (m.getImdbUrl().equals(movie.getImdbUrl())) {
-                    match++;
+                    match += 15;
                 }
             }
 
             if (movie.getSynopsis() != null && !movie.getSynopsis().isEmpty() && m.getSynopsis() != null) {
                 if (m.getSynopsis().equals(movie.getSynopsis())) {
-                    match += 2;
+                    match += 20;
                 } else if (m.getSynopsis().contains(movie.getSynopsis())) {
-                    match++;
+                    match += 10;
                 }
             }
 
             if (movie.getEpisode() != null && m.getEpisode() != null && movie.getEpisode() > 0) {
                 if (Objects.equals(m.getEpisode(), movie.getEpisode())) {
-                    match++;
+                    match += 10;
                 }
             }
 
-            if (match > 2 && match > maxMatch) {
+            if (match > 20 && match > maxMatch) {
                 maxMatch = match;
                 best = m;
             }
