@@ -65,7 +65,7 @@
             <option value="传记">传记</option>
             <option value="家庭">家庭</option>
             <option value="短片">短片</option>
-            <option value="情色">情色</option>
+            <option value="情色" v-if="$auth.user.authenticated">情色</option>
             <option value="纪录片">纪录片</option>
           </select>
         </div>
