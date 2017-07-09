@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.bittorrent.TorrentFile;
 import org.har01d.imovie.AbstractParser;
-import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
@@ -1391,7 +1390,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         }
     }
 
-    private String getOne(Set<String> set) {
+    protected String getOne(Set<String> set) {
         if (set == null) {
             return null;
         }
@@ -1722,15 +1721,6 @@ public class BttParserImpl extends AbstractParser implements BttParser {
 
     private String fixUrl(String url) {
         return url.replace(".pw/", ".co/").replace(".net/", ".co/").replace(".top/", ".co/");
-    }
-
-    private Set<Category> getCategories(Set<String> names) {
-        Set<Category> categories = new HashSet<>();
-        for (String name : names) {
-            Category c = new Category(name);
-            categories.add(c);
-        }
-        return categories;
     }
 
     private Set<Person> getPersons(Set<String> names) {

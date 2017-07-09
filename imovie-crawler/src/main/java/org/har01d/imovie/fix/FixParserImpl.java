@@ -7,9 +7,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
-import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.StringUtils;
@@ -212,27 +210,6 @@ public class FixParserImpl extends AbstractParser implements FixParser {
         }
 
         return values;
-    }
-
-    private Set<Category> getCategories(Set<String> names) {
-        Set<Category> categories = new HashSet<>();
-        for (String name : names) {
-            Category c = new Category(name);
-            categories.add(c);
-        }
-        return categories;
-    }
-
-    private Set<Person> getPeople(Set<String> names) {
-        Set<Person> people = new HashSet<>();
-        for (String name : names) {
-            if ("更多…".equals(name)) {
-                continue;
-            }
-            Person p = new Person(name);
-            people.add(p);
-        }
-        return people;
     }
 
 }

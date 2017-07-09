@@ -59,7 +59,7 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
                 }
 
                 Elements elements = doc.select("div.wrap .right ul.list li a.name");
-                logger.info("[btbtxf] {}: {} movies", page, elements.size());
+                logger.info("[btxf] {}: {} movies", page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
@@ -73,18 +73,18 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[btbtxf] {}-{}-{} find movie {}", page, total, count, movie.getName());
+                            logger.info("[btxf] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             service.save(new Source(pageUrl, movie.getSourceTime()));
                             count++;
                             total++;
-                        } else {
+                        }/* else {
                             service.save(new Source(pageUrl, false));
-                        }
+                        }*/
                         error = 0;
                     } catch (Exception e) {
                         error++;
                         service.publishEvent(pageUrl, e.getMessage());
-                        logger.error("[btbtxf] Parse page failed: " + pageUrl, e);
+                        logger.error("[btxf] Parse page failed: " + pageUrl, e);
                     }
                 }
 
@@ -96,13 +96,13 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
             } catch (Exception e) {
                 error++;
                 service.publishEvent(url, e.getMessage());
-                logger.error("[btbtxf] Get HTML failed: " + url, e);
+                logger.error("[btxf] Get HTML failed: " + url, e);
             }
         }
 
         saveCrawlerConfig();
         savePage(1);
-        logger.info("[btbtxf] ===== get {} movies =====", total);
+        logger.info("[btxf] ===== get {} movies =====", total);
     }
 
 }

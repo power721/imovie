@@ -168,7 +168,7 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
         return values;
     }
 
-    private Set<Category> getCategories(Set<String> names) {
+    protected Set<Category> getCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
         for (String name : names) {
             Category c = new Category(name.replace("电影", ""));
@@ -180,9 +180,6 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
     private Set<Person> getPeople(Element element) {
         Set<Person> people = new HashSet<>();
         for (Element a : element.select("a")) {
-            if ("未录入".equals(a.text())) {
-                continue;
-            }
             Person p = new Person(a.text());
             people.add(p);
         }

@@ -215,18 +215,7 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
         return values;
     }
 
-    private String getOne(Set<String> set) {
-        if (set == null) {
-            return null;
-        }
-
-        for (String element : set) {
-            return element;
-        }
-        return null;
-    }
-
-    private Set<Category> getCategories(Set<String> names) {
+    protected Set<Category> getCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
         for (String name : names) {
             if ("魔幻".equals(name)) {

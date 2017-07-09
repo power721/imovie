@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
-import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
@@ -184,15 +183,6 @@ public class XywParserImpl extends AbstractParser implements XywParser {
             }
         }
         return 0;
-    }
-
-    private Set<Category> getCategories(Set<String> names) {
-        Set<Category> categories = new HashSet<>();
-        for (String name : names) {
-            Category c = new Category(name);
-            categories.add(c);
-        }
-        return categories;
     }
 
     private Set<Person> getPeople(Element element) {

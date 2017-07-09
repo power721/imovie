@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.util.UrlUtils;
@@ -133,7 +132,7 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
                 } else if (phase == 6) {
                     movie.setImdbUrl(UrlUtils.getImdbUrl(text));
                 } else if (phase == 7) {
-                    movie.setActors(getPersons(getValues(text)));
+                    movie.setActors(getPeople(getValues(text)));
                 }
             }
         }
@@ -176,7 +175,7 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
         return values;
     }
 
-    private Set<Category> getCategories(Set<String> names) {
+    protected Set<Category> getCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
         for (String name : names) {
             if ("动漫".equals(name)) {
@@ -188,15 +187,6 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
             categories.add(c);
         }
         return categories;
-    }
-
-    private Set<Person> getPersons(Set<String> names) {
-        Set<Person> people = new HashSet<>();
-        for (String name : names) {
-            Person p = new Person(name);
-            people.add(p);
-        }
-        return people;
     }
 
 }

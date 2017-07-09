@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
@@ -71,6 +73,23 @@ public abstract class AbstractParser implements Parser {
         return null;
     }
 
+    protected String getOne(Set<String> set) {
+        if (set == null) {
+            return null;
+        }
+
+        return set.iterator().next();
+    }
+
+    protected Set<Category> getCategories(Set<String> names) {
+        Set<Category> categories = new HashSet<>();
+        for (String name : names) {
+            Category c = new Category(name);
+            categories.add(c);
+        }
+        return categories;
+    }
+
     protected Set<Language> getLanguages(Set<String> names) {
         Set<Language> languages = new HashSet<>();
         for (String name : names) {
@@ -83,6 +102,18 @@ public abstract class AbstractParser implements Parser {
             languages.add(l);
         }
         return languages;
+    }
+
+    protected Set<Person> getPeople(Set<String> names) {
+        Set<Person> people = new HashSet<>();
+        for (String name : names) {
+            if ("更多…".equals(name)) {
+                continue;
+            }
+            Person p = new Person(name);
+            people.add(p);
+        }
+        return people;
     }
 
     protected Set<Region> getRegions(Set<String> names) {
