@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class TransferParam {
-
-    private Set<Integer> resources;
+    private Set<Integer> resourceIds;
     private Integer movieId;
 }

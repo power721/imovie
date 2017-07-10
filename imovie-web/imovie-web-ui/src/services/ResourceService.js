@@ -28,5 +28,17 @@ export default {
         cb(false, data)
       }
     })
+  },
+  transferResources (data, cb) {
+    return Vue.http.post('/api/resources/transfer', data)
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
   }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@ResponseBody
 @RepositoryRestController
 public class UserController {
 
@@ -40,12 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/users/{name}")
-    public @ResponseBody User getUser(@PathVariable String name) {
+    public User getUser(@PathVariable String name) {
         return userRepository.findByUsername(name);
     }
 
     @PostMapping("/users")
-    public @ResponseBody User signup(@Valid @RequestBody AccountDTO accountDTO) {
+    public User signup(@Valid @RequestBody AccountDTO accountDTO) {
         User user = new User();
         user.setUsername(accountDTO.getUsername());
         user.setEmail(accountDTO.getEmail());
@@ -55,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public @ResponseBody User updateAccount(@Valid @RequestBody UserDTO userDTO, Principal principal) {
+    public User updateAccount(@Valid @RequestBody UserDTO userDTO, Principal principal) {
         User user = userRepository.findByUsername(principal.getName());
 
         String password = userDTO.getPassword();

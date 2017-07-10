@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseBody
 @RepositoryRestController
 public class CustomRepositoryRestController {
 
@@ -49,13 +50,11 @@ public class CustomRepositoryRestController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @ResponseBody
     @PostMapping("/resources/transfer")
     public Set<Integer> transferResources(@RequestBody TransferParam transferParam) {
-        return service.transferResources(transferParam.getResources(), transferParam.getMovieId());
+        return service.transferResources(transferParam.getResourceIds(), transferParam.getMovieId());
     }
 
-    @ResponseBody
     @GetMapping("/movies/filter")
     public Page<Movie> filterMovies(@RequestParam(defaultValue = "", required = false) String name,
         @RequestParam(defaultValue = "", required = false) String category, Pageable pageable) {
