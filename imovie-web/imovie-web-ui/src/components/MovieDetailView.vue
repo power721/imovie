@@ -102,12 +102,6 @@
       <template v-if="isAccessible(movie)">
         <div class="ui horizontal divider">{{ $tc("token.resource", movie.res.length) }}</div>
         <div class="ui relaxed divided list" id="resources">
-          <div class="item">
-            <div class="ui right floated master checkbox" v-if="$auth.user.isAdmin">
-              <input type="checkbox" name="master">
-              <label></label>
-            </div>
-          </div>
           <div class="item" v-for="resource in movie.res" :key="resource.id">
             <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
             <div class="content">
@@ -175,45 +169,6 @@ export default {
   },
   created () {
     this.fetchData()
-  },
-  mounted () {
-    var $parentCheckbox = $('#resources .master.checkbox')
-    var $childCheckbox = $('#resources .child.checkbox')
-    $parentCheckbox.checkbox({
-      onChecked: function () {
-        $childCheckbox.checkbox('check')
-      },
-      onUnchecked: function () {
-        $childCheckbox.checkbox('uncheck')
-      }
-    })
-
-    $childCheckbox.checkbox({
-      // Fire on load to set parent value
-      fireOnInit: true,
-      // Change parent state on each child checkbox change
-      onChange: function () {
-        console.log($parentCheckbox)
-        var allChecked = true
-        var allUnchecked = true
-        // check to see if all other siblings are checked or unchecked
-        $childCheckbox.each(function () {
-          if ($(this).checkbox('is checked')) {
-            allUnchecked = false
-          } else {
-            allChecked = false
-          }
-        })
-        // set parent checkbox state, but dont trigger its onChange callback
-        if (allChecked) {
-          $parentCheckbox.checkbox('set checked')
-        } else if (allUnchecked) {
-          $parentCheckbox.checkbox('set unchecked')
-        } else {
-          $parentCheckbox.checkbox('set indeterminate')
-        }
-      }
-    })
   },
   watch: {
     '$route': 'fetchData'
