@@ -19,6 +19,7 @@ import org.har01d.imovie.domain.ImdbRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.fix.FixCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
+import org.har01d.imovie.lg.LgCrawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.service.DouBanService;
@@ -84,6 +85,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private BtxfCrawler btxfCrawler;
 
     @Autowired
+    private LgCrawler lgCrawler;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
@@ -110,13 +114,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             ScheduledExecutorService executorService = Executors
                 .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    rs05Crawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 3, TimeUnit.HOURS);
 
 //            executorService.scheduleWithFixedDelay(() -> {
 //                try {
@@ -125,6 +122,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 //                    logger.error("", e);
 //                }
 //            }, 0, 5, TimeUnit.HOURS);
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    rs05Crawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 3, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {
@@ -194,6 +199,14 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             executorService.scheduleWithFixedDelay(() -> {
                 try {
                     btxfCrawler.crawler();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }, 0, 6, TimeUnit.HOURS);
+
+            executorService.scheduleWithFixedDelay(() -> {
+                try {
+                    lgCrawler.crawler();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
