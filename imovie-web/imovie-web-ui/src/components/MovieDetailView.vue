@@ -118,7 +118,7 @@
               <label></label>
             </div>
           </div>
-          <button class="ui right floated primary button" id="move" @click="transferResources">
+          <button class="ui right floated primary button" id="move" @click="transferResources" v-if="$auth.user.isAdmin">
             Move
           </button>
         </div>
