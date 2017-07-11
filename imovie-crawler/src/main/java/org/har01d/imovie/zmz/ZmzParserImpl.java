@@ -98,6 +98,7 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
     private Set<Resource> findResource(String resourceUri, String name, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
         if (resourceUri.contains("http://xiazai002.com/")) {
+            int count = 0;
             try {
                 String html = HttpUtils.getHtml(resourceUri);
                 Document doc = Jsoup.parse(html);
@@ -125,25 +126,56 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
                         }
                         title = title.replace("人人下载器专用链下载 ", "");
                         String uri = (String) links.get("1");
+                        Resource resource;
                         if (isResource(uri)) {
-                            resources.add(service.saveResource(uri, title));
+                            resource = service.saveResource(uri, title);
+                            resources.add(resource);
+                            if (!resource.isNew()) {
+                                count++;
+                            } else {
+                                count = 0;
+                            }
                         }
 
                         uri = (String) links.get("2");
                         if (isResource(uri)) {
-                            resources.add(service.saveResource(uri, title));
+                            resource = service.saveResource(uri, title);
+                            resources.add(resource);
+                            if (!resource.isNew()) {
+                                count++;
+                            } else {
+                                count = 0;
+                            }
                         }
 
                         uri = (String) links.get("9");
                         if (isResource(uri)) {
-                            resources.add(service.saveResource(uri, title));
+                            resource = service.saveResource(uri, title);
+                            resources.add(resource);
+                            if (!resource.isNew()) {
+                                count++;
+                            } else {
+                                count = 0;
+                            }
                         }
 
                         uri = (String) links.get("102");
                         if (isResource(uri)) {
                             title = title + " 百度云";
-                            resources.add(service.saveResource(uri, title));
+                            resource = service.saveResource(uri, title);
+                            resources.add(resource);
+                            if (!resource.isNew()) {
+                                count++;
+                            } else {
+                                count = 0;
+                            }
                         }
+                        if (count > 5) {
+                            break;
+                        }
+                    }
+                    if (count > 5) {
+                        break;
                     }
                 }
             } catch (Exception e) {

@@ -351,6 +351,7 @@ public class MovieServiceImpl implements MovieService {
         } else {
             resource = new Resource(uri, original, title);
         }
+        resource.setNew(true);
         resourceRepository.save(resource);
         return resource;
     }

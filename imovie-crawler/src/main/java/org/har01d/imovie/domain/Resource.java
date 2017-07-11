@@ -30,6 +30,8 @@ public class Resource {
     @ManyToMany(mappedBy = "resources", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Movie> movies;
 
+    private transient boolean isNew;
+
     public Resource() {
     }
 
@@ -86,6 +88,14 @@ public class Resource {
 
     public void setMovies(List<Movie> movies) {
         this.movies = movies;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 
     @Override
