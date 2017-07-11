@@ -31,6 +31,8 @@ public interface MovieService {
 
     Movie save(Movie movie);
 
+    Movie save(Movie movie, boolean updateTime);
+
     Source save(Source source);
 
     Resource save(Resource resource);

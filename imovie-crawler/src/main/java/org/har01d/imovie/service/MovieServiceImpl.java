@@ -241,12 +241,19 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie save(Movie movie) {
+        return save(movie, true);
+    }
+
+    @Override
+    public Movie save(Movie movie, boolean updateTime) {
         if (movie.getId() == null) {
             logger.debug("create movie {}:{}", movie.getId(), movie.getName());
         } else {
             logger.debug("update movie {}:{}", movie.getId(), movie.getName());
         }
-        movie.setUpdatedTime(new Date());
+        if (updateTime) {
+            movie.setUpdatedTime(new Date());
+        }
         return movieRepository.save(movie);
     }
 

@@ -260,7 +260,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             Movie movie = service.findByImdb("http://www.imdb.com/title/" + imdb.getId());
             if (movie != null) {
                 movie.setImdbScore(imdb.getRating());
-                service.save(movie);
+                service.save(movie, false);
             }
         }
 

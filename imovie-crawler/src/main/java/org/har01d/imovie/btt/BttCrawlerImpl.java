@@ -173,6 +173,10 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                     }
 
                     if (!matched) {
+                        if (fid == 981) {
+                            logger.warn("skip {}: {}", text, pageUrl);
+                            continue;
+                        }
                         logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 0);
                     }
 

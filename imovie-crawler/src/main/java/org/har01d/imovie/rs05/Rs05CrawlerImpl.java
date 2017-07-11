@@ -112,7 +112,7 @@ public class Rs05CrawlerImpl extends AbstractCrawler implements Rs05Crawler {
 
         saveCrawlerConfig();
         savePage(1);
-        logger.info("===== get {} movies =====", total);
+        logger.info("[RS05]===== get {} movies =====", total);
     }
 
     private Date getSourceTime(Element element) {
