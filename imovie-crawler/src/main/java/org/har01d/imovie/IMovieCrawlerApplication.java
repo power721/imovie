@@ -118,13 +118,13 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }
             }, 0, 3, TimeUnit.HOURS);
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    rarBtCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 5, TimeUnit.HOURS);
+//            executorService.scheduleWithFixedDelay(() -> {
+//                try {
+//                    rarBtCrawler.crawler();
+//                } catch (Exception e) {
+//                    logger.error("", e);
+//                }
+//            }, 0, 5, TimeUnit.HOURS);
 
             executorService.scheduleWithFixedDelay(() -> {
                 try {

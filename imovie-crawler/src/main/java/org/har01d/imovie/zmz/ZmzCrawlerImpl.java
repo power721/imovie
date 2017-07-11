@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
@@ -33,7 +32,6 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
     private ZmzParser parser;
 
     @Override
-    @Transactional
     public void crawler() throws InterruptedException {
         int total = 0;
         int error = 0;
@@ -80,7 +78,7 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
 
                     Movie movie = new Movie();
                     if (source != null && source.getMovieId() != null) {
-                        movie = service.findById(source.getMovieId());
+                        movie.setId(source.getMovieId());
                     }
 
                     try {

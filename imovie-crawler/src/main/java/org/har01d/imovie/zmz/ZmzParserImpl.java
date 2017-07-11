@@ -73,14 +73,14 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
                 }
             }
         } else {
-            m = movie;
+            m = service.findById(movie.getId());
         }
 
         String uri = doc.select("div.view-res-list p a").attr("href");
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(uri, movie.getName(), url));
+            resources.addAll(findResource(uri, m.getName(), url));
 
             logger.info("[zmz] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
