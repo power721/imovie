@@ -124,7 +124,7 @@ public class MovieServiceImpl implements MovieService {
         int id = 0;
         for (Resource resource : resources) {
             id++;
-            List<Resource> all = resourceRepository.findByUri(resource.getUri());
+            List<Resource> all = resourceRepository.findByUri(resource.getUri(), resource.getId());
             if (all.size() <= 1) {
                 continue;
             }
