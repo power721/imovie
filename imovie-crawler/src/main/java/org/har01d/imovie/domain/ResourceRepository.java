@@ -7,6 +7,8 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     Resource findFirstByUri(String uri);
 
+    List<Resource> findByUri(String uri);
+
     Resource findFirstByOriginal(String uri);
 
     List<Resource> findByUriStartingWith(String uri);

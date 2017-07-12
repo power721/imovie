@@ -102,6 +102,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${crawlers:all}")
     private Set<String> types;
 
+    @Value("${fix:0}")
+    private int fix = 0;
+
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -114,6 +117,11 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
+            if (fix > 0) {
+                service.fixDuplicateResources(fix);
+                return;
+            }
+
             douBanService.tryLogin();
 //            updateImdbTop250();
             service.fixDuplicateMovies();

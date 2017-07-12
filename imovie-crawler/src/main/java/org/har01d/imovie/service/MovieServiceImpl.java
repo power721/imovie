@@ -34,7 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,6 +115,27 @@ public class MovieServiceImpl implements MovieService {
             for (Movie movie : deleted) {
                 movieRepository.delete(movie);
                 logger.info("delete movie {}: {}", movie.getId(), movie.getName());
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void fixDuplicateResources(int number) {
+        Pageable pageable = new PageRequest(0, number, Direction.DESC, "id");
+        Page<Resource> resources = resourceRepository.findAll(pageable);
+        for (Resource resource : resources) {
+            List<Resource> all = resourceRepository.findByUri(resource.getUri());
+            if (all.size() <= 1) {
+                continue;
+            }
+
+            logger.info("handle {}: {}-{}", resource.getId(), resource.getTitle(), resource.getUri());
+            for (Resource r : all) {
+                if (r.getMovies().isEmpty()) {
+                    logger.info("delete resource {}: {}-{}", r.getId(), r.getTitle(), r.getUri());
+                    resourceRepository.delete(r);
+                }
             }
         }
     }

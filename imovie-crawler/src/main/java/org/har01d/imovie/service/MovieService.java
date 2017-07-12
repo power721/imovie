@@ -19,6 +19,8 @@ public interface MovieService {
 
     void fixDuplicateMovies();
 
+    void fixDuplicateResources(int number);
+
     Integer getYear(String yearStr);
 
     Set<Person> getPersons(Set<String> names);
