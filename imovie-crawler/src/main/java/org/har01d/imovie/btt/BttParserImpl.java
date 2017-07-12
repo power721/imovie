@@ -108,6 +108,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
 
             findResource(url, doc, resources, null);
             findAttachments(doc, resources, null);
+            m.setSize(resources.size());
             logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         }
 

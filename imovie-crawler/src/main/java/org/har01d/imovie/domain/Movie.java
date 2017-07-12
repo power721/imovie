@@ -86,6 +86,7 @@ public class Movie {
     private Date updatedTime;
 
     private transient Date sourceTime = new Date();
+    private transient int size;
 
     public Integer getId() {
         return id;
@@ -300,5 +301,13 @@ public class Movie {
 
     public void setSourceTime(Date sourceTime) {
         this.sourceTime = sourceTime;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

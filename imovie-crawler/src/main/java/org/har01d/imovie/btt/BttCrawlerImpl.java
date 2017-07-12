@@ -212,6 +212,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
 
                     if (!matched) {
                         if (fid == 981) {
+                            zero++;
                             logger.warn("skip {}: {}", text, pageUrl);
                             continue;
                         }
@@ -222,7 +223,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             service.save(new Source(fixPageUrl(pageUrl), movie.getSourceTime()));
-                            if (movie.getRes().isEmpty()) {
+                            if (movie.getSize() == 0) {
                                 zero++;
                             } else {
                                 zero = 0;
@@ -244,7 +245,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                 if (crawler != null && count == 0) {
                     break;
                 }
-                if (zero > 80) {
+                if (zero > 60) {
                     if (crawler == null) {
                         crawler = saveCrawlerConfig(String.valueOf(fid));
                     }

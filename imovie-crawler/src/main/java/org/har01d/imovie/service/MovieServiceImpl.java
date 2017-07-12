@@ -30,6 +30,7 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.domain.SourceRepository;
+import org.har01d.imovie.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -427,7 +428,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Event publishEvent(String source, String message) {
-        return eventRepository.save(new Event(source, message));
+        return eventRepository.save(new Event(StringUtils.truncate(source, 255), message));
     }
 
     @Override
