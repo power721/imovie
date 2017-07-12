@@ -105,6 +105,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${fix:0}")
     private int fix = 0;
 
+    @Value("${offset:0}")
+    private int offset = 0;
+
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -118,7 +121,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             if (fix > 0) {
-                service.fixDuplicateResources(fix);
+                service.fixDuplicateResources(offset, fix);
                 return;
             }
 

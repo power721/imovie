@@ -14,6 +14,6 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     List<Resource> findByUriStartingWith(String uri);
 
-    @Query(value = "SELECT r.* FROM resource r ORDER BY r.id DESC LIMIT ?1", nativeQuery = true)
-    List<Resource> findTop(int limit);
+    @Query(value = "SELECT r.* FROM resource r ORDER BY r.id DESC LIMIT ?2 OFFSET ?1", nativeQuery = true)
+    List<Resource> findTop(int offset, int limit);
 }

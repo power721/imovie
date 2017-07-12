@@ -19,7 +19,7 @@ public interface MovieService {
 
     void fixDuplicateMovies();
 
-    void fixDuplicateResources(int number);
+    void fixDuplicateResources(int offset, int number);
 
     Integer getYear(String yearStr);
 

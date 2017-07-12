@@ -118,9 +118,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void fixDuplicateResources(int limit) {
-        List<Resource> resources = resourceRepository.findTop(limit);
-        logger.info("fix {} duplicated resources", resources.size());
+    public void fixDuplicateResources(int offset, int limit) {
+        List<Resource> resources = resourceRepository.findTop(offset, limit);
+        logger.info("try to fix  {} resources", resources.size());
         for (Resource resource : resources) {
             List<Resource> all = resourceRepository.findByUri(resource.getUri());
             if (all.size() <= 1) {
