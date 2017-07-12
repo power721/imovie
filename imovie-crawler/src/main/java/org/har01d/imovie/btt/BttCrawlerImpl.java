@@ -287,7 +287,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
             }
             String temp = title.substring(1, index);
             temp = fixName(title, index, temp);
+            index = title.indexOf(temp) + temp.length();
             temp = fixName(title, index, temp);
+            index = title.indexOf(temp) + temp.length();
             temp = fixName(title, index, temp);
             title = temp.replace("未删减版", "").replace("鼠绘汉化", "");
         }
