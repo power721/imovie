@@ -118,9 +118,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-//    @Transactional
     public void fixDuplicateResources(int limit) {
         List<Resource> resources = resourceRepository.findTop(limit);
+        logger.info("fix {} duplicated resources", resources.size());
         for (Resource resource : resources) {
             List<Resource> all = resourceRepository.findByUri(resource.getUri());
             if (all.size() <= 1) {
@@ -384,11 +384,11 @@ public class MovieServiceImpl implements MovieService {
             if (resource != null) {
                 return resource;
             }
-        }
-
-        resource = resourceRepository.findFirstByOriginal(original);
-        if (resource != null) {
-            return resource;
+        } else {
+            resource = resourceRepository.findFirstByUri(original);
+            if (resource != null) {
+                return resource;
+            }
         }
 
         if (uri == null) {
