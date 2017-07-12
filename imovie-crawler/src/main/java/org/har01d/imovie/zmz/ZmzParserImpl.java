@@ -121,9 +121,9 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
                         }
 
                         String title = text + element.text().replace("查看下载链接", "").trim();
-                        if (name != null && !title.contains(name)) {
-                            title = name + "-" + title;
-                        }
+//                        if (name != null && !title.contains(name)) {
+//                            title = name + "-" + title;
+//                        }
                         title = title.replace("人人下载器专用链下载 ", "");
                         String uri = (String) links.get("1");
                         Resource resource;

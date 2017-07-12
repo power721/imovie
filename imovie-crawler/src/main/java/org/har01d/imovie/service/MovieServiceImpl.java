@@ -121,13 +121,15 @@ public class MovieServiceImpl implements MovieService {
     public void fixDuplicateResources(int offset, int limit) {
         List<Resource> resources = resourceRepository.findTop(offset, limit);
         logger.info("try to fix {}-{} resources", offset, resources.size());
+        int id = 0;
         for (Resource resource : resources) {
+            id++;
             List<Resource> all = resourceRepository.findByUri(resource.getUri());
             if (all.size() <= 1) {
                 continue;
             }
 
-            logger.info("handle {}: {}-{}", resource.getId(), resource.getTitle(), resource.getUri());
+            logger.info("{}-handle {}: {}-{}", id, resource.getId(), resource.getTitle(), resource.getUri());
             List<Resource> deleted = new ArrayList<>();
             Resource kept = null;
             for (Resource r : all) {
@@ -147,15 +149,15 @@ public class MovieServiceImpl implements MovieService {
                 deleted.remove(kept);
             }
 
-            logger.info("keep resource {}: {}-{}", kept.getId(), kept.getTitle(), kept.getUri());
+            logger.info("{}-keep resource {}: {}-{}", id, kept.getId(), kept.getTitle(), kept.getUri());
             for (Resource r : deleted) {
                 for (Movie movie : r.getMovies()) {
                     movie.getRes().remove(r);
                     movieRepository.save(movie);
-                    logger.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
+                    logger.info("{}-update movie {}: {} Resources: {}", id, movie.getId(), movie.getName(),
                         movie.getRes().size());
                 }
-                logger.info("delete resource {}: {}-{}", r.getId(), r.getTitle(), r.getUri());
+                logger.info("{}-delete resource {}: {}-{}", id, r.getId(), r.getTitle(), r.getUri());
                 resourceRepository.delete(r);
             }
         }
