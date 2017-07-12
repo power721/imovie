@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -97,6 +99,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Autowired
     private ImdbRepository imdbRepository;
 
+    @Value("${crawlers:all}")
+    private Set<String> types;
+
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -124,96 +129,120 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 //                }
 //            }, 0, 5, TimeUnit.HOURS);
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    rs05Crawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 3, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("rs05")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        rs05Crawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 3, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    btttCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 5, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("bttt")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        btttCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 5, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    btaCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 5, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("bta")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        btaCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 5, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    btdyCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 5, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("btdy")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        btdyCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 5, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    btPanCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 5, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("btp")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        btPanCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 5, TimeUnit.HOURS);
+            }
 
-            executorService.submit(() -> {
-                try {
-                    xywCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            });
+            if (types.contains("all") || types.contains("xyw")) {
+                executorService.submit(() -> {
+                    try {
+                        xywCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                });
+            }
 
-            executorService.submit(() -> {
-                try {
-                    imdbCrawler.crawler();
-                    updateImdb();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            });
+            if (types.contains("all") || types.contains("imdb")) {
+                executorService.submit(() -> {
+                    try {
+                        imdbCrawler.crawler();
+                        updateImdb();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                });
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    fixCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 6, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("fix")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        fixCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    zmzCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 1, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("zmz")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        zmzCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 1, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    btxfCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 6, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("btxf")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        btxfCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
 
-            executorService.scheduleWithFixedDelay(() -> {
-                try {
-                    lgCrawler.crawler();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }, 0, 6, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("lg")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        lgCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
 
-            bttCrawler.crawler();
+            if (types.contains("all") || types.contains("btt")) {
+                bttCrawler.crawler();
+            }
         }
     }
 

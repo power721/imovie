@@ -1,6 +1,7 @@
 package org.har01d.imovie.btt;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +47,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     @Value("${url.btt.site}")
     private String siteUrl;
 
+    @Value("${crawler.type:all}")
+    private Set<String> types;
+
     @Autowired
     private BttParser parser;
 
@@ -57,11 +61,26 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
-//        executorService.scheduleWithFixedDelay(() -> work(981), 0, 60, TimeUnit.MINUTES);
-        executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
+        if (types.contains("all") || types.contains("951")) {
+            executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
+        }
+
+        if (types.contains("all") || types.contains("1183")) {
+            executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
+        }
+
+        if (types.contains("all") || types.contains("950")) {
+            executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
+        }
+
+        if (types.contains("all") || types.contains("981")) {
+            executorService.scheduleWithFixedDelay(() -> work(981), 0, 60, TimeUnit.MINUTES);
+        }
+
+        if (types.contains("all") || types.contains("1193")) {
+            executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
+        }
+
         executorService.awaitTermination(5L, TimeUnit.DAYS);
         executorService.shutdown();
     }

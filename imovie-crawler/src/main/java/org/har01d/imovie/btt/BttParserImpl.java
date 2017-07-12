@@ -64,6 +64,9 @@ public class BttParserImpl extends AbstractParser implements BttParser {
     @Value("${file.download}")
     private File downloadDir;
 
+    @Value("${no-resource:false}")
+    private boolean noResource;
+
     private AtomicInteger id = new AtomicInteger();
 
     @Override
@@ -87,21 +90,25 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
             Set<Resource> resources = movie.getRes();
-            Elements elements = doc.select("div.post p");
-            findResource(elements.text(), resources, movie.getName());
-            findResource(url, doc, resources, movie.getName());
-            findAttachments(doc, resources, movie.getName());
+            if (!noResource) {
+                Elements elements = doc.select("div.post p");
+                findResource(elements.text(), resources, movie.getName());
+                findResource(url, doc, resources, movie.getName());
+                findAttachments(doc, resources, movie.getName());
+            }
             logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
 
         Set<Resource> resources = m.getRes();
         int size = resources.size();
-        Elements elements = doc.select("div.post p");
-        findResource(elements.text(), resources, null);
+        if (!noResource) {
+            Elements elements = doc.select("div.post p");
+            findResource(elements.text(), resources, null);
 
-        findResource(url, doc, resources, null);
-        findAttachments(doc, resources, null);
+            findResource(url, doc, resources, null);
+            findAttachments(doc, resources, null);
+        }
 
         logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);

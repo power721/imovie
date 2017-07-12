@@ -30,9 +30,9 @@ url:
   douban: https://movie.douban.com
   imdb: http://www.imdb.com/search/title?count=100&title_type=feature,tv_series&view=simple&page=
   btt:
-    site: http://btbtt.pw/
-    page: http://btbtt.pw/forum-index-fid-%d-page-%d.htm
-    thread: http://btbtt.pw/thread-index-fid-%d-tid-%d.htm
+    site: http://btbtt.co/
+    page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
+    thread: http://btbtt.co/thread-index-fid-%d-tid-%d.htm
   rarbt:
     site: http://www.rarbt.com
     page: http://www.rarbt.com/index.php/index/index/p/%d.html
