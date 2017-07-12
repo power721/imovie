@@ -77,7 +77,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
         }
 
         if (types.contains("all") || types.contains("981")) {
-            executorService.scheduleWithFixedDelay(() -> work(981), 0, 60, TimeUnit.MINUTES);
+            executorService.scheduleWithFixedDelay(() -> work(981), 0, 180, TimeUnit.MINUTES);
         }
 
         if (types.contains("all") || types.contains("1193")) {

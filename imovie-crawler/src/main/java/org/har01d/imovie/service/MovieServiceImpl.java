@@ -119,7 +119,6 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    @Transactional
     public void fixDuplicateResources(int offset, int limit) {
         List<Resource> resources = resourceRepository.findTop(offset, limit);
         logger.info("try to fix {}-{} resources", offset, resources.size());
@@ -155,18 +154,24 @@ public class MovieServiceImpl implements MovieService {
 
             logger.info("{}-keep resource {}: {}-{}", id, kept.getId(), kept.getTitle(), kept.getUri());
             for (Resource r : deleted) {
-                for (Movie movie : r.getMovies()) {
-                    movie.getRes().remove(r);
-                    movieRepository.save(movie);
-                    logger.info("{}-update movie {}: {} Resources: {}", id, movie.getId(), movie.getName(),
-                        movie.getRes().size());
-                }
-                logger.info("{}-delete resource {}: {}-{}", id, r.getId(), r.getTitle(), r.getUri());
-                resourceRepository.delete(r);
+                delete(r);
             }
         }
 
         logger.info("next offset: {}", offset);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Resource resource) {
+        for (Movie movie : resource.getMovies()) {
+            movie.getRes().remove(resource);
+            movieRepository.save(movie);
+            logger.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
+                movie.getRes().size());
+        }
+        logger.info("delete resource {}: {}-{}", resource.getId(), resource.getTitle(), resource.getUri());
+        resourceRepository.delete(resource);
     }
 
     @Override

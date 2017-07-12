@@ -21,6 +21,8 @@ public interface MovieService {
 
     void fixDuplicateResources(int offset, int number);
 
+    void delete(Resource r);
+
     Integer getYear(String yearStr);
 
     Set<Person> getPersons(Set<String> names);
