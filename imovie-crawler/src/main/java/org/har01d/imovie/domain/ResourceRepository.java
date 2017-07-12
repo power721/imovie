@@ -8,7 +8,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     Resource findFirstByUri(String uri);
 
-    @Query(value = "SELECT r.* FROM resource r WHERE id <= ?1", nativeQuery = true)
+    @Query(value = "SELECT r.* FROM resource r WHERE uri = ?1 AND id <= ?2", nativeQuery = true)
     List<Resource> findByUri(String uri, int id);
 
     Resource findFirstByOriginal(String uri);
