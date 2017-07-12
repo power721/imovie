@@ -45,7 +45,7 @@
         <div class="field">
           <label>{{ $tc("token.category") }}</label>
           <select class="ui dropdown" id="category" v-model="category" @change="filter">
-            <option value="all">默认</option>
+            <option value="all">{{ $t("token.all") }}</option>
             <option value="剧情">剧情</option>
             <option value="爱情">爱情</option>
             <option value="喜剧">喜剧</option>

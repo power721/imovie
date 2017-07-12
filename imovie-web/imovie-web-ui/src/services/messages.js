@@ -27,7 +27,8 @@ export default {
       episode: 'Episode',
       alias: 'Alias | Aliases',
       synopsis: 'Synopsis',
-      update: 'Update'
+      update: 'Update',
+      all: 'All'
     },
     message: {
       noIntro: 'No details.',
@@ -62,7 +63,8 @@ export default {
       episode: '集数',
       alias: '又名',
       synopsis: '剧情简介',
-      update: '更新'
+      update: '更新',
+      all: '全部'
     },
     message: {
       noIntro: '暂无介绍',
