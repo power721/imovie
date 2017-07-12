@@ -39,6 +39,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     private static final Pattern SUBJECT_PATTERN4 = Pattern
         .compile("^\\[([^]]+)] \\[(\\d+)]\\[([^]]+)]\\[[^]]+]\\[([^]]+)].*$");
 
+    private static final Pattern SUBJECT_PATTERN5 = Pattern
+        .compile("\\[([^]]+)] \\[([^]]+)] \\[[^]]+] \\[([^]]+)] 【.+?】 【.+?】【.+?】【(.+?)】.*$");
+
     private static final Pattern NUMBER = Pattern.compile("(\\d+)");
 
     @Value("${url.btt.page}")
@@ -161,6 +164,22 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                     }
 
                     if (!matched) {
+                        matcher = SUBJECT_PATTERN5.matcher(text);
+                        if (matcher.find()) {
+                            name = getName(matcher.group(3).trim());
+                            logger.info("{}-{}-{}-{} {}: {} - {}", fid, page, total, count, name, pageUrl, 2);
+
+                            String y = matcher.group(1);
+                            movie.setName(name);
+                            if (y.matches("\\d{4}")) {
+                                movie.setYear(Integer.valueOf(y));
+                            }
+                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(2))));
+                            matched = true;
+                        }
+                    }
+
+                    if (!matched) {
                         matcher = SUBJECT_PATTERN2.matcher(text);
                         if (matcher.find()) {
                             name = getName(matcher.group(3).trim());
@@ -269,7 +288,8 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
             String temp = title.substring(1, index);
             temp = fixName(title, index, temp);
             temp = fixName(title, index, temp);
-            title = temp.replace("未删减版", "");
+            temp = fixName(title, index, temp);
+            title = temp.replace("未删减版", "").replace("鼠绘汉化", "");
         }
 
         String[] comps = title.split("/");
@@ -279,7 +299,8 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     private String fixName(String title, int index, String temp) {
         if (temp.contains("BT") || temp.contains("电驴") || temp.contains("下载") || temp.contains("网盘")
             || temp.contains("迅雷") || temp.contains("快传") || temp.contains("百度")
-            || temp.contains("字幕组") || temp.contains("OPFans枫雪动漫") || temp.contains("CONAN")
+            || temp.contains("字幕组") || temp.contains("高清") || temp.contains("动漫") || temp.contains("動漫")
+            || temp.contains("CONAN") || temp.contains("漫画")
             || temp.contains("三立") || temp.contains("民视") || temp.contains("中视") || temp.contains("台视")
             || temp.contains("TVB") || temp.contains("ATV") || temp.contains("HKTV") || temp.contains("Viu TV")) {
             int start = index + 1;
