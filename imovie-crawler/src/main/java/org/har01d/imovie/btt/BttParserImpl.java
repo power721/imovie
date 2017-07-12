@@ -89,28 +89,28 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         if (m == null) {
             logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
-            Set<Resource> resources = movie.getRes();
             if (!noResource) {
+                Set<Resource> resources = movie.getRes();
                 Elements elements = doc.select("div.post p");
                 findResource(elements.text(), resources, movie.getName());
                 findResource(url, doc, resources, movie.getName());
                 findAttachments(doc, resources, movie.getName());
+                logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             }
-            logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
 
-        Set<Resource> resources = m.getRes();
-        int size = resources.size();
         if (!noResource) {
+            Set<Resource> resources = m.getRes();
+            int size = resources.size();
             Elements elements = doc.select("div.post p");
             findResource(elements.text(), resources, null);
 
             findResource(url, doc, resources, null);
             findAttachments(doc, resources, null);
+            logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         }
 
-        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
         service.save(m);
         m.setSourceTime(getSourceTime(doc));
         return m;
@@ -1373,6 +1373,8 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             end = getNextToken(text, start);
             if (start > 20 && end > start) {
                 movie.setRunningTime(getValue(text.substring(start, end), 120));
+            } else {
+                getName(text, movie);
             }
 
             start = text.indexOf("片名:") + 3;

@@ -127,6 +127,7 @@ public class MovieServiceImpl implements MovieService {
             id++;
             List<Resource> all = resourceRepository.findByUri(resource.getUri(), resource.getId());
             if (all.size() <= 1) {
+                offset += all.size();
                 continue;
             }
 
@@ -146,6 +147,7 @@ public class MovieServiceImpl implements MovieService {
             }
 
             if (kept == null) {
+                offset++;
                 kept = resource;
                 deleted.remove(kept);
             }
@@ -162,6 +164,8 @@ public class MovieServiceImpl implements MovieService {
                 resourceRepository.delete(r);
             }
         }
+
+        logger.info("next offset: {}", offset);
     }
 
     @Override
