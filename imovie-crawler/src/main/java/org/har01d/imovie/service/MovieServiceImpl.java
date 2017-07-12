@@ -118,6 +118,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional
     public void fixDuplicateResources(int offset, int limit) {
         List<Resource> resources = resourceRepository.findTop(offset, limit);
         logger.info("try to fix {}-{} resources", offset, resources.size());
