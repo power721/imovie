@@ -34,9 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,10 +118,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    @Transactional
-    public void fixDuplicateResources(int number) {
-        Pageable pageable = new PageRequest(0, number, Direction.DESC, "id");
-        Page<Resource> resources = resourceRepository.findAll(pageable);
+//    @Transactional
+    public void fixDuplicateResources(int limit) {
+        List<Resource> resources = resourceRepository.findTop(limit);
         for (Resource resource : resources) {
             List<Resource> all = resourceRepository.findByUri(resource.getUri());
             if (all.size() <= 1) {
@@ -131,11 +128,29 @@ public class MovieServiceImpl implements MovieService {
             }
 
             logger.info("handle {}: {}-{}", resource.getId(), resource.getTitle(), resource.getUri());
+            List<Resource> deleted = new ArrayList<>();
+            Resource kept = null;
             for (Resource r : all) {
                 if (r.getMovies().isEmpty()) {
-                    logger.info("delete resource {}: {}-{}", r.getId(), r.getTitle(), r.getUri());
-                    resourceRepository.delete(r);
+                    deleted.add(r);
+                } else {
+                    if (kept == null) {
+                        kept = r;
+                    } else {
+                        deleted.add(r);
+                    }
                 }
+            }
+
+            if (kept == null) {
+                kept = resource;
+                deleted.remove(kept);
+            }
+
+            logger.info("keep resource {}: {}-{}", kept.getId(), kept.getTitle(), kept.getUri());
+            for (Resource r : deleted) {
+                logger.info("delete resource {}: {}-{}", r.getId(), r.getTitle(), r.getUri());
+                resourceRepository.delete(r);
             }
         }
     }
