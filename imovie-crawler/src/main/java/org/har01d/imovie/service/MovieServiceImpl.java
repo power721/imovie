@@ -149,6 +149,12 @@ public class MovieServiceImpl implements MovieService {
 
             logger.info("keep resource {}: {}-{}", kept.getId(), kept.getTitle(), kept.getUri());
             for (Resource r : deleted) {
+                for (Movie movie : r.getMovies()) {
+                    movie.getRes().remove(r);
+                    movieRepository.save(movie);
+                    logger.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
+                        movie.getRes().size());
+                }
                 logger.info("delete resource {}: {}-{}", r.getId(), r.getTitle(), r.getUri());
                 resourceRepository.delete(r);
             }
