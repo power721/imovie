@@ -73,6 +73,12 @@ export default {
       }
 
       return this.pagination.number - this.onEachSide
+    },
+    prevWindow () {
+      return this.pagination.number - this.windowSize
+    },
+    nextWindow () {
+      return this.pagination.number + this.windowSize
     }
   },
   methods: {

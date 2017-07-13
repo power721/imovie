@@ -5,6 +5,7 @@
       <i v-if="icons.first != ''" :class="[icons.first]"></i>
       <span v-else>&laquo;</span>
     </a>
+    <a @click="loadPage(prevWindow)" :class="[css.pageClass]" v-if="prevWindow >= 0">&#8672;</a>
     <a @click="loadPage('prev')"
        :class="['btn-nav', css.linkClass, isOnFirstPage ? css.disabledClass : '']">
       <i v-if="icons.next != ''" :class="[icons.prev]"></i>
@@ -31,6 +32,7 @@
       <i v-if="icons.next != ''" :class="[icons.next]"></i>
       <span v-else>&rsaquo;&nbsp;</span>
     </a>
+    <a @click="loadPage(nextWindow)" :class="[css.pageClass]" v-if="nextWindow < totalPage">&#8674;</a>
     <a @click="loadPage(totalPage-1)"
        :class="['btn-nav', css.linkClass, isOnLastPage ? css.disabledClass : '']">
       <i v-if="icons.last != ''" :class="[icons.last]"></i>
