@@ -56,10 +56,12 @@ public class CkDramaCrawlerImpl extends AbstractCrawler implements CkDramaCrawle
                 for (Element element : elements) {
                     String pageUrl = element.attr("href");
                     Source source = service.findSource(pageUrl);
-//                    if (source != null) {
-//                        logger.info("skip {}", pageUrl);
-//                        continue;
-//                    }
+                    if (source != null) {
+                        if (source.isCompleted()) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
+                    }
 
                     boolean completed = false;
                     if (element.select("div.boutlist ul li p.slz").text().contains("全集")) {
