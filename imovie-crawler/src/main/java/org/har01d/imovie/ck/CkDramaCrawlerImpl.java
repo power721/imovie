@@ -1,5 +1,6 @@
 package org.har01d.imovie.ck;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
@@ -60,6 +61,11 @@ public class CkDramaCrawlerImpl extends AbstractCrawler implements CkDramaCrawle
 //                        continue;
 //                    }
 
+                    boolean completed = false;
+                    if (element.select("div.boutlist ul li p.slz").text().contains("全集")) {
+                        completed = true;
+                    }
+
                     Movie movie = new Movie();
                     movie.setName(getName(element.text()));
                     try {
@@ -73,6 +79,8 @@ public class CkDramaCrawlerImpl extends AbstractCrawler implements CkDramaCrawle
                         } else {
                             source = new Source(pageUrl, false);
                         }
+                        source.setCompleted(completed);
+                        source.setUpdatedTime(new Date());
                         service.save(source);
                         error = 0;
                     } catch (Exception e) {

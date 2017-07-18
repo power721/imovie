@@ -68,6 +68,7 @@ public class CkCrawlerImpl extends AbstractCrawler implements CkCrawler {
                         if (movie != null) {
                             logger.info("[ck] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
                             count++;
                             total++;
                         } else {
