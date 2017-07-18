@@ -29,6 +29,9 @@ url:
   lg: http://www.languang.co/movie_bt/page/
   douban: https://movie.douban.com
   imdb: http://www.imdb.com/search/title?count=100&title_type=feature,tv_series&view=simple&page=
+  ck:
+    movie: http://www.ck180.com/sift/?&page=
+    drama: http://www.ck180.com/drama/page/
   btt:
     site: http://btbtt.co/
     page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
