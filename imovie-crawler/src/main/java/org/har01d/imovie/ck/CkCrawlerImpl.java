@@ -1,6 +1,8 @@
 package org.har01d.imovie.ck;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class CkCrawlerImpl extends AbstractCrawler implements CkCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(CkCrawler.class);
+    private static final Pattern NAME = Pattern.compile("(.+)\\d+-\\d+合集");
 
     @Value("${url.ck.movie}")
     private String baseUrl;
@@ -62,7 +65,7 @@ public class CkCrawlerImpl extends AbstractCrawler implements CkCrawler {
                     }
 
                     Movie movie = new Movie();
-                    movie.setName(element.text());
+                    movie.setName(getName(element.text()));
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
@@ -104,6 +107,14 @@ public class CkCrawlerImpl extends AbstractCrawler implements CkCrawler {
         saveCrawlerConfig();
         savePage(1);
         logger.info("[ck] ===== get {} movies =====", total);
+    }
+
+    private String getName(String text) {
+        Matcher matcher = NAME.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return text;
     }
 
 }

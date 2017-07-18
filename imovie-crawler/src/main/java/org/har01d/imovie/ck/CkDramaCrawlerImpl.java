@@ -61,6 +61,12 @@ public class CkDramaCrawlerImpl extends AbstractCrawler implements CkDramaCrawle
                             logger.info("skip {}", pageUrl);
                             continue;
                         }
+
+                        long time = System.currentTimeMillis();
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
                     }
 
                     boolean completed = false;

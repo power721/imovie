@@ -117,7 +117,7 @@ public class CkParserImpl extends AbstractParser implements CkParser {
                 phase = 3;
                 Element next = element.nextElementSibling();
                 Set<Person> people = new HashSet<>();
-                while (next.tagName().equals("a")) {
+                while (next != null && next.tagName().equals("a")) {
                     Person p = new Person(next.text());
                     people.add(p);
                     next = next.nextElementSibling();

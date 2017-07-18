@@ -443,7 +443,7 @@ public class MovieServiceImpl implements MovieService {
         for (Movie m : movies) {
             int match = 0;
             if (movie.getName().equals(m.getName())) {
-                match += 20;
+                match += 15;
             } else if (m.getName().startsWith(movie.getName())) {
                 match += 10;
             }
