@@ -529,9 +529,9 @@ public class MovieServiceImpl implements MovieService {
             }
 
             if (movie.getSynopsis() != null && !movie.getSynopsis().isEmpty() && m.getSynopsis() != null) {
-                if (m.getSynopsis().equals(movie.getSynopsis())) {
+                if (m.getSynopsis().replaceAll("　", "").trim().equals(movie.getSynopsis().trim())) {
                     match += 20;
-                } else if (m.getSynopsis().contains(movie.getSynopsis())) {
+                } else if (m.getSynopsis().replaceAll("　", "").trim().contains(movie.getSynopsis().trim())) {
                     match += 10;
                 }
             }

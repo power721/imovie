@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
 import org.json.simple.JSONArray;
@@ -42,23 +43,7 @@ public class CkParserImpl extends AbstractParser implements CkParser {
 
         getMovie(doc, movie);
 
-        String dbUrl = movie.getDbUrl();
-        Movie m = getByDb(dbUrl);
-
-        if (m == null) {
-            String imdb = movie.getImdbUrl();
-            if (imdb != null) {
-                m = service.findByImdb(imdb);
-            }
-        }
-
-        if (m == null) {
-            m = searchByImdb(movie);
-        }
-
-        if (m == null) {
-            m = searchByName(movie);
-        }
+        Movie m = searchByName(movie);
 
         if (m != null) {
             Set<Resource> resources = m.getRes();
@@ -114,8 +99,9 @@ public class CkParserImpl extends AbstractParser implements CkParser {
     }
 
     private void getMovie(Document doc, Movie movie) {
-        movie.setSynopsis(doc.select("span#short_summary_all").text());
+        movie.setSynopsis(doc.select("span#short_summary_all").text().replace("[收起]", ""));
         Elements elements = doc.select("div#video-list span");
+        movie.setEpisode(getEpisode(doc.select("div#video-list").text()));
         int phase = 0;
         for (Element element : elements) {
             String text = element.text();
@@ -129,12 +115,20 @@ public class CkParserImpl extends AbstractParser implements CkParser {
                 phase = 5;
             } else if (text.contains("导演：")) {
                 phase = 3;
+                Element next = element.nextElementSibling();
+                Set<Person> people = new HashSet<>();
+                while (next.tagName().equals("a")) {
+                    Person p = new Person(next.text());
+                    people.add(p);
+                    next = next.nextElementSibling();
+                }
+                movie.setDirectors(people);
             } else if (text.contains("主演：")) {
                 phase = 2;
             } else if (text.contains("更新：")) {
                 phase = 7;
             } else if (text.contains("更新至：")) {
-                phase = 8;
+                phase = 0;
             } else if (text.contains("简介：")) {
                 phase = 0;
             } else {
@@ -152,8 +146,6 @@ public class CkParserImpl extends AbstractParser implements CkParser {
                     movie.setRegions(getRegions(getValues(element)));
                 } else if (phase == 7) {
                     movie.setSourceTime(getSourceTime(text));
-                } else if (phase == 8) {
-                    movie.setEpisode(getEpisode(text));
                 }
             }
         }
