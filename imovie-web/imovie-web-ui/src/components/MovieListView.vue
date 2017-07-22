@@ -109,7 +109,7 @@
           </div>
           <div class="extra">
             <div>
-              <span class="date">{{ movie.createdTime | date }}</span>
+              <span class="date" :data-tooltip="getTooltip(movie.updatedTime)" data-position="top left">{{ movie.createdTime | date }}</span>
               <span class="category">{{ movie.categories | join }}</span>
               <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB: {{ movie.imdbScore || '0.0' }}</a>
               <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}: {{ movie.dbScore || '0.0' }}</a>
@@ -134,7 +134,6 @@
   }
   span.date {
     color: #8f8f8f;
-    left: 5px;
   }
   span.category {
     color: #9f9f9f;
@@ -275,6 +274,9 @@ export default {
       } else {
         return '/movies/' + movie.id
       }
+    },
+    getTooltip: function (updatedTime) {
+      return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
     },
     deleteMovie: function (id) {
       movieService.deleteMovie(id, (success, data) => {

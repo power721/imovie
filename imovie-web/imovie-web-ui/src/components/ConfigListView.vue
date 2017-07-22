@@ -22,6 +22,8 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="ui hidden divider"></div>
   </div>
 </template>
 <style>

@@ -39,6 +39,7 @@
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
+    <div class="ui hidden divider"></div>
   </div>
 </template>
 <style>
