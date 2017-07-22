@@ -5,6 +5,7 @@ import EpisodeListView from '@/components/EpisodeListView'
 import ResourceListView from '@/components/ResourceListView'
 import MovieDetailView from '@/components/MovieDetailView'
 import ConfigListView from '@/components/ConfigListView'
+import EventListView from '@/components/EventListView'
 import UserView from '@/components/UserView'
 import LoginView from '@/components/LoginView'
 import SignupView from '@/components/SignupView'
@@ -43,6 +44,12 @@ export default new Router({
       path: '/configs',
       name: 'ConfigListView',
       component: ConfigListView,
+      meta: {auth: true}
+    },
+    {
+      path: '/events',
+      name: 'EventListView',
+      component: EventListView,
       meta: {auth: true}
     },
     {

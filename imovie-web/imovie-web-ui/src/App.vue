@@ -8,6 +8,7 @@
           <router-link class="item" to="/episodes">{{ $t("token.episodes") }}</router-link>
           <router-link class="item" to="/resources" v-if="user.authenticated">{{ $tc("token.resource", 5) }}</router-link>
           <router-link class="item" to="/configs" v-if="user.isAdmin">{{ $tc("token.config", 5) }}</router-link>
+          <router-link class="item" to="/events" v-if="user.isAdmin">{{ $tc("token.event", 5) }}</router-link>
           <div class="right menu">
             <div class="item" v-if="!user.authenticated">
               <router-link to="/login">{{ $t("token.login") }}</router-link>

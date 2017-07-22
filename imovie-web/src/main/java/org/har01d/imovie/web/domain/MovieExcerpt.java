@@ -30,4 +30,6 @@ public interface MovieExcerpt {
     Integer getEpisode();
 
     Date getCreatedTime();
+
+    Date getUpdatedTime();
 }

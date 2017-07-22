@@ -109,7 +109,7 @@
           </div>
           <div class="extra">
             <div>
-              <span class="date">{{ movie.createdTime | date }}</span>
+              <span class="date" data-tooltip="movie.updatedTime | date">{{ movie.createdTime | date }}</span>
               <span class="category">{{ movie.categories | join }}</span>
               <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB: {{ movie.imdbScore || '0.0' }}</a>
               <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}: {{ movie.dbScore || '0.0' }}</a>
