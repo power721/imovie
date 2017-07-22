@@ -43,42 +43,42 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
 
     @RestResource(path = "by-movie", rel = "by-movie")
-    Page<Movie> findByEpisodeEquals(@Param("episode") int episode, Pageable pageable);
+    Page<Movie> findByEpisodeIsNull(Pageable pageable);
 
     @RestResource(path = "by-movie-category", rel = "by-movie-category")
-    Page<Movie> findByEpisodeEqualsAndCategories_Name(@Param("episode") int episode, @Param("category") String category,
+    Page<Movie> findByEpisodeIsNullAndCategories_Name(@Param("category") String category,
         Pageable pageable);
 
     @RestResource(path = "by-movie-name", rel = "by-movie-name")
-    Page<Movie> findByEpisodeEqualsAndNameContaining(@Param("episode") int episode, @Param("name") String name,
+    Page<Movie> findByEpisodeIsNullAndNameContaining(@Param("name") String name,
         Pageable pageable);
 
     @RestResource(path = "search-movie", rel = "search-movie")
-    Page<Movie> findByEpisodeEqualsAndNameContainingAndCategories_Name(@Param("episode") int episode,
+    Page<Movie> findByEpisodeIsNullAndNameContainingAndCategories_Name(
         @Param("name") String name, @Param("category") String category, Pageable pageable);
 
     @RestResource(path = "by-movie-imdb", rel = "by-movie-imdb")
-    Page<Movie> findByEpisodeEqualsAndImdbUrlContaining(@Param("episode") int episode, @Param("name") String imdb,
+    Page<Movie> findByEpisodeIsNullAndImdbUrlContaining(@Param("name") String imdb,
         Pageable pageable);
 
 
     @RestResource(path = "by-episode", rel = "by-episode")
-    Page<Movie> findByEpisodeGreaterThan(@Param("episode") int episode, Pageable pageable);
+    Page<Movie> findByEpisodeNotNull(Pageable pageable);
 
     @RestResource(path = "by-episode-category", rel = "by-episode-category")
-    Page<Movie> findByEpisodeGreaterThanAndCategories_Name(@Param("episode") int episode,
+    Page<Movie> findByEpisodeNotNullAndCategories_Name(
         @Param("category") String category, Pageable pageable);
 
     @RestResource(path = "by-episode-name", rel = "by-episode-name")
-    Page<Movie> findByEpisodeGreaterThanAndNameContaining(@Param("episode") int episode, @Param("name") String name,
+    Page<Movie> findByEpisodeNotNullAndNameContaining(@Param("name") String name,
         Pageable pageable);
 
     @RestResource(path = "search-episode", rel = "search-episode")
-    Page<Movie> findByEpisodeGreaterThanAndNameContainingAndCategories_Name(@Param("episode") int episode,
+    Page<Movie> findByEpisodeNotNullAndNameContainingAndCategories_Name(
         @Param("name") String name, @Param("category") String category, Pageable pageable);
 
     @RestResource(path = "by-episode-imdb", rel = "by-episode-imdb")
-    Page<Movie> findByEpisodeGreaterThanAndImdbUrlContaining(@Param("episode") int episode, @Param("name") String imdb,
+    Page<Movie> findByEpisodeNotNullAndImdbUrlContaining(@Param("name") String imdb,
         Pageable pageable);
 
 }

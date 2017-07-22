@@ -3,7 +3,6 @@ import Vue from 'vue'
 export default {
   getEpisodes (params, cb) {
     var uri = '/api/movies/search/by-episode'
-    params.episode = 0
     if (params.name && params.category && params.category !== 'all') {
       uri = '/api/movies/search/search-episode/'
     } else if (params.name) {
