@@ -139,7 +139,7 @@ public class TorrentFile {
         }
 
         hexHash = hash.toString().toUpperCase();
-        magnet = "magnet:?xt=urn:btih:" + hexHash + "&dn=" + name;
+        magnet = "magnet:?xt=urn:btih:" + hexHash;
     }
 
     private boolean hashCheckFile() throws IOException {
