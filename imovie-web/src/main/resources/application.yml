@@ -1,6 +1,7 @@
-# config context path to "/" by setting an empty string
 server:
-  contextPath:
+  tomcat:
+    accesslog:
+      enabled: true
 
 security:
   oauth2:
@@ -48,10 +49,6 @@ logging:
     org.power.oj: DEBUG
     org.springframework:
       security: DEBUG
-management:
-  security:
-    enabled: false
-  context-path: /manage
 
 ---
 spring:
@@ -62,3 +59,12 @@ logging:
   level:
     org.springframework:
      web: DEBUG
+
+---
+spring:
+  profiles: production
+server:
+  address: 127.0.0.1
+  port: 9090
+  compression:
+    enabled: true
