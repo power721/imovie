@@ -68,3 +68,4 @@ server:
   port: 9090
   compression:
     enabled: true
+    min-response-size: 524288
