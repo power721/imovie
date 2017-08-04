@@ -71,6 +71,27 @@
         </div>
 
         <div class="field">
+          <label>{{ $tc("token.region") }}</label>
+          <select class="ui dropdown" id="region" v-model="region" @change="filter">
+            <option value="all">{{ $t("token.all") }}</option>
+            <option value="中国大陆">中国大陆</option>
+            <option value="美国">美国</option>
+            <option value="日本">日本</option>
+            <option value="英国">英国</option>
+            <option value="香港">香港</option>
+            <option value="台湾">台湾</option>
+            <option value="法国">法国</option>
+            <option value="韩国">韩国</option>
+            <option value="德国">德国</option>
+            <option value="加拿大">加拿大</option>
+            <option value="意大利">意大利</option>
+            <option value="西班牙">西班牙</option>
+            <option value="澳大利亚">澳大利亚</option>
+            <option value="泰国">泰国</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label>{{ $t("token.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="filter" placeholder="Search...">
@@ -160,7 +181,7 @@
   }
 </style>
 <script>
-import episodeService from '@/services/EpisodeService'
+import movieService from '@/services/MovieService'
 import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
@@ -180,6 +201,7 @@ export default {
       text: this.$route.query.search || storageService.getItem('searchEpisode') || '',
       sort: this.$route.query.sort || storageService.getItem('sortEpisode') || '',
       category: this.$route.query.category || storageService.getItem('episodeCategory') || 'all',
+      region: this.$route.query.region || storageService.getItem('episodeRegion') || 'all',
       currentPage: this.$route.query.page || storageService.getItem('episodePage') || 0,
       pagination: null,
       movies: []
@@ -203,8 +225,8 @@ export default {
       this.error = this.movies = null
       this.loading = true
       storageService.setItem('episodePage', this.currentPage)
-      let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
-      episodeService.getEpisodes(params, (success, data) => {
+      let params = { episode: true, name: this.text, category: this.category, region: this.region, page: this.currentPage, sort: this.sort }
+      movieService.getMovies(params, (success, data) => {
         this.loading = false
         if (success) {
           this.fireEvent('load-success', data)
@@ -227,6 +249,7 @@ export default {
       storageService.setItem('sortEpisode', this.sort)
       storageService.setItem('searchEpisode', this.text)
       storageService.setItem('episodeCategory', this.category)
+      storageService.setItem('episodeRegion', this.region)
       this.loadData()
     },
     getPaginationData: function (pagination) {
@@ -279,7 +302,7 @@ export default {
       return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
     },
     deleteMovie: function (id) {
-      episodeService.deleteMovie(id, (success, data) => {
+      movieService.deleteMovie(id, (success, data) => {
         if (success) {
           $('div[data-id=' + id + ']').remove()
         } else {

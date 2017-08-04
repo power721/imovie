@@ -71,6 +71,36 @@
         </div>
 
         <div class="field">
+          <label>{{ $tc("token.region") }}</label>
+          <select class="ui dropdown" id="region" v-model="region" @change="filter">
+            <option value="all">{{ $t("token.all") }}</option>
+            <option value="中国大陆">中国大陆</option>
+            <option value="美国">美国</option>
+            <option value="日本">日本</option>
+            <option value="英国">英国</option>
+            <option value="香港">香港</option>
+            <option value="法国">法国</option>
+            <option value="韩国">韩国</option>
+            <option value="德国">德国</option>
+            <option value="加拿大">加拿大</option>
+            <option value="台湾">台湾</option>
+            <option value="意大利">意大利</option>
+            <option value="西班牙">西班牙</option>
+            <option value="澳大利亚">澳大利亚</option>
+            <option value="印度">印度</option>
+            <option value="泰国">泰国</option>
+            <option value="比利时">比利时</option>
+            <option value="瑞典">瑞典</option>
+            <option value="俄罗斯">俄罗斯</option>
+            <option value="西德">西德</option>
+            <option value="丹麦">丹麦</option>
+            <option value="荷兰">荷兰</option>
+            <option value="苏联">苏联</option>
+            <option value="瑞士">瑞士</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label>{{ $t("token.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="text" @change="filter" placeholder="Search...">
@@ -158,6 +188,7 @@
     margin-top: auto;
     margin-bottom: auto;
   }
+
 </style>
 <script>
 import movieService from '@/services/MovieService'
@@ -180,6 +211,7 @@ export default {
       text: this.$route.query.search || storageService.getItem('search') || '',
       sort: this.$route.query.sort || storageService.getItem('sort') || '',
       category: this.$route.query.category || storageService.getItem('category') || 'all',
+      region: this.$route.query.region || storageService.getItem('region') || 'all',
       currentPage: this.$route.query.page || storageService.getItem('page') || 0,
       pagination: null,
       movies: []
@@ -203,8 +235,8 @@ export default {
       this.error = this.movies = null
       this.loading = true
       storageService.setItem('page', this.currentPage)
-      let params = { name: this.text, category: this.category, page: this.currentPage, sort: this.sort }
-      movieService.getAllMovies(params, (success, data) => {
+      let params = { name: this.text, category: this.category, region: this.region, page: this.currentPage, sort: this.sort }
+      movieService.getMovies(params, (success, data) => {
         this.loading = false
         if (success) {
           this.fireEvent('load-success', data)
@@ -227,6 +259,7 @@ export default {
       storageService.setItem('sort', this.sort)
       storageService.setItem('search', this.text)
       storageService.setItem('category', this.category)
+      storageService.setItem('region', this.region)
       this.loadData()
     },
     getPaginationData: function (pagination) {
