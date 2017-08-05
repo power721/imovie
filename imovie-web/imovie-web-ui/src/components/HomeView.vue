@@ -270,7 +270,7 @@
           <div class="inline fields">
             <div class="field">
               <label>{{ $t("token.dbScore") }}</label>
-              <select class="ui dropdown" v-model="search.db.op">
+              <select class="ui dropdown" :class="{disabled: search.db.val === 'all'}" v-model="search.db.op">
                 <option value="==">==</option>
                 <option value="!=">!=</option>
                 <option value=">">></option>
@@ -303,7 +303,7 @@
 
             <div class="field">
               <label>{{ $t("token.imdbScore") }}</label>
-              <select class="ui dropdown" v-model="search.imdb.op">
+              <select class="ui dropdown" :class="{disabled: search.imdb.val === 'all'}" v-model="search.imdb.op">
                 <option value="==">==</option>
                 <option value="!=">!=</option>
                 <option value=">">></option>
@@ -411,6 +411,23 @@
             </div>
           </div>
 
+          <div class="inline fields" v-if="search.type === 'episode'">
+            <div class="field">
+              <label>{{ $t("token.episode") }}</label>
+              <select class="ui dropdown" v-model="search.episode.op">
+                <option value="==">==</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value=">=">>=</option>
+                <option value="<"><</option>
+                <option value="<="><=</option>
+              </select>
+            </div>
+            <div class="field">
+              <input type="number" min="0" max="1000" v-model="search.episode.val">
+            </div>
+          </div>
+
           <div class="inline fields" v-if="$auth.user.authenticated">
             <label>{{ $tc("token.resource") }}?</label>
             <div class="field">
@@ -509,6 +526,10 @@ export default {
           val: ''
         },
         year: {
+          op: '==',
+          val: ''
+        },
+        episode: {
           op: '==',
           val: ''
         },
@@ -723,7 +744,11 @@ export default {
       }
 
       if (this.search.type === 'episode') {
-        q.push('episode!=NULL')
+        if (this.search.episode.val) {
+          q.push('episode' + this.search.episode.op + this.search.episode.val)
+        } else {
+          q.push('episode!=NULL')
+        }
       } else if (this.search.type === 'movie') {
         q.push('episode==NULL')
       }
