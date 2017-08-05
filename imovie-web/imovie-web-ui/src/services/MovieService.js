@@ -3,37 +3,26 @@ import Vue from 'vue'
 export default {
   getMovies (params, cb) {
     var q = []
-    if (params.name) {
-      if (/^tt\d+$/.test(params.name)) {
-        q.push('imdbUrl==*' + params.name)
+    var query = params.q
+    if (query.text) {
+      if (/^tt\d+$/.test(query.text)) {
+        q.push('imdbUrl=="*' + query.text + '"')
       } else {
-        q.push('title==*' + params.name + '*')
+        q.push('title=="*' + query.text + '*"')
       }
-      delete params.name
     }
-    if (params.episode) {
-      q.push('episode!=NULL')
-      delete params.episode
+    if (query.type) {
+      if (query.type === 'episode') {
+        q.push('episode!=NULL')
+      } else if (query.type === 'movie') {
+        q.push('episode==NULL')
+      }
     }
-    if (params.movie) {
-      q.push('episode==NULL')
-      delete params.movie
+    if (query.category && query.category !== 'all') {
+      q.push('categories.name==' + query.category)
     }
-    if (params.category && params.category !== 'all') {
-      q.push('categories.name==' + params.category)
-      delete params.category
-    }
-    if (params.region && params.region !== 'all') {
-      q.push('regions.name==' + params.region)
-      delete params.region
-    }
-    if (params.language && params.language !== 'all') {
-      q.push('languages.name==' + params.language)
-      delete params.language
-    }
-    if (params.year && params.year !== 'all') {
-      q.push('year==' + params.year)
-      delete params.year
+    if (query.search) {
+      q.push(query.search)
     }
     params.q = q.join(';')
     return Vue.http.get('/api/movies/', {params: params})

@@ -3,7 +3,7 @@ export default {
     token: {
       index: 'Home',
       movie: 'Movie | Movies',
-      episodes: 'Episodes',
+      episodes: 'Episode | Episodes',
       resource: 'Resource | Resources',
       config: 'Config | Configs',
       event: 'Event | Events',
@@ -23,13 +23,16 @@ export default {
       editor: 'Editor | Editors',
       actor: 'Actor | Actors',
       region: 'Region | Regions',
+      area: 'Region',
       language: 'Language | Languages',
       runningTime: 'Running Time',
       episode: 'Episode',
       alias: 'Alias | Aliases',
       synopsis: 'Synopsis',
       update: 'Update',
-      all: 'All'
+      year: 'Year',
+      all: 'All',
+      any: 'Any'
     },
     message: {
       noIntro: 'No details.',
@@ -60,13 +63,16 @@ export default {
       editor: '编剧',
       actor: '主演',
       region: '制片国家/地区',
+      area: '地区',
       language: '语言',
       runningTime: '片长',
       episode: '集数',
       alias: '又名',
       synopsis: '剧情简介',
       update: '更新',
-      all: '全部'
+      year: '年代',
+      all: '全部',
+      any: '任意'
     },
     message: {
       noIntro: '暂无介绍',
