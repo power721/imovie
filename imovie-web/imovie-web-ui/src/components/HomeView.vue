@@ -138,21 +138,23 @@
               <select class="ui dropdown" v-model="search.text.name">
                 <option value="name">name</option>
                 <option value="title">title</option>
+                <option value="synopsis">synopsis</option>
                 <option value="imdbUrl">imdb</option>
+                <option value="aliases">alias</option>
               </select>
             </div>
             <div class="field">
               <select class="ui dropdown" v-model="search.text.op1">
                 <option value="is"></option>
-                <option value="not">not</option>
+                <option value="not" v-if="search.text.name != 'aliases'">not</option>
               </select>
             </div>
             <div class="field">
               <select class="ui dropdown" v-model="search.text.op2">
                 <option value="contains">contains</option>
-                <option value="equals" v-if="search.text.name != 'imdbUrl'">equals</option>
-                <option value="startsWith" v-if="search.text.name != 'imdbUrl'">starts with</option>
-                <option value="endsWith" v-if="search.text.name != 'imdbUrl'">ends with</option>
+                <option value="equals" v-if="search.text.name == 'name' || search.text.name == 'title'">equals</option>
+                <option value="startsWith" v-if="search.text.name == 'name' || search.text.name == 'title'">starts with</option>
+                <option value="endsWith" v-if="search.text.name == 'name' || search.text.name == 'title'">ends with</option>
               </select>
             </div>
             <div class="field">
@@ -264,6 +266,20 @@
             </div>
             <div class="field">
               <input type="number" min="1900" max="2050" v-model="search.year.val">
+            </div>
+
+            <div class="field">
+              <label>{{ $t("token.updatedTime") }}</label>
+              <select class="ui dropdown" v-model="search.updated.op">
+                <option value="==">==</option>
+                <option value=">">></option>
+                <option value=">=">>=</option>
+                <option value="<"><</option>
+                <option value="<="><=</option>
+              </select>
+            </div>
+            <div class="field">
+              <datepicker v-model="search.updated.val" :language="$i18n.locale" name="updatedTime" format="yyyy-MM-dd" clear-button="true"></datepicker>
             </div>
           </div>
 
@@ -491,10 +507,6 @@
     margin-top: auto;
     margin-bottom: auto;
   }
-
-
-
-
 </style>
 <script>
 import movieService from '@/services/MovieService'
@@ -502,6 +514,7 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
+import Datepicker from './datepicker/Datepicker'
 import VueSemanticModal from 'vue-semantic-modal'
 import $ from 'jquery'
 
@@ -510,7 +523,8 @@ export default {
   components: {
     VuePagination,
     VuePaginationInfo,
-    VueSemanticModal
+    VueSemanticModal,
+    Datepicker
   },
   data () {
     return {
@@ -527,6 +541,10 @@ export default {
         },
         year: {
           op: '==',
+          val: ''
+        },
+        updated: {
+          op: '>',
           val: ''
         },
         episode: {
@@ -679,7 +697,10 @@ export default {
         if (this.search.text.op1 === 'not') {
           op = '!='
         }
-        if (this.search.text.op2 === 'contains') {
+        if (this.search.text.name === 'aliases') {
+          op = '=m='
+          val = this.search.text.val
+        } else if (this.search.text.op2 === 'contains') {
           val = '*' + this.search.text.val + '*'
         } else if (this.search.text.op2 === 'startsWith') {
           val = '*' + this.search.text.val
@@ -693,6 +714,11 @@ export default {
 
       if (this.search.year.val) {
         q.push('year' + this.search.year.op + this.search.year.val)
+      }
+
+      if (this.search.updated.val) {
+        var date = new Date(this.search.updated.val).toISOString().substring(0, 10)
+        q.push('updatedTime' + this.search.updated.op + date)
       }
 
       if (this.query.region && this.query.region !== 'all') {
@@ -759,6 +785,7 @@ export default {
         q.push('resources=e=0')
       }
 
+      console.log(this.$i18n.locale)
       this.query.search = q.join(';')
       this.showModal = false
       this.loadData()
