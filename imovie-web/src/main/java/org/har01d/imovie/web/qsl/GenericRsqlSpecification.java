@@ -66,6 +66,10 @@ public class GenericRsqlSpecification<T> implements Specification<T> {
                 return path.in(args);
             case NOT_IN:
                 return builder.not(path.in(args));
+            case EMPTY:
+                return builder.isEmpty(path);
+            case NOT_EMPTY:
+                return builder.isNotEmpty(path);
         }
 
         return null;

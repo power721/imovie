@@ -231,7 +231,6 @@ export default {
       storageService.setItem('sortMovie', this.sort)
       storageService.setItem('searchMovie', this.query.text)
       storageService.setItem('movieCategory', this.query.category)
-      storageService.setItem('movieRegion', this.query.region)
       this.loadData()
     },
     getPaginationData: function (pagination) {

@@ -9,6 +9,7 @@ import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
 import org.har01d.imovie.web.dto.TransferParam;
 import org.har01d.imovie.web.qsl.CustomRsqlVisitor;
+import org.har01d.imovie.web.qsl.RsqlSearchOperation;
 import org.har01d.imovie.web.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -82,7 +83,7 @@ public class CustomRepositoryRestController {
         if (StringUtils.isEmpty(search)) {
             results = repository.findAll(pageable.getPageable());
         } else {
-            Node rootNode = new RSQLParser().parse(search);
+            Node rootNode = new RSQLParser(RsqlSearchOperation.operators()).parse(search);
             Specification<Movie> spec = rootNode.accept(new CustomRsqlVisitor<>());
             results = repository.findAll(spec, pageable.getPageable());
         }

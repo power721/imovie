@@ -231,7 +231,6 @@ export default {
       storageService.setItem('sortEpisode', this.sort)
       storageService.setItem('searchEpisode', this.query.text)
       storageService.setItem('episodeCategory', this.query.category)
-      storageService.setItem('episodeRegion', this.query.region)
       this.loadData()
     },
     getPaginationData: function (pagination) {

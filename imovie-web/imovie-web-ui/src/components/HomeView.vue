@@ -400,13 +400,35 @@
             <div class="field">
               <div class="ui radio checkbox">
                 <input type="radio" name="type" value="movie" v-model="search.type">
-                <label>{{ $t("token.movie") }}</label>
+                <label>{{ $tc("token.movie") }}</label>
               </div>
             </div>
             <div class="field">
               <div class="ui radio checkbox">
                 <input type="radio" name="type" value="episode" v-model="search.type">
-                <label>{{ $t("token.episodes") }}</label>
+                <label>{{ $tc("token.episodes") }}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline fields" v-if="$auth.user.authenticated">
+            <label>{{ $tc("token.resource") }}?</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="resources" value="all" v-model="search.resources">
+                <label>不限</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="resources" value="notempty" v-model="search.resources">
+                <label>有</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="resources" value="empty" v-model="search.resources">
+                <label>无</label>
               </div>
             </div>
           </div>
@@ -510,7 +532,8 @@ export default {
           op: 'all',
           val: ''
         },
-        type: 'all'
+        type: 'all',
+        resources: 'all'
       },
       query: {
         search: '',
@@ -566,7 +589,6 @@ export default {
       storageService.setItem('sort', this.sort)
       storageService.setItem('search', this.query.text)
       storageService.setItem('category', this.query.category)
-      storageService.setItem('region', this.query.region)
       this.loadData()
     },
     getPaginationData: function (pagination) {
@@ -704,6 +726,12 @@ export default {
         q.push('episode!=NULL')
       } else if (this.search.type === 'movie') {
         q.push('episode==NULL')
+      }
+
+      if (this.search.resources === 'notempty') {
+        q.push('resources=n=0')
+      } else if (this.search.resources === 'empty') {
+        q.push('resources=e=0')
       }
 
       this.query.search = q.join(';')
