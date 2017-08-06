@@ -127,7 +127,7 @@
 
     <div class="ui hidden divider"></div>
 
-    <vue-semantic-modal v-model="showModal">
+    <vue-semantic-modal v-model="showModal" show-close-icon="true">
       <template slot="header">
         {{ $t("message.AdvanceSearch") }}
       </template>
