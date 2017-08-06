@@ -47,3 +47,7 @@ export function join (values, delm) {
 export function imdb (value) {
   return value.replace('http://www.imdb.com/title/', '')
 }
+
+export function lower (value) {
+  return value.toLowerCase()
+}

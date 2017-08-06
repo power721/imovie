@@ -4,9 +4,13 @@ import static org.springframework.data.rest.webmvc.ControllerUtils.EMPTY_RESOURC
 
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
+import org.har01d.imovie.web.domain.Person;
+import org.har01d.imovie.web.domain.PersonRepository;
 import org.har01d.imovie.web.dto.TransferParam;
 import org.har01d.imovie.web.qsl.CustomRsqlVisitor;
 import org.har01d.imovie.web.qsl.RsqlSearchOperation;
@@ -46,6 +50,9 @@ public class CustomRepositoryRestController {
     private MovieRepository repository;
 
     @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
     private MovieService service;
 
     @Autowired
@@ -70,6 +77,11 @@ public class CustomRepositoryRestController {
     @PostMapping("/resources/transfer")
     public Set<Integer> transferResources(@RequestBody TransferParam transferParam) {
         return service.transferResources(transferParam.getResourceIds(), transferParam.getMovieId());
+    }
+
+    @GetMapping("/persons/search")
+    public List<String> findPersons(String name) {
+        return personRepository.findTop20ByNameContains(name).stream().map(Person::getName).collect(Collectors.toList());
     }
 
     @GetMapping("/movies")

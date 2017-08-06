@@ -18,7 +18,7 @@ export default {
       releaseDate: 'Release Time',
       dbScore: 'DouBan',
       db: 'DouBan',
-      imdbScore: 'IMDB',
+      imdbScore: 'IMDb',
       director: 'Director | Directors',
       editor: 'Editor | Editors',
       actor: 'Actor | Actors',
@@ -28,15 +28,19 @@ export default {
       runningTime: 'Running Time',
       episode: 'Episode',
       alias: 'Alias | Aliases',
+      name: 'Name',
+      title: 'Title',
       synopsis: 'Synopsis',
       update: 'Update',
       year: 'Year',
       all: 'All',
-      any: 'Any'
+      any: 'Any',
+      contains: 'Contains'
     },
     message: {
       noIntro: 'No details.',
-      download: 'Download '
+      download: 'Download ',
+      AdvanceSearch: 'Advance Search'
     }
   },
   zh: {
@@ -58,7 +62,7 @@ export default {
       releaseDate: '上映时间',
       dbScore: '豆瓣评分',
       db: '豆瓣',
-      imdbScore: 'IMDB评分',
+      imdbScore: 'IMDb评分',
       director: '导演',
       editor: '编剧',
       actor: '主演',
@@ -67,16 +71,20 @@ export default {
       language: '语言',
       runningTime: '片长',
       episode: '集数',
-      alias: '又名',
+      alias: '别名',
+      name: '名字',
+      title: '标题',
       synopsis: '剧情简介',
       update: '更新',
       year: '年代',
       all: '全部',
-      any: '任意'
+      any: '任意',
+      contains: '包含'
     },
     message: {
       noIntro: '暂无介绍',
-      download: '点击下载资源 '
+      download: '点击下载资源 ',
+      AdvanceSearch: '高级搜索'
     }
   }
 }

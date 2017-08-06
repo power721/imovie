@@ -4,26 +4,28 @@ export default {
   getMovies (params, cb) {
     var q = []
     var query = params.q
-    if (query.text) {
-      if (/^tt\d+$/.test(query.text)) {
-        q.push('imdbUrl=="*' + query.text + '"')
-      } else {
-        q.push('title=="*' + query.text + '*"')
-      }
-    }
-    if (query.type) {
-      if (query.type === 'episode') {
-        q.push('episode!=NULL')
-      } else if (query.type === 'movie') {
-        q.push('episode==NULL')
-      }
-    }
-    if (query.category && query.category !== 'all') {
-      q.push('categories.name==' + query.category)
-    }
     if (query.search) {
       q.push(query.search)
+    } else {
+      if (query.text) {
+        if (/^tt\d+$/.test(query.text)) {
+          q.push('imdbUrl=="*' + query.text + '"')
+        } else {
+          q.push('title=="*' + query.text + '*"')
+        }
+      }
+      if (query.type) {
+        if (query.type === 'episode') {
+          q.push('episode!=NULL')
+        } else if (query.type === 'movie') {
+          q.push('episode==NULL')
+        }
+      }
+      if (query.category && query.category !== 'all') {
+        q.push('categories.name==' + query.category)
+      }
     }
+
     params.q = q.join(';')
     return Vue.http.get('/api/movies/', {params: params})
     .then(({data}) => {
@@ -52,6 +54,19 @@ export default {
 
   deleteMovie (id, cb) {
     return Vue.http.delete('/api/movies/' + id)
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
+  },
+
+  findPersonsByName (name, cb) {
+    return Vue.http.get('/api/persons/search/?name=' + name.trim())
     .then(({data}) => {
       if (cb) {
         cb(true, data)

@@ -91,11 +91,11 @@
 
     <div class="ui divided items movie-list">
       <div v-for="movie in movies" class="item movie" :data-id="movie.id" style="min-height: 225px;">
-        <router-link :to="getLink(movie)" class="ui small image" :title="movie.title">
+        <router-link :to="getLink(movie)" class="ui small image" :title="movie.title" :target="query.search ? '_blank' : ''">
           <img :src="movie.thumb">
         </router-link>
         <div class="content">
-          <router-link :to="getLink(movie)" class="header">
+          <router-link :to="getLink(movie)" class="header" :target="query.search ? '_blank' : ''">
             {{ movie.title }}
           </router-link>
           <div class="ui blue circular label" v-if="movie.episode">
@@ -129,18 +129,18 @@
 
     <vue-semantic-modal v-model="showModal">
       <template slot="header">
-        Advance Search
+        {{ $t("message.AdvanceSearch") }}
       </template>
       <template slot="content">
         <div class="ui form">
           <div class="inline fields">
             <div class="field">
               <select class="ui dropdown" v-model="search.text.name">
-                <option value="name">name</option>
-                <option value="title">title</option>
-                <option value="synopsis">synopsis</option>
-                <option value="imdbUrl">imdb</option>
-                <option value="aliases">alias</option>
+                <option value="name">{{ $t("token.name") | lower }}</option>
+                <option value="title">{{ $t("token.title") | lower }}</option>
+                <option value="synopsis">{{ $t("token.synopsis") | lower }}</option>
+                <option value="imdbUrl">IMDb</option>
+                <option value="aliases">{{ $tc("token.alias") | lower }}</option>
               </select>
             </div>
             <div class="field">
@@ -151,7 +151,7 @@
             </div>
             <div class="field">
               <select class="ui dropdown" v-model="search.text.op2">
-                <option value="contains">contains</option>
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
                 <option value="equals" v-if="search.text.name == 'name' || search.text.name == 'title'">equals</option>
                 <option value="startsWith" v-if="search.text.name == 'name' || search.text.name == 'title'">starts with</option>
                 <option value="endsWith" v-if="search.text.name == 'name' || search.text.name == 'title'">ends with</option>
@@ -165,90 +165,108 @@
           <div class="inline fields">
             <div class="field">
               <label>{{ $tc("token.category") }}</label>
-              <select class="ui dropdown" v-model="query.category">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="剧情">剧情</option>
-                <option value="爱情">爱情</option>
-                <option value="喜剧">喜剧</option>
-                <option value="动作">动作</option>
-                <option value="科幻">科幻</option>
-                <option value="奇幻">奇幻</option>
-                <option value="冒险">冒险</option>
-                <option value="动画">动画</option>
-                <option value="战争">战争</option>
-                <option value="悬疑">悬疑</option>
-                <option value="惊悚">惊悚</option>
-                <option value="恐怖">恐怖</option>
-                <option value="犯罪">犯罪</option>
-                <option value="音乐">音乐</option>
-                <option value="歌舞">歌舞</option>
-                <option value="历史">历史</option>
-                <option value="传记">传记</option>
-                <option value="家庭">家庭</option>
-                <option value="短片">短片</option>
-                <option value="情色" v-if="$auth.user.authenticated">情色</option>
-                <option value="纪录片">纪录片</option>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
               </select>
             </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.category.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.category.val" :multiple="true" :options="options.categories" select-label="" :max="5"></multiselect>
+            </div>
+          </div>
 
+          <div class="inline fields">
             <div class="field">
               <label>{{ $tc("token.area") }}</label>
-              <select class="ui dropdown" v-model="query.region">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="中国大陆">中国大陆</option>
-                <option value="美国">美国</option>
-                <option value="日本">日本</option>
-                <option value="英国">英国</option>
-                <option value="香港">香港</option>
-                <option value="法国">法国</option>
-                <option value="韩国">韩国</option>
-                <option value="德国">德国</option>
-                <option value="加拿大">加拿大</option>
-                <option value="台湾">台湾</option>
-                <option value="意大利">意大利</option>
-                <option value="西班牙">西班牙</option>
-                <option value="澳大利亚">澳大利亚</option>
-                <option value="印度">印度</option>
-                <option value="泰国">泰国</option>
-                <option value="比利时">比利时</option>
-                <option value="瑞典">瑞典</option>
-                <option value="俄罗斯">俄罗斯</option>
-                <option value="西德">西德</option>
-                <option value="丹麦">丹麦</option>
-                <option value="荷兰">荷兰</option>
-                <option value="苏联">苏联</option>
-                <option value="瑞士">瑞士</option>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
               </select>
             </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.region.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.region.val" :multiple="true" :options="options.regions" select-label="" :max="5"></multiselect>
+            </div>
+          </div>
 
+          <div class="inline fields">
             <div class="field">
               <label>{{ $tc("token.language") }}</label>
-              <select class="ui dropdown" v-model="query.language">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="汉语普通话">汉语普通话</option>
-                <option value="英语">英语</option>
-                <option value="日语">日语</option>
-                <option value="法语">法语</option>
-                <option value="粤语">粤语</option>
-                <option value="韩语">韩语</option>
-                <option value="德语">德语</option>
-                <option value="西班牙语">西班牙语</option>
-                <option value="意大利语">意大利语</option>
-                <option value="俄语">俄语</option>
-                <option value="泰语">泰语</option>
-                <option value="北印度语">北印度语</option>
-                <option value="葡萄牙语">葡萄牙语</option>
-                <option value="瑞典语">瑞典语</option>
-                <option value="阿拉伯语">阿拉伯语</option>
-                <option value="波兰语">波兰语</option>
-                <option value="印地语">印地语</option>
-                <option value="丹麦语">丹麦语</option>
-                <option value="荷兰语">荷兰语</option>
-                <option value="芬兰语">芬兰语</option>
-                <option value="希伯来语">希伯来语</option>
-                <option value="土耳其语">土耳其语</option>
-                <option value="无对白">无对白</option>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
               </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.language.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.language.val" :multiple="true" :options="options.languages" select-label="" :max="5"></multiselect>
+            </div>
+          </div>
+
+          <div class="inline fields">
+            <div class="field">
+              <label>{{ $tc("token.director") }}</label>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.director.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.director.val" placeholder="Type to search" open-direction="bottom" :options="options.directors" :multiple="true" :searchable="true" :loading="options.isLoading" :internal-search="false" select-label="" :limit="5" :max="5" @search-change="findDirectorsByName"/>
+            </div>
+          </div>
+
+          <div class="inline fields">
+            <div class="field">
+              <label>{{ $tc("token.editor") }}</label>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.editor.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.editor.val" placeholder="Type to search" open-direction="bottom" :options="options.editors" :multiple="true" :searchable="true" :loading="options.isLoading" :internal-search="false" select-label="" :limit="5" :max="5" @search-change="findEditorsByName"/>
+            </div>
+          </div>
+
+          <div class="inline fields">
+            <div class="field">
+              <label>{{ $tc("token.actor") }}</label>
+              <select class="ui disabled dropdown">
+                <option value="contains">{{ $t("token.contains") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" v-model="search.actor.op">
+                <option value="all">{{ $t("token.all") | lower }}</option>
+                <option value="any">{{ $t("token.any") | lower }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <multiselect v-model="search.actor.val" placeholder="Type to search" open-direction="bottom" :options="options.actors" :multiple="true" :searchable="true" :loading="options.isLoading" :internal-search="false" select-label="" :limit="5" :max="5" @search-change="findActorsByName"/>
             </div>
           </div>
 
@@ -352,60 +370,6 @@
           </div>
 
           <div class="inline fields">
-            <div class="field">
-              <label>{{ $tc("token.director") }}</label>
-              <select class="ui dropdown">
-                <option value="contains">contains</option>
-              </select>
-            </div>
-            <div class="field">
-              <select class="ui dropdown" v-model="search.director.op">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="any">{{ $t("token.any") }}</option>
-              </select>
-            </div>
-            <div class="field">
-              <input type="text" v-model="search.director.val">
-            </div>
-          </div>
-
-          <div class="inline fields">
-            <div class="field">
-              <label>{{ $tc("token.editor") }}</label>
-              <select class="ui dropdown">
-                <option value="contains">contains</option>
-              </select>
-            </div>
-            <div class="field">
-              <select class="ui dropdown" v-model="search.editor.op">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="any">{{ $t("token.any") }}</option>
-              </select>
-            </div>
-            <div class="field">
-              <input type="text" v-model="search.editor.val">
-            </div>
-          </div>
-
-          <div class="inline fields">
-            <div class="field">
-              <label>{{ $tc("token.actor") }}</label>
-              <select class="ui dropdown">
-                <option value="contains">contains</option>
-              </select>
-            </div>
-            <div class="field">
-              <select class="ui dropdown" v-model="search.actor.op">
-                <option value="all">{{ $t("token.all") }}</option>
-                <option value="any">{{ $t("token.any") }}</option>
-              </select>
-            </div>
-            <div class="field">
-              <input type="text" v-model="search.actor.val">
-            </div>
-          </div>
-
-          <div class="inline fields">
             <label>Type</label>
             <div class="field">
               <div class="ui radio checkbox">
@@ -476,6 +440,7 @@
   </div>
 
 </template>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style>
   #movies>.movie-list>.movie>.content>.description {
     min-height: 150px;
@@ -507,6 +472,10 @@
     margin-top: auto;
     margin-bottom: auto;
   }
+  #app input.multiselect__input {
+    border: none;
+    padding: 0px;
+  }
 </style>
 <script>
 import movieService from '@/services/MovieService'
@@ -516,6 +485,7 @@ import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
 import Datepicker from './datepicker/Datepicker'
 import VueSemanticModal from 'vue-semantic-modal'
+import Multiselect from 'vue-multiselect'
 import $ from 'jquery'
 
 export default {
@@ -524,7 +494,8 @@ export default {
     VuePagination,
     VuePaginationInfo,
     VueSemanticModal,
-    Datepicker
+    Datepicker,
+    Multiselect
   },
   data () {
     return {
@@ -561,15 +532,27 @@ export default {
         },
         director: {
           op: 'all',
-          val: ''
+          val: []
         },
         editor: {
           op: 'all',
-          val: ''
+          val: []
         },
         actor: {
           op: 'all',
-          val: ''
+          val: []
+        },
+        category: {
+          op: 'all',
+          val: []
+        },
+        region: {
+          op: 'all',
+          val: []
+        },
+        language: {
+          op: 'all',
+          val: []
         },
         type: 'all',
         resources: 'all'
@@ -580,6 +563,15 @@ export default {
         category: this.$route.query.category || storageService.getItem('category') || 'all',
         region: this.$route.query.region || storageService.getItem('region') || 'all',
         language: this.$route.query.language || storageService.getItem('language') || 'all'
+      },
+      options: {
+        isLoading: false,
+        directors: [],
+        editors: [],
+        actors: [],
+        categories: ['剧情', '爱情', '喜剧', '动作', '科幻', '奇幻', '冒险', '动画', '战争', '悬疑', '惊悚', '恐怖', '犯罪', '音乐', '歌舞', '历史', '传记', '家庭', '短片', '纪录片'],
+        regions: ['中国大陆', '美国', '日本', '英国', '香港', '法国', '韩国', '德国', '加拿大', '台湾', '意大利', '西班牙', '澳大利亚', '印度', '泰国', '比利时', '瑞典', '俄罗斯', '西德', '丹麦', '荷兰', '苏联', '瑞士'],
+        languages: ['汉语普通话', '英语', '日语', '法语', '粤语', '韩语', '德语', '西班牙语', '意大利语', '俄语', '泰语', '北印度语', '葡萄牙语', '瑞典语', '阿拉伯语', '波兰语', '印地语', '丹麦语', '荷兰语', '芬兰语', '希伯来语', '土耳其语', '无对白']
       },
       currentPage: this.$route.query.page || storageService.getItem('page') || 0,
       pagination: null,
@@ -688,6 +680,33 @@ export default {
         }
       })
     },
+    findDirectorsByName: function (name) {
+      this.options.isLoading = true
+      movieService.findPersonsByName(name, (success, data) => {
+        this.options.isLoading = false
+        if (success) {
+          this.options.directors = data
+        }
+      })
+    },
+    findEditorsByName: function (name) {
+      this.options.isLoading = true
+      movieService.findPersonsByName(name, (success, data) => {
+        this.options.isLoading = false
+        if (success) {
+          this.options.editors = data
+        }
+      })
+    },
+    findActorsByName: function (name) {
+      this.options.isLoading = true
+      movieService.findPersonsByName(name, (success, data) => {
+        this.options.isLoading = false
+        if (success) {
+          this.options.actors = data
+        }
+      })
+    },
     advanceSearch: function () {
       this.currentPage = 0
       var q = []
@@ -747,25 +766,49 @@ export default {
 
       if (this.search.director.val) {
         if (this.search.director.op === 'any') {
-          q.push('directors.name=in=(' + this.search.director.val.split(/[,;]/).join(',') + ')')
+          q.push('directors.name=in=(' + this.search.director.val.join(',') + ')')
         } else {
-          this.search.director.val.split(/[,;]/).forEach(e => q.push('directors.name=="' + e.trim() + '"'))
+          this.search.director.val.forEach(e => q.push('directors.name=="' + e + '"'))
         }
       }
 
       if (this.search.editor.val) {
         if (this.search.editor.op === 'any') {
-          q.push('editors.name=in=(' + this.search.editor.val.split(/[,;]/).join(',') + ')')
+          q.push('editors.name=in=(' + this.search.editor.val.join(',') + ')')
         } else {
-          this.search.editor.val.split(/[,;]/).forEach(e => q.push('editors.name=="' + e.trim() + '"'))
+          this.search.editor.val.forEach(e => q.push('editors.name=="' + e + '"'))
         }
       }
 
       if (this.search.actor.val) {
         if (this.search.actor.op === 'any') {
-          q.push('actors.name=in=(' + this.search.actor.val.split(/[,;]/).join(',') + ')')
+          q.push('actors.name=in=(' + this.search.actor.val.join(',') + ')')
         } else {
-          this.search.actor.val.split(/[,;]/).forEach(e => q.push('actors.name=="' + e.trim() + '"'))
+          this.search.actor.val.forEach(e => q.push('actors.name=="' + e + '"'))
+        }
+      }
+
+      if (this.search.category.val) {
+        if (this.search.category.op === 'any') {
+          q.push('categories.name=in=(' + this.search.category.val.join(',') + ')')
+        } else {
+          this.search.category.val.forEach(e => q.push('categories.name=="' + e + '"'))
+        }
+      }
+
+      if (this.search.region.val) {
+        if (this.search.region.op === 'any') {
+          q.push('regions.name=in=(' + this.search.region.val.join(',') + ')')
+        } else {
+          this.search.region.val.forEach(e => q.push('regions.name=="' + e + '"'))
+        }
+      }
+
+      if (this.search.language.val) {
+        if (this.search.language.op === 'any') {
+          q.push('languages.name=in=(' + this.search.language.val.join(',') + ')')
+        } else {
+          this.search.language.val.forEach(e => q.push('languages.name=="' + e + '"'))
         }
       }
 
@@ -785,8 +828,9 @@ export default {
         q.push('resources=e=0')
       }
 
-      console.log(this.$i18n.locale)
       this.query.search = q.join(';')
+      console.log(this.search)
+      console.log(this.query)
       this.showModal = false
       this.loadData()
     }

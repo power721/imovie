@@ -168,13 +168,13 @@ export default {
     }
   },
   created () {
-    this.fetchData()
+    this.loadData()
   },
   watch: {
-    '$route': 'fetchData'
+    '$route': 'loadData'
   },
   methods: {
-    fetchData () {
+    loadData () {
       this.error = this.movie = null
       this.loading = true
       movieService.getMovie(this.$route.params.id, (success, data) => {
