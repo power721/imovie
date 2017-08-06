@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-@Deprecated
 @Service
 public class DouBanCrawlerImpl implements DouBanCrawler {
 
@@ -62,17 +61,14 @@ public class DouBanCrawlerImpl implements DouBanCrawler {
                     for (Object item1 : items) {
                         JSONObject item = (JSONObject) item1;
                         String pageUrl = (String) item.get("url");
-                        Movie movie = service.findByDbUrl(pageUrl);
-                        if (movie == null) {
-                            try {
-                                movie = parser.parse(pageUrl);
-                                service.save(movie);
-                                count++;
-                                total++;
-                            } catch (Exception e) {
-                                service.publishEvent(pageUrl, e.getMessage());
-                                logger.error("Parse page failed: " + pageUrl, e);
-                            }
+                        try {
+                            Movie movie = parser.parse(pageUrl, false);
+                            service.updateMovie(pageUrl, movie);
+                            count++;
+                            total++;
+                        } catch (Exception e) {
+                            service.publishEvent(pageUrl, e.getMessage());
+                            logger.error("Parse page failed: " + pageUrl, e);
                         }
                     }
 

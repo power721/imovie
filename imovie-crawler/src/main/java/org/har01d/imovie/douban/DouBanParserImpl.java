@@ -3,6 +3,7 @@ package org.har01d.imovie.douban;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,11 +42,19 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private DouBanService douBanService;
 
+    @Autowired
+    private DouBanListParser douBanListParser;
+
     private volatile int errorCount;
     private volatile int count;
 
     @Override
-    public synchronized Movie parse(String url) throws IOException {
+    public Movie parse(String url) throws IOException {
+        return parse(url, false);
+    }
+
+    @Override
+    public synchronized Movie parse(String url, boolean includeDbList) throws IOException {
         if (count++ > 0) {
             if (count % 100 == 0) {
                 douBanService.updateCookie();
@@ -87,6 +96,11 @@ public class DouBanParserImpl implements DouBanParser {
         movie.setDbScore(dbScore);
         movie.setDbUrl(url);
         movie.setSynopsis(StringUtils.truncate(findSynopsis(synopsis), 10000));
+        try {
+            movie.setVotes(Integer.parseInt(content.select(".rating_sum .rating_people span").text()));
+        } catch (Exception e) {
+            // ignore
+        }
 
         Set<String> snapshots = new HashSet<>();
         for (Element element : content.select("#related-pic img")) {
@@ -110,6 +124,10 @@ public class DouBanParserImpl implements DouBanParser {
             movie.setYear(service.getYear(movie.getReleaseDate()));
         }
 
+        if (includeDbList) {
+            service.updateMovie(url, movie);
+            parseDouList(doc, movie.getTitle());
+        }
         return movie;
     }
 
@@ -241,6 +259,9 @@ public class DouBanParserImpl implements DouBanParser {
             return true;
         } else if ((value = getValue(text, "首播:")) != null) {
             movie.setReleaseDate(value);
+            if(movie.getEpisode() == null) {
+                movie.setEpisode(0);
+            }
         }
 
         if ((value = getValue(text, "片长:", 100)) != null) {
@@ -248,6 +269,9 @@ public class DouBanParserImpl implements DouBanParser {
             return true;
         } else if ((value = getValue(text, "单集片长:", 100)) != null) {
             movie.setRunningTime(value);
+            if(movie.getEpisode() == null) {
+                movie.setEpisode(0);
+            }
         }
 
         if ((value = getValue(text, "集数:")) != null) {
@@ -255,8 +279,12 @@ public class DouBanParserImpl implements DouBanParser {
                 movie.setEpisode(Integer.valueOf(value));
                 return true;
             } catch (NumberFormatException e) {
-                // ignore
+                movie.setEpisode(0);
             }
+        }
+
+        if (movie.getEpisode() == null && getValue(text, "季数:") != null) {
+            movie.setEpisode(0);
         }
 
         if ((value = getValue(text, "IMDb链接:")) != null) {
@@ -300,6 +328,21 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return values;
+    }
+
+    private void parseDouList(Document doc, String title) {
+        Elements elements = doc.select("div#subject-doulist ul li a");
+        for (Element element : elements) {
+            String url = element.attr("href");
+            if (service.findSource(url) == null) {
+                try {
+                    logger.info("{}:{}", title, url);
+                    douBanListParser.parse(url);
+                } catch (IOException | ParseException e) {
+                    logger.warn("parse DouBan list failed.", e);
+                }
+            }
+        }
     }
 
 }

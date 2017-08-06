@@ -21,6 +21,7 @@ import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.douban.DouBanCrawler;
 import org.har01d.imovie.fix.FixCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.lg.LgCrawler;
@@ -97,6 +98,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private CkDramaCrawler ckDramaCrawler;
+
+    @Autowired
+    private DouBanCrawler douBanCrawler;
 
     @Autowired
     private MovieService service;
@@ -271,6 +275,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             if (types.contains("ckd")) {
                 ckDramaCrawler.crawler();
+            }
+
+            if (types.contains("douban")) {
+                douBanCrawler.crawler();
             }
 
             if (types.contains("all") || types.contains("btt")) {

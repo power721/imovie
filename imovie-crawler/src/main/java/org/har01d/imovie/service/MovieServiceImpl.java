@@ -196,6 +196,12 @@ public class MovieServiceImpl implements MovieService {
     public Set<Person> getPersons(Set<String> names) {
         Set<Person> persons = new HashSet<>();
         for (String name : names) {
+            if (name.endsWith(")")) {
+                int index = name.indexOf('(');
+                if (index > 0) {
+                    name = name.substring(0, index);
+                }
+            }
             Optional<Person> person = personRepository.findFirstByName(name);
             if (person.isPresent()) {
                 persons.add(person.get());
@@ -418,6 +424,22 @@ public class MovieServiceImpl implements MovieService {
         resource.setNew(true);
         resourceRepository.save(resource);
         return resource;
+    }
+
+    @Override
+    public Movie updateMovie(String url, Movie movie) {
+        Movie m = findByDbUrl(url);
+        if (m != null) {
+            m.setEpisode(movie.getEpisode());
+            m.setDbScore(movie.getDbScore());
+            m.setAliases(movie.getAliases());
+            m.setDirectors(movie.getDirectors());
+            m.setEditors(movie.getEditors());
+            m.setActors(movie.getActors());
+            m.setSynopsis(movie.getSynopsis());
+            return movieRepository.save(m);
+        }
+        return movieRepository.save(movie);
     }
 
     @Override

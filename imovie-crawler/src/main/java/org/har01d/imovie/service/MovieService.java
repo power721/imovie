@@ -69,6 +69,8 @@ public interface MovieService {
 
     Resource saveResource(String uri, String original, String title);
 
+    Movie updateMovie(String url, Movie movie);
+
     Resource findResource(String uri);
 
     Event publishEvent(String source, String message);

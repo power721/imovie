@@ -620,6 +620,9 @@ export default {
       storageService.setItem('sort', this.sort)
       storageService.setItem('search', this.query.text)
       storageService.setItem('category', this.query.category)
+      if (this.query.text || this.query.category !== 'all') {
+        this.query.search = ''
+      }
       this.loadData()
     },
     getPaginationData: function (pagination) {
@@ -829,8 +832,8 @@ export default {
       }
 
       this.query.search = q.join(';')
-      console.log(this.search)
-      console.log(this.query)
+      this.query.text = ''
+      this.query.category = 'all'
       this.showModal = false
       this.loadData()
     }
