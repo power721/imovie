@@ -151,6 +151,7 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         Document doc = Jsoup.parse(html);
+        // TODO: fix encoded data
         Elements elements = doc.select("div.article a.nbg");
 
         for (Element element : elements) {

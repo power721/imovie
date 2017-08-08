@@ -29,6 +29,9 @@ url:
   lg: http://www.languang.co/movie_bt/page/
   douban: https://movie.douban.com
   imdb: http://www.imdb.com/search/title?count=100&title_type=feature,tv_series&view=simple&page=
+  mp4:
+    site: http://www.mp4ba.tv
+    page: http://www.mp4ba.tv/search.php?searchtype=5&page=
   ck:
     movie: http://www.ck180.com/sift/?&page=
     drama: http://www.ck180.com/drama/page/

@@ -617,12 +617,12 @@ export default {
     },
     filter: function () {
       this.currentPage = 0
+      if (this.query.text !== storageService.getItem('search') || this.query.category !== storageService.getItem('category')) {
+        this.query.search = ''
+      }
       storageService.setItem('sort', this.sort)
       storageService.setItem('search', this.query.text)
       storageService.setItem('category', this.query.category)
-      if (this.query.text || this.query.category !== 'all') {
-        this.query.search = ''
-      }
       this.loadData()
     },
     getPaginationData: function (pagination) {
@@ -797,6 +797,9 @@ export default {
         } else {
           this.search.category.val.forEach(e => q.push('categories.name=="' + e + '"'))
         }
+        this.query.category = ''
+      } else {
+        this.query.category = 'all'
       }
 
       if (this.search.region.val) {
@@ -833,7 +836,6 @@ export default {
 
       this.query.search = q.join(';')
       this.query.text = ''
-      this.query.category = 'all'
       this.showModal = false
       this.loadData()
     }
