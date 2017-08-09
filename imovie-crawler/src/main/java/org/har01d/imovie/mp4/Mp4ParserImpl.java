@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -26,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
 
     private static final Logger logger = LoggerFactory.getLogger(Mp4Parser.class);
+    private static final Pattern EP = Pattern.compile("共(\\d+)集");
+    private static final Pattern NAME = Pattern.compile("(.*)(第.+季)");
 
     @Override
     @Transactional
@@ -34,7 +38,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         Document doc = Jsoup.parse(html);
 
         getMovie(doc, movie);
-
 
         String dbUrl = movie.getDbUrl();
         Movie m = null;
@@ -107,18 +110,23 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
                 movie.setCategories(getCategories(getValues(element)));
             }
             if (text.contains("地区：")) {
-                text = element.select("label").first().text();
-                int index = text.indexOf("地区：") + "地区：".length();
-                movie.setRegions(getRegions(Collections.singleton(text.substring(index, text.length()))));
+                String temp = element.select("label").first().text();
+                int index = temp.indexOf("地区：") + "地区：".length();
+                movie.setRegions(getRegions(Collections.singleton(temp.substring(index, temp.length()))));
             }
             if (text.contains("年代：")) {
                 movie.setYear(service.getYear(text));
             }
+            if (text.contains("状态：")) {
+                movie.setEpisode(getEpisode(text));
+            }
             if (text.contains("导演：")) {
-                movie.setDirectors(getPeople(getValues(element)));
+                movie.setDirectors(getPeople(getValues2(element)));
+//                int index = text.indexOf("导演：") + "导演：".length();
+//                movie.setDirectors(getPeople(Collections.singleton(text.substring(index, text.length()))));
             }
             if (text.contains("主演：")) {
-                movie.setActors(getPeople(getValues(element)));
+                movie.setActors(getPeople(getValues2(element)));
             }
             if (text.contains("更新时间：")) {
                 text = element.select("label").first().text();
@@ -139,12 +147,50 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         if (movie.getImdbUrl() == null) {
             movie.setImdbUrl(UrlUtils.getImdbUrl(html));
         }
+        movie.setName(fixName(movie.getName()));
+    }
+
+    private String fixName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        Matcher matcher = NAME.matcher(name);
+        if (matcher.matches()) {
+            return matcher.group(1) + " " + matcher.group(2);
+        }
+        return name;
+    }
+
+    private Integer getEpisode(String text) {
+        Matcher matcher = EP.matcher(text);
+        if (matcher.find()) {
+            try {
+                return Integer.valueOf(matcher.group(1));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            return 0;
+        }
+        return null;
     }
 
     private Set<String> getValues(Element element) {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
-            values.add(a.text());
+            if (!a.text().isEmpty()) {
+                values.add(a.text());
+            }
+        }
+        return values;
+    }
+
+    private Set<String> getValues2(Element element) {
+        Set<String> values = new HashSet<>();
+        for (Element a : element.select("a")) {
+            if (!a.text().isEmpty()) {
+                values.add(a.text().replace(' ', '·'));
+            }
         }
         return values;
     }

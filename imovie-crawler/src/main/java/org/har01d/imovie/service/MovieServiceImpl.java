@@ -359,6 +359,16 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie searchByName(Movie movie) {
+        if (movie.getName() == null) {
+            return null;
+        }
+
+        List<Movie> movies = movieRepository.findByNameContains(movie.getName());
+        return findBestMatchedMovie(movies, movie);
+    }
+
+    @Override
     @Transactional
     public Movie findByDbUrl(String url) {
         return movieRepository.findFirstByDbUrl(url);

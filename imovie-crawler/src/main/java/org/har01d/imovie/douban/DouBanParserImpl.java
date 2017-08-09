@@ -136,7 +136,8 @@ public class DouBanParserImpl implements DouBanParser {
         String url;
         List<Movie> movies = new ArrayList<>();
         try {
-            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
+            url = "https://m.douban.com/search/?type=movie&query=" + URLEncoder.encode(text, "UTF-8");
+//            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             logger.error("search movie failed: " + text, e);
             return movies;
@@ -151,26 +152,28 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         Document doc = Jsoup.parse(html);
-        // TODO: fix encoded data
-        Elements elements = doc.select("div.article a.nbg");
+        Elements elements = doc.select("ul.search_results_subjects li a");
 
         for (Element element : elements) {
             String dbUrl = element.attr("href");
-            Movie m = service.findByDbUrl(dbUrl);
-            if (m != null) {
-                movies.add(m);
-            }
+            if (dbUrl.contains("/movie/subject/")) {
+                dbUrl = "https://movie.douban.com" + dbUrl.replace("/movie", "");
+                Movie m = service.findByDbUrl(dbUrl);
+                if (m != null) {
+                    movies.add(m);
+                }
 
-            if (m == null && dbUrl.contains("movie.douban.com/subject/")) {
-                try {
-                    m = parse(dbUrl);
-                    service.save(new Source(dbUrl));
-                    if (m != null) {
-                        movies.add(service.save(m));
+                if (m == null) {
+                    try {
+                        m = parse(dbUrl);
+                        service.save(new Source(dbUrl));
+                        if (m != null) {
+                            movies.add(service.save(m));
+                        }
+                    } catch (Exception e) {
+                        service.publishEvent(dbUrl, e.getMessage());
+                        logger.error("Parse page failed: " + dbUrl, e);
                     }
-                } catch (Exception e) {
-                    service.publishEvent(dbUrl, e.getMessage());
-                    logger.error("Parse page failed: " + dbUrl, e);
                 }
             }
         }

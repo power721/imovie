@@ -9,6 +9,8 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
     List<Movie> findByNameStartsWith(String name);
 
+    List<Movie> findByNameContains(String name);
+
     Movie findFirstByDbUrl(String dbUrl);
 
     List<Movie> findByDbUrl(String dbUrl);

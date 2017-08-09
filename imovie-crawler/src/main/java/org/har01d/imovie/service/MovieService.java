@@ -51,6 +51,8 @@ public interface MovieService {
 
     List<Movie> findByName(String name);
 
+    Movie searchByName(Movie movie);
+
     Movie findByDbUrl(String url);
 
     Movie findByImdb(String url);
