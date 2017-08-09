@@ -64,14 +64,14 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc));
+            resources.addAll(findResource(doc, movie.getName()));
 
             logger.info("[MP4] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
             return m;
         } else {
-            findResource(doc);
+            findResource(doc, movie.getName());
         }
 
         logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
@@ -79,13 +79,16 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         return null;
     }
 
-    private Set<Resource> findResource(Document doc) {
+    private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
         Elements elements = doc.select("ul#ul1 li a");
         for (Element element : elements) {
             String uri = element.attr("href");
             if (isResource(uri)) {
                 String title = element.text();
+                if (!title.contains(name)) {
+                    title = name + "-" + title;
+                }
                 resources.add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
             }
         }
