@@ -33,7 +33,7 @@ url:
     site: http://www.mp4ba.tv
     page: http://www.mp4ba.tv/search.php?searchtype=5&page=
   ck:
-    movie: http://www.ck180.com/sift/?&page=
+    movie: http://www.ck180.com/sift/?page=
     drama: http://www.ck180.com/drama/page/
   btt:
     site: http://btbtt.co/
