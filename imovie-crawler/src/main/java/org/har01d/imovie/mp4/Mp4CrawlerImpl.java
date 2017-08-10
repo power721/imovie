@@ -64,7 +64,7 @@ public class Mp4CrawlerImpl extends AbstractCrawler implements Mp4Crawler {
                     }
 
                     Movie movie = new Movie();
-                    movie.setName(element.text());
+                    movie.setName(getName(element));
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
@@ -105,6 +105,12 @@ public class Mp4CrawlerImpl extends AbstractCrawler implements Mp4Crawler {
         saveCrawlerConfig();
         savePage(1);
         logger.info("[mp4] ===== get {} movies =====", total);
+    }
+
+    private String getName(Element element) {
+        return element.text().replace("国语", "").replace("未删减版", "")
+            .replace("真人版", "").replace("(未删减)", "")
+            .replace("修复加长版", "").replace("(加长版)", "");
     }
 
 }

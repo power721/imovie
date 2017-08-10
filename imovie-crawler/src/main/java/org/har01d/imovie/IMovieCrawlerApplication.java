@@ -267,15 +267,15 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 6, TimeUnit.HOURS);
             }
 
-            if (types.contains("all") || types.contains("ck")) {
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        ckCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
+//            if (types.contains("all") || types.contains("ck")) {
+//                executorService.scheduleWithFixedDelay(() -> {
+//                    try {
+//                        ckCrawler.crawler();
+//                    } catch (Exception e) {
+//                        logger.error("", e);
+//                    }
+//                }, 0, 6, TimeUnit.HOURS);
+//            }
 
             if (types.contains("all") || types.contains("mp4")) {
                 executorService.scheduleWithFixedDelay(() -> {

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -29,6 +29,7 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
 
     private static final Logger logger = LoggerFactory.getLogger(Mp4Parser.class);
     private static final Pattern EP = Pattern.compile("共(\\d+)集");
+    private static final Pattern EP1 = Pattern.compile("第(\\d+)集全");
     private static final Pattern NAME = Pattern.compile("(.*)(第.+季)");
 
     @Override
@@ -89,7 +90,13 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
                 if (!title.contains(name)) {
                     title = name + "-" + title;
                 }
-                resources.add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
+                try {
+                    resources
+                        .add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
+                } catch (Exception e) {
+                    service.publishEvent(name, e.getMessage());
+                    logger.error("[mp4] get resource failed", e);
+                }
             }
         }
         return resources;
@@ -97,17 +104,24 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
 
     private void getMovie(Document doc, Movie movie) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        movie.setTitle(doc.select("div.info h1").text().replace("电影下载", ""));
+        movie.setTitle(doc.select("div.info h1").text().replace("电影下载", "").replace("电视剧下载", "").replace("国语", ""));
         if (movie.getName() == null) {
             movie.setName(movie.getTitle());
         }
+        String type = "";
 
         Elements elements = doc.select("div.info div");
         for (Element element : elements) {
             String text = element.text();
             if (text.contains("语言：")) {
                 int index = text.indexOf("语言：") + "语言：".length();
-                movie.setLanguages(getLanguages(Collections.singleton(text.substring(index, text.length()))));
+                String temp = text.substring(index, text.length());
+                if ("国语".equals(temp)) {
+                    temp = "汉语普通话";
+                }
+                if (!"未知".equals(temp)) {
+                    movie.setLanguages(getLanguages(new HashSet<>(Arrays.asList(temp.split(" / ")))));
+                }
             }
             if (text.contains("剧情：")) {
                 movie.setCategories(getCategories(getValues(element)));
@@ -115,7 +129,20 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
             if (text.contains("地区：")) {
                 String temp = element.select("label").first().text();
                 int index = temp.indexOf("地区：") + "地区：".length();
-                movie.setRegions(getRegions(Collections.singleton(temp.substring(index, temp.length()))));
+                temp = temp.substring(index, temp.length());
+                if ("其它".equals(temp)) {
+                    if ("大陆剧".equals(type)) {
+                        temp = "中国大陆";
+                    }
+                }
+                if ("大陆".equals(temp)) {
+                    temp = "中国大陆";
+                }
+                movie.setRegions(getRegions(new HashSet<>(Arrays.asList(temp.split(" , ")))));
+            }
+            if (text.contains("分类：")) {
+                int index = text.indexOf("分类：") + "分类：".length();
+                type = text.substring(index, text.length());
             }
             if (text.contains("年代：")) {
                 movie.setYear(service.getYear(text));
@@ -174,6 +201,16 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
                 // ignore
             }
             return 0;
+        } else {
+            matcher = EP1.matcher(text);
+            if (matcher.find()) {
+                try {
+                    return Integer.valueOf(matcher.group(1));
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+                return 0;
+            }
         }
         return null;
     }
@@ -181,8 +218,15 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
     private Set<String> getValues(Element element) {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
-            if (!a.text().isEmpty()) {
-                values.add(a.text());
+            String name = a.text();
+            if (!name.isEmpty()) {
+                if ("cult".equals(name) || "SM".equals(name)) {
+                    continue;
+                }
+                if ("言情".equals(name)) {
+                    name = "爱情";
+                }
+                values.add(a.text().trim());
             }
         }
         return values;
@@ -192,7 +236,7 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
             if (!a.text().isEmpty()) {
-                values.add(a.text().replace(' ', '·'));
+                values.add(a.text().replace(' ', '·').trim());
             }
         }
         return values;

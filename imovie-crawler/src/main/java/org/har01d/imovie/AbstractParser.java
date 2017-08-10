@@ -84,6 +84,9 @@ public abstract class AbstractParser implements Parser {
     protected Set<Category> getCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
         for (String name : names) {
+            if (name.isEmpty()) {
+                continue;
+            }
             Category c = new Category(name);
             categories.add(c);
         }
@@ -93,6 +96,9 @@ public abstract class AbstractParser implements Parser {
     protected Set<Language> getLanguages(Set<String> names) {
         Set<Language> languages = new HashSet<>();
         for (String name : names) {
+            if (name.isEmpty()) {
+                continue;
+            }
             if ("国语".equals(name) || "普通话".equals(name) || "国语对白".equals(name)) {
                 name = "汉语普通话";
             } else if ("国粤".equals(name)) {
@@ -107,7 +113,7 @@ public abstract class AbstractParser implements Parser {
     protected Set<Person> getPeople(Set<String> names) {
         Set<Person> people = new HashSet<>();
         for (String name : names) {
-            if ("更多…".equals(name)) {
+            if (name.isEmpty() || "更多…".equals(name) || "内详".equals(name)) {
                 continue;
             }
             Person p = new Person(name);
@@ -119,6 +125,9 @@ public abstract class AbstractParser implements Parser {
     protected Set<Region> getRegions(Set<String> names) {
         Set<Region> regions = new HashSet<>();
         for (String name : names) {
+            if (name.isEmpty()) {
+                continue;
+            }
             if ("大陆".equals(name)) {
                 name = "中国大陆";
             }
