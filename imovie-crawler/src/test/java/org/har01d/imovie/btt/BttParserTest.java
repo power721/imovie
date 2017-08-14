@@ -1,6 +1,7 @@
 package org.har01d.imovie.btt;
 
 import org.har01d.imovie.domain.Movie;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
@@ -50,9 +52,10 @@ public class BttParserTest {
 
     @Test
     public void test5() throws Exception {
-        String pageUrl = "http://btbtt.co/thread-index-fid-1183-tid-4258696.htm";
+        String pageUrl = "http://www.btbtt.co/thread-index-fid-981-tid-4354456.htm";
         Movie movie = new Movie();
-        movie.setTitle("test");
+//        movie.setTitle("世间情");
+//        movie.setName("世间情");
         parser.parse(pageUrl, movie);
     }
 
