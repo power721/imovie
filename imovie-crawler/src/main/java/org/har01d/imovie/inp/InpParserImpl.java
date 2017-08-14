@@ -1,10 +1,9 @@
-package org.har01d.imovie.mp4;
+package org.har01d.imovie.inp;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -21,16 +20,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
+public class InpParserImpl extends AbstractParser implements InpParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(Mp4Parser.class);
-    private static final Pattern EP = Pattern.compile("共(\\d+)集");
-    private static final Pattern EP1 = Pattern.compile("第(\\d+)集全");
-    private static final Pattern NAME = Pattern.compile("(.*)(第.+季)");
+    private static final Logger logger = LoggerFactory.getLogger(InpParser.class);
+    private static final Pattern EP = Pattern.compile("(\\d+)集");
+
+    @Value("${url.inp.site}")
+    private String siteUrl;
 
     @Override
     @Transactional
@@ -61,13 +62,12 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
             m = searchByName(movie);
         }
 
-
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
             resources.addAll(findResource(doc, movie.getName()));
 
-            logger.info("[MP4] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+            logger.info("[inp] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             m.setSourceTime(movie.getSourceTime());
             service.save(m);
@@ -83,11 +83,16 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
 
     private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
-        Elements elements = doc.select("ul#ul1 li a");
+        Elements elements = doc.select("div.downbox .zylistbox table tr td.td_thunder");
         for (Element element : elements) {
-            String uri = element.attr("href");
-            if (isResource(uri)) {
-                String title = element.text();
+            String uri = element.select("input").val();
+            if (uri.isEmpty()) {
+                uri = element.select("a").attr("href");
+                if (uri.startsWith("/down/")) {
+                    resources.addAll(findResource(siteUrl + uri, element.text()));
+                }
+            } else if (isResource(uri)) {
+                String title = element.select("a").text();
                 if (!title.contains(name)) {
                     title = name + "-" + title;
                 }
@@ -96,81 +101,91 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
                         .add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(name, e.getMessage());
-                    logger.error("[mp4] get resource failed", e);
+                    logger.error("[inp] get resource failed", e);
                 }
+            }
+        }
+
+        elements = doc.select("div.moiveinfobox .movieall ul.movieplaylist li a");
+        for (Element element : elements) {
+            String uri = element.attr("href");
+            if (uri.startsWith("/down/")) {
+                resources.addAll(findResource(siteUrl + uri, element.text()));
             }
         }
         return resources;
     }
 
+    private Set<Resource> findResource(String url, String title) {
+        Set<Resource> resources = new HashSet<>();
+        try {
+            String html = HttpUtils.getHtml(url);
+            Document doc = Jsoup.parse(html);
+            String uri = doc.select("a#down_cili").attr("href");
+            if (uri.isEmpty()) {
+                uri = doc.select("iframe#play_area").attr("src");
+                if (isResource(uri)) {
+                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                } else if (doc.select("h3 a").text().contains("中文字幕")) {
+                    uri = doc.select("div#down_verify_box li a.btn-orange").attr("href");
+                    title = "中文字幕-" + title;
+                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                }
+            } else if (isResource(uri)) {
+                String original = siteUrl + doc.select("div#down_verify_box li a.btn-orange").attr("href");
+                resources.add(service.saveResource(uri, original, StringUtils.truncate(title, 120)));
+            }
+        } catch (Exception e) {
+            service.publishEvent(url, e.getMessage());
+            logger.error("[inp] get resource failed", e);
+        }
+        return resources;
+    }
+
     private void getMovie(Document doc, Movie movie) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        movie.setTitle(doc.select("div.info h1").text().replace("电影下载", "").replace("电视剧下载", "").replace("国语", ""));
+        movie.setTitle(doc.select("div.moiveinfobox h2 a").text());
         if (movie.getName() == null) {
             movie.setName(movie.getTitle());
         }
-        String type = "";
 
-        Elements elements = doc.select("div.info div");
+        Elements elements = doc.select("div.moiveinfobox div.minfocon div.moiveinfo ul.minfolist li");
         for (Element element : elements) {
             String text = element.text();
-            if (text.contains("语言：")) {
-                int index = text.indexOf("语言：") + "语言：".length();
-                String temp = text.substring(index, text.length());
-                if ("国语".equals(temp)) {
-                    temp = "汉语普通话";
-                }
-                if (!"未知".equals(temp)) {
-                    movie.setLanguages(getLanguages(new HashSet<>(Arrays.asList(temp.split(" / ")))));
-                }
-            }
-            if (text.contains("剧情：")) {
-                movie.setCategories(getCategories(getValues(element)));
-            }
             if (text.contains("地区：")) {
-                String temp = element.select("label").first().text();
+                String temp = text;
                 int index = temp.indexOf("地区：") + "地区：".length();
                 temp = temp.substring(index, temp.length());
-                if ("其它".equals(temp)) {
-                    if ("大陆剧".equals(type)) {
-                        temp = "中国大陆";
-                    }
-                }
                 if ("大陆".equals(temp)) {
                     temp = "中国大陆";
                 }
-                movie.setRegions(getRegions(new HashSet<>(Arrays.asList(temp.split(" , ")))));
-            }
-            if (text.contains("分类：")) {
-                int index = text.indexOf("分类：") + "分类：".length();
-                type = text.substring(index, text.length());
+                movie.setRegions(getRegions(getValues(temp)));
             }
             if (text.contains("年代：")) {
                 movie.setYear(service.getYear(text));
             }
-            if (text.contains("状态：")) {
+            if (text.contains("集数：")) {
                 movie.setEpisode(getEpisode(text));
             }
             if (text.contains("导演：")) {
-                movie.setDirectors(getPeople(getValues2(element)));
-//                int index = text.indexOf("导演：") + "导演：".length();
-//                movie.setDirectors(getPeople(Collections.singleton(text.substring(index, text.length()))));
-            }
-            if (text.contains("主演：")) {
-                movie.setActors(getPeople(getValues2(element)));
-            }
-            if (text.contains("更新时间：")) {
-                text = element.select("label").first().text();
-                int index = text.indexOf("更新时间：") + "更新时间：".length();
-                try {
-                    movie.setSourceTime(df.parse(text.substring(index, text.length())));
-                } catch (ParseException e) {
-                    logger.error("[mp4] Parse date failed.", e);
-                }
+                movie.setDirectors(getPeople(getValues(element)));
             }
         }
 
-        String html = doc.select("ul.description").html();
+        movie.setActors(
+            getPeople(getValues(doc.select("div.moiveinfobox div.minfocon div.moiveinfo .yyinfo .yycon").first())));
+        movie.setAliases(getValues(doc.select("div.moiveinfobox h2 .updateinfo").text()));
+        movie.setSynopsis(
+            doc.select("div.moiveinfobox div.minfocon div.moiveinfo .yyinfo .yycon").last().text().replace("…", ""));
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String date = doc.select("span[itemprop=datePublished]").attr("content");
+        try {
+            movie.setSourceTime(df.parse(date));
+        } catch (ParseException e) {
+            // ignore
+        }
+
+        String html = doc.select("div.moiveintrocon").html();
         if (movie.getDbUrl() == null) {
             movie.setDbUrl(UrlUtils.getDbUrl(html));
         }
@@ -178,19 +193,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         if (movie.getImdbUrl() == null) {
             movie.setImdbUrl(UrlUtils.getImdbUrl(html));
         }
-        movie.setName(fixName(movie.getName()));
-    }
-
-    private String fixName(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        Matcher matcher = NAME.matcher(name);
-        if (matcher.matches()) {
-            return matcher.group(1) + " " + matcher.group(2);
-        }
-        return name;
     }
 
     private Integer getEpisode(String text) {
@@ -202,16 +204,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
                 // ignore
             }
             return 0;
-        } else {
-            matcher = EP1.matcher(text);
-            if (matcher.find()) {
-                try {
-                    return Integer.valueOf(matcher.group(1));
-                } catch (NumberFormatException e) {
-                    // ignore
-                }
-                return 0;
-            }
         }
         return null;
     }
@@ -221,9 +213,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         for (Element a : element.select("a")) {
             String name = a.text().trim();
             if (!name.isEmpty()) {
-                if ("cult".equals(name) || "SM".equals(name)) {
-                    continue;
-                }
                 if ("言情".equals(name)) {
                     name = "爱情";
                 }
@@ -233,11 +222,15 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         return values;
     }
 
-    private Set<String> getValues2(Element element) {
+    private Set<String> getValues(String text) {
         Set<String> values = new HashSet<>();
-        for (Element a : element.select("a")) {
-            if (!a.text().isEmpty()) {
-                values.add(a.text().replace(' ', '·').trim());
+        for (String name : text.split("/|,")) {
+            name = name.trim();
+            if ("未录入".equals(name)) {
+                continue;
+            }
+            if (!name.isEmpty()) {
+                values.add(name);
             }
         }
         return values;

@@ -1,6 +1,7 @@
 package org.har01d.imovie.btt;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,8 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.MyThreadFactory;
+import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
+import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.util.HttpUtils;
 import org.jsoup.Jsoup;
@@ -142,7 +145,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                         if (y.matches("\\d{4}")) {
                             movie.setYear(Integer.valueOf(y));
                         }
-                        movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
+                        movie.setCategories(getCategories(Collections.singleton(matcher.group(2))));
                         matched = true;
                     }
 
@@ -157,8 +160,8 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
-                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(3))));
-                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(2))));
+                            movie.setCategories(getCategories(Collections.singleton(matcher.group(3))));
+                            movie.setRegions(getRegions(Collections.singleton(matcher.group(2))));
                             matched = true;
                         }
                     }
@@ -174,7 +177,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
-                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(2))));
+                            movie.setRegions(getRegions(Collections.singleton(matcher.group(2))));
                             matched = true;
                         }
                     }
@@ -190,7 +193,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                             if (y.matches("\\d{4}")) {
                                 movie.setYear(Integer.valueOf(y));
                             }
-                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(2))));
+                            movie.setCategories(getCategories(Collections.singleton(matcher.group(2))));
                             matched = true;
                         }
                     }
@@ -204,8 +207,8 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                             String y = matcher.group(2);
                             movie.setName(name);
                             movie.setYear(Integer.valueOf(y));
-                            movie.setCategories(service.getCategories(Collections.singleton(matcher.group(1))));
-                            movie.setRegions(service.getRegions(Collections.singleton(matcher.group(3))));
+                            movie.setCategories(getCategories(Collections.singleton(matcher.group(1))));
+                            movie.setRegions(getRegions(Collections.singleton(matcher.group(3))));
                             matched = true;
                         }
                     }
@@ -321,6 +324,33 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
             }
         }
         return temp;
+    }
+
+    protected Set<Category> getCategories(Set<String> names) {
+        Set<Category> categories = new HashSet<>();
+        for (String name : names) {
+            if (name.isEmpty()) {
+                continue;
+            }
+            Category c = new Category(name);
+            categories.add(c);
+        }
+        return categories;
+    }
+
+    protected Set<Region> getRegions(Set<String> names) {
+        Set<Region> regions = new HashSet<>();
+        for (String name : names) {
+            if (name.isEmpty()) {
+                continue;
+            }
+            if ("大陆".equals(name)) {
+                name = "中国大陆";
+            }
+            Region r = new Region(name);
+            regions.add(r);
+        }
+        return regions;
     }
 
 }

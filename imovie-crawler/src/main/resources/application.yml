@@ -32,9 +32,12 @@ url:
   mp4:
     site: http://www.mp4ba.tv
     page: http://www.mp4ba.tv/search.php?searchtype=5&page=
+  inp:
+    site: http://www.inapian.com
+    page: http://www.inapian.com/list/%d-%d.html
   ck:
-    movie: http://www.ck180.com/sift/?page=
-    drama: http://www.ck180.com/drama/page/
+    movie: http://www.ck180.net/sift/?page=
+    drama: http://www.ck180.net/drama/page/
   btt:
     site: http://btbtt.co/
     page: http://btbtt.co/forum-index-fid-%d-page-%d.htm

@@ -24,6 +24,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.douban.DouBanCrawler;
 import org.har01d.imovie.fix.FixCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
+import org.har01d.imovie.inp.InpCrawler;
 import org.har01d.imovie.lg.LgCrawler;
 import org.har01d.imovie.mp4.Mp4Crawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
@@ -96,6 +97,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private Mp4Crawler mp4Crawler;
+
+    @Autowired
+    private InpCrawler inpCrawler;
 
     @Autowired
     private CkCrawler ckCrawler;
@@ -267,20 +271,30 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 6, TimeUnit.HOURS);
             }
 
-//            if (types.contains("all") || types.contains("ck")) {
-//                executorService.scheduleWithFixedDelay(() -> {
-//                    try {
-//                        ckCrawler.crawler();
-//                    } catch (Exception e) {
-//                        logger.error("", e);
-//                    }
-//                }, 0, 6, TimeUnit.HOURS);
-//            }
+            if (types.contains("all") || types.contains("ck")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        ckCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
 
             if (types.contains("all") || types.contains("mp4")) {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         mp4Crawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
+
+            if (types.contains("all") || types.contains("inp")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        inpCrawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }
