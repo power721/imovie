@@ -152,13 +152,15 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             ScheduledExecutorService executorService = Executors
                 .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
 
-//            executorService.scheduleWithFixedDelay(() -> {
-//                try {
-//                    rarBtCrawler.crawler();
-//                } catch (Exception e) {
-//                    logger.error("", e);
-//                }
-//            }, 0, 5, TimeUnit.HOURS);
+            if (types.contains("all") || types.contains("rar")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        rarBtCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 5, TimeUnit.HOURS);
+            }
 
             if (types.contains("all") || types.contains("rs05")) {
                 executorService.scheduleWithFixedDelay(() -> {
