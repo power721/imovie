@@ -155,9 +155,7 @@ public class InpParserImpl extends AbstractParser implements InpParser {
                 String temp = text;
                 int index = temp.indexOf("地区：") + "地区：".length();
                 temp = temp.substring(index, temp.length());
-                if ("大陆".equals(temp)) {
-                    temp = "中国大陆";
-                }
+
                 movie.setRegions(getRegions(getValues(temp)));
             }
             if (text.contains("年代：")) {
@@ -228,6 +226,17 @@ public class InpParserImpl extends AbstractParser implements InpParser {
             name = name.trim();
             if ("未录入".equals(name)) {
                 continue;
+            }
+            if ("大陆".equals(name)) {
+                name = "中国大陆";
+            } else if ("印度 India".equals(name)) {
+                name = "印度";
+            } else if ("荷兰 The Net".equals(name)) {
+                name = "荷兰";
+            } else if ("加拿大 Canada".equals(name)) {
+                name = "加拿大";
+            } else if ("UK".equals(name)) {
+                name = "英国";
             }
             if (!name.isEmpty()) {
                 values.add(name);
