@@ -128,7 +128,10 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
     }
 
     private String getName(Element element) {
-        return element.text().split("/")[0];
+        return element.text().split("/")[0].replace("(美版)", "")
+            .replace("(BBC版)", "")
+            .replaceFirst("（\\d+版）", "")
+            .replaceFirst("\\[.+]", "");
     }
 
 }

@@ -3,6 +3,7 @@ package org.har01d.imovie.mj;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -64,6 +65,9 @@ public class MjParserImpl extends AbstractParser implements MjParser {
         Elements elements = doc.select("div.block ul.downloadlist li.down-item a.down-link");
         for (Element element : elements) {
             String uri = element.attr("href");
+            if (uri.startsWith("d2k://")) {
+                uri = "e" + uri;
+            }
             if (isResource(uri)) {
                 String title = element.text();
                 String temp = element.parent().parent().parent().select("h3 span a.current").text();
@@ -134,6 +138,12 @@ public class MjParserImpl extends AbstractParser implements MjParser {
         }
 
         movie.setSynopsis(doc.select("p#movie_info_intro_s").text().replace("剧情简介：", "").trim());
+        if (!movie.getName().contains("第") && !movie.getName().endsWith("季")) {
+            Matcher matcher = NAME.matcher(movie.getTitle());
+            if (matcher.matches()) {
+                movie.setName(movie.getName() + " " + matcher.group(2));
+            }
+        }
     }
 
     private Set<String> getValues(Element element) {

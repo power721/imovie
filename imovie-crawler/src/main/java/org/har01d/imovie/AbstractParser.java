@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractParser implements Parser {
 
     private static final Logger log = LoggerFactory.getLogger(Parser.class);
-    private static final Pattern NAME = Pattern.compile("([^ ]+)(第.+季)");
+    protected static final Pattern NAME = Pattern.compile("([^ ]+)(第.+季)");
+    private static final Pattern NAME1 = Pattern.compile("([^ ]+)第(.+)至.+季");
 
     @Autowired
     protected DouBanParser douBanParser;
@@ -67,7 +68,12 @@ public abstract class AbstractParser implements Parser {
     }
 
     private String fixName(String name) {
-        Matcher matcher = NAME.matcher(name);
+        Matcher matcher = NAME1.matcher(name);
+        if (matcher.matches()) {
+            return matcher.group(1) + " 第" + matcher.group(2) + "季";
+        }
+
+        matcher = NAME.matcher(name);
         if (matcher.matches()) {
             return matcher.group(1) + " " + matcher.group(2);
         }
