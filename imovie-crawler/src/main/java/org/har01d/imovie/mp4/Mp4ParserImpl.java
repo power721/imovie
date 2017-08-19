@@ -30,7 +30,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
     private static final Logger logger = LoggerFactory.getLogger(Mp4Parser.class);
     private static final Pattern EP = Pattern.compile("共(\\d+)集");
     private static final Pattern EP1 = Pattern.compile("第(\\d+)集全");
-    private static final Pattern NAME = Pattern.compile("(.*)(第.+季)");
 
     @Override
     @Transactional
@@ -178,19 +177,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         if (movie.getImdbUrl() == null) {
             movie.setImdbUrl(UrlUtils.getImdbUrl(html));
         }
-        movie.setName(fixName(movie.getName()));
-    }
-
-    private String fixName(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        Matcher matcher = NAME.matcher(name);
-        if (matcher.matches()) {
-            return matcher.group(1) + " " + matcher.group(2);
-        }
-        return name;
     }
 
     private Integer getEpisode(String text) {

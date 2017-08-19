@@ -35,6 +35,12 @@ url:
   inp:
     site: http://www.inapian.com
     page: http://www.inapian.com/list/%d-%d.html
+  mj:
+    site: http://www.meijuxz.com
+    page: http://www.meijuxz.com/%s-%d.html
+  dyb:
+    site: http://www.dybird.com
+    page: http://www.dybird.com/listfilm/%d/%d.html
   ck:
     movie: http://www.ck180.net/sift/?page=
     drama: http://www.ck180.net/drama/page/

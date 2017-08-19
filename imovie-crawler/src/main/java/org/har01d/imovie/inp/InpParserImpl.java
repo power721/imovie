@@ -110,7 +110,11 @@ public class InpParserImpl extends AbstractParser implements InpParser {
         for (Element element : elements) {
             String uri = element.attr("href");
             if (uri.startsWith("/down/")) {
-                resources.addAll(findResource(siteUrl + uri, element.text()));
+                String title = element.text();
+                if (!title.contains(name)) {
+                    title = name + "-" + title;
+                }
+                resources.addAll(findResource(siteUrl + uri, title));
             }
         }
         return resources;

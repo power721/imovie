@@ -22,10 +22,12 @@ import org.har01d.imovie.domain.Imdb;
 import org.har01d.imovie.domain.ImdbRepository;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.douban.DouBanCrawler;
+import org.har01d.imovie.dyb.DybCrawler;
 import org.har01d.imovie.fix.FixCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.inp.InpCrawler;
 import org.har01d.imovie.lg.LgCrawler;
+import org.har01d.imovie.mj.MjCrawler;
 import org.har01d.imovie.mp4.Mp4Crawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
@@ -106,6 +108,12 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private CkDramaCrawler ckDramaCrawler;
+
+    @Autowired
+    private MjCrawler mjCrawler;
+
+    @Autowired
+    private DybCrawler dybCrawler;
 
     @Autowired
     private DouBanCrawler douBanCrawler;
@@ -297,6 +305,26 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         inpCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
+
+            if (/*types.contains("all") || */types.contains("mj")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        mjCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
+
+            if (/*types.contains("all") || */types.contains("dyb")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        dybCrawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }

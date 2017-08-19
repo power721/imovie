@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractParser implements Parser {
 
     private static final Logger log = LoggerFactory.getLogger(Parser.class);
+    private static final Pattern NAME = Pattern.compile("([^ ]+)(第.+季)");
 
     @Autowired
     protected DouBanParser douBanParser;
@@ -59,7 +62,16 @@ public abstract class AbstractParser implements Parser {
             return null;
         }
 
+        movie.setName(fixName(movie.getName()));
         return searchMovie(movie, movie.getName());
+    }
+
+    private String fixName(String name) {
+        Matcher matcher = NAME.matcher(name);
+        if (matcher.matches()) {
+            return matcher.group(1) + " " + matcher.group(2);
+        }
+        return name;
     }
 
     protected Movie searchMovie(Movie movie, String text) {

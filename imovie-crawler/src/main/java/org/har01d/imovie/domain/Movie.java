@@ -87,6 +87,7 @@ public class Movie {
     private transient Date sourceTime = new Date();
     private transient int size;
     private transient int votes;
+    private transient boolean completed = true;
 
     public Integer getId() {
         return id;
@@ -317,5 +318,13 @@ public class Movie {
 
     public void setVotes(int votes) {
         this.votes = votes;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }
