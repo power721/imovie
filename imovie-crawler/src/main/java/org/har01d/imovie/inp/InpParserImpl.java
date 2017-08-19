@@ -237,6 +237,8 @@ public class InpParserImpl extends AbstractParser implements InpParser {
                 name = "加拿大";
             } else if ("UK".equals(name)) {
                 name = "英国";
+            } else if ("USA".equals(name)) {
+                name = "美国";
             }
             if (!name.isEmpty()) {
                 values.add(name);

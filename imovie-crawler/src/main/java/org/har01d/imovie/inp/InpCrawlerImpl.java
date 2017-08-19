@@ -35,12 +35,19 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        work(1);
+        work(2);
+        work(3);
+        work(4);
+    }
+
+    private void work(int id) {
         int total = 0;
         int error = 0;
-        int page = getPage();
-        Config crawler = getCrawlerConfig();
+        int page = getPage(String.valueOf(id));
+        Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {
-            String url = String.format(baseUrl, 1, page);
+            String url = String.format(baseUrl, id, page);
             try {
                 if (error >= 5) {
                     logger.warn("sleep {} seconds", error * 30L);
@@ -51,11 +58,11 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.sortbox ul.relist li div.minfo a.title");
                 if (elements.size() == 0) {
-                    crawler = saveCrawlerConfig();
+                    crawler = saveCrawlerConfig(String.valueOf(id));
                     page = 1;
                     continue;
                 }
-                logger.info("[inp] {}: {} movies", page, elements.size());
+                logger.info("[inp-{}] {}: {} movies", id, page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
@@ -71,7 +78,7 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[inp] {}-{}-{} find movie {}", page, total, count, movie.getName());
+                            logger.info("[inp-{}] {}-{}-{} find movie {}", id, page, total, count, movie.getName());
                             source = new Source(pageUrl, movie.getSourceTime());
                             count++;
                             total++;
@@ -83,12 +90,12 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
                     } catch (Exception e) {
                         error++;
                         service.publishEvent(pageUrl, e.getMessage());
-                        logger.error("[inp] Parse page failed: " + pageUrl, e);
+                        logger.error("[inp-{}] Parse page failed: {}", id, pageUrl, e);
                     }
                 }
 
                 if (!doc.select("div.pages a").last().text().equals("尾页")) {
-                    crawler = saveCrawlerConfig();
+                    crawler = saveCrawlerConfig(String.valueOf(id));
                     page = 1;
                     continue;
                 }
@@ -97,18 +104,18 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
                     break;
                 }
                 page++;
-                savePage(page);
+                savePage(String.valueOf(id), page);
                 TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
             } catch (Exception e) {
                 error++;
                 service.publishEvent(url, e.getMessage());
-                logger.error("[inp] Get HTML failed: " + url, e);
+                logger.error("[inp-{}] Get HTML failed: {}", id, url, e);
             }
         }
 
-        saveCrawlerConfig();
-        savePage(1);
-        logger.info("[inp] ===== get {} movies =====", total);
+        saveCrawlerConfig(String.valueOf(id));
+        savePage(String.valueOf(id), 1);
+        logger.info("[inp-{}] ===== get {} movies =====", id, total);
     }
 
     private String getName(Element element) {
