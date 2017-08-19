@@ -27,6 +27,7 @@ Object.keys(filters).forEach(key => {
 })
 
 router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || 'imovies'
   if (to.meta.auth && !auth.loggedIn()) {
     next({
       path: '/login',

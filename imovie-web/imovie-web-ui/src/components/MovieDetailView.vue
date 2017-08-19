@@ -181,6 +181,7 @@ export default {
         this.loading = false
         if (success) {
           this.movie = data
+          document.title = this.movie.title
         } else {
           this.error = data.message || 'Bad Request'
         }
