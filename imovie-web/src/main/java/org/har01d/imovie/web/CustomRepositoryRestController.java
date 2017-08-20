@@ -11,6 +11,8 @@ import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
 import org.har01d.imovie.web.domain.Person;
 import org.har01d.imovie.web.domain.PersonRepository;
+import org.har01d.imovie.web.domain.Resource;
+import org.har01d.imovie.web.dto.ResourceDTO;
 import org.har01d.imovie.web.dto.TransferParam;
 import org.har01d.imovie.web.qsl.CustomRsqlVisitor;
 import org.har01d.imovie.web.qsl.RsqlSearchOperation;
@@ -71,6 +73,11 @@ public class CustomRepositoryRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMovie(@PathVariable Integer id) {
         service.deleteMovie(id);
+    }
+
+    @PostMapping("/movies/{id}/resources")
+    public Resource addResource(@PathVariable Integer id, @RequestBody ResourceDTO resourceDTO) {
+        return service.addResource(id, resourceDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -76,5 +76,18 @@ export default {
         cb(false, data)
       }
     })
+  },
+
+  addResource (id, param, cb) {
+    return Vue.http.post('/api/movies/' + id + '/resources', param)
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
   }
 }

@@ -122,6 +122,7 @@
             Move
           </button>
         </div>
+
         <div class="ui modal" id="transfer">
           <i class="close icon"></i>
           <div class="header">
@@ -143,6 +144,36 @@
       </template>
       <div class="ui hidden divider"></div>
 
+      <template v-if="$auth.user.isAdmin">
+        <div class="ui">
+          <button class="ui right floated primary button" id="add" @click="showAddModal=true">
+            Add
+          </button>
+        </div>
+        <vue-semantic-modal v-model="showAddModal" show-close-icon="true">
+          <template slot="header">
+            Add Resource
+          </template>
+          <template slot="content">
+            <div class="ui form">
+              <div class="required field">
+                <label>Title</label>
+                <input v-model="resourceDTO.title" placeholder="title" required>
+              </div>
+              <div class="required field">
+                <label>URI</label>
+                <input type="url" v-model="resourceDTO.uri" placeholder="URI" required>
+              </div>
+            </div>
+          </template>
+          <template slot="actions">
+            <div class="ui cancel button" @click="showAddModal=false">Cancel</div>
+            <div class="ui ok green button" @click="addResource">Add</div>
+          </template>
+        </vue-semantic-modal>
+      </template>
+      <div class="ui hidden divider"></div>
+
     </div>
   </div>
 </template>
@@ -150,18 +181,30 @@
   img.thumb {
     max-width: 450px;
   }
+  button#add {
+    margin-top: -14px;
+  }
 </style>
 <script>
 import movieService from '@/services/MovieService'
 import resourceService from '@/services/ResourceService'
+import VueSemanticModal from 'vue-semantic-modal'
 import $ from 'jquery'
 
 export default {
   name: 'MovieDetail',
+  components: {
+    VueSemanticModal
+  },
   data () {
     return {
       loading: false,
       error: '',
+      showAddModal: false,
+      resourceDTO: {
+        uri: null,
+        title: null
+      },
       movieId: null,
       resourceIds: [],
       movie: null
@@ -259,6 +302,16 @@ export default {
           })
         }
       }).modal('show')
+    },
+    addResource: function () {
+      this.showAddModal = false
+      movieService.addResource(this.movie.id, this.resourceDTO, (success, data) => {
+        if (success) {
+          this.$router.go(this.$router.currentRoute)
+        } else {
+          console.log('Add resources failed: ' + data)
+        }
+      })
     }
   }
 }

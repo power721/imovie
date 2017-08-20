@@ -21,10 +21,10 @@ public class Resource {
     @Column(columnDefinition = "TEXT")
     private String uri;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String original;
 
+    @NotNull
     private String title;
 
     @ManyToMany(mappedBy = "resources", cascade = {CascadeType.PERSIST, CascadeType.MERGE})

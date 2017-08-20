@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
 import org.har01d.imovie.web.domain.Resource;
 import org.har01d.imovie.web.domain.ResourceRepository;
+import org.har01d.imovie.web.dto.ResourceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,23 @@ public class MovieServiceImpl implements MovieService {
 
         resourceRepository.delete(resource);
         log.info("delete resource {}: {}", id, resource.getTitle());
+    }
+
+    @Override
+    @Transactional
+    public Resource addResource(Integer id, @Valid ResourceDTO resourceDTO) {
+        Resource resource = resourceRepository.findFirstByUri(resourceDTO.getUri());
+        if (resource == null) {
+            resource = resourceRepository.save(new Resource(resourceDTO.getUri(), resourceDTO.getTitle()));
+        }
+
+        Movie movie = movieRepository.getOne(id);
+        if (movie != null) {
+            movie.getRes().add(resource);
+            movieRepository.save(movie);
+            log.info("update movie {}: add resource {}:{}", movie.getId(), resource.getId(), resource.getUri());
+        }
+        return resource;
     }
 
     @Transactional

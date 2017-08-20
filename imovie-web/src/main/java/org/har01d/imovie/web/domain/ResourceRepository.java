@@ -8,6 +8,8 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
+    Resource findFirstByUri(String uri);
+
     @RestResource(path = "search", rel = "search")
     Page<Resource> findByTitleContainingOrUriContaining(@Param("text") String text1, @Param("text") String text2,
         Pageable pageable);
