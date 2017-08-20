@@ -156,8 +156,17 @@ public abstract class AbstractParser implements Parser {
     }
 
     protected boolean isResource(String uri) {
-        return uri != null && (uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
-            || uri.startsWith("ftp://") || uri.contains("pan.baidu.com"));
+        return uri != null && (uri.startsWith("magnet:?")
+            || uri.startsWith("ed2k://")
+            || uri.startsWith("thunder://")
+            || uri.startsWith("ftp://")
+            || uri.contains("pan.baidu.com/")
+            || uri.endsWith(".mp4")
+            || uri.endsWith(".mkv")
+            || uri.endsWith(".avi")
+            || uri.endsWith(".rmvb")
+            || uri.endsWith(".torrent")
+        );
     }
 
 }

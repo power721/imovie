@@ -212,7 +212,7 @@ public class DybParserImpl extends AbstractParser implements DybParser {
             } else if (text.contains("制片国家/地区:")) {
                 movie.setRegions(getRegions(getValues(text, "制片国家/地区:")));
                 metadata = true;
-            } else if (metadata && !text.substring(0, 6).contains(":")) {
+            } else if (metadata && text.length() > 6 && !text.substring(0, 6).contains(":")) {
                 movie.setSynopsis(text);
             }
         }
