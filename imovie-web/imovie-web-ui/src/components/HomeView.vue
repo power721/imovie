@@ -13,31 +13,31 @@
         <label>{{ $t("token.sort") }}</label>
         <div class="field">
           <div class="ui radio checkbox">
-            <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="filter">
+            <input type="radio" name="sort" v-model="sort" value="createdTime,desc" @change="sortMovies">
             <label>{{ $t("token.createdTime") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
-            <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="filter">
+            <input type="radio" name="sort" v-model="sort" value="updatedTime,desc" @change="sortMovies">
             <label>{{ $t("token.updatedTime") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
-            <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="filter">
+            <input type="radio" name="sort" v-model="sort" value="releaseDate,desc,year,desc" @change="sortMovies">
             <label>{{ $t("token.releaseDate") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
-            <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="filter">
+            <input type="radio" name="sort" v-model="sort" value="dbScore,desc" @change="sortMovies">
             <label>{{ $t("token.dbScore") }}</label>
           </div>
         </div>
         <div class="field">
           <div class="ui radio checkbox">
-            <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="filter">
+            <input type="radio" name="sort" v-model="sort" value="imdbScore,desc,dbScore,desc" @change="sortMovies">
             <label>{{ $t("token.imdbScore") }}</label>
           </div>
         </div>
@@ -623,6 +623,11 @@ export default {
       storageService.setItem('sort', this.sort)
       storageService.setItem('search', this.query.text)
       storageService.setItem('category', this.query.category)
+      this.loadData()
+    },
+    sortMovies: function () {
+      this.currentPage = 0
+      storageService.setItem('sort', this.sort)
       this.loadData()
     },
     getPaginationData: function (pagination) {
