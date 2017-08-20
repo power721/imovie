@@ -72,8 +72,12 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                     String pageUrl = siteUrl + element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
+                        if (source.isCompleted() || "HDDY".equals(type)) {
+                            continue;
+                        }
+
                         long time = System.currentTimeMillis();
-                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(24)) {
                             logger.info("skip {}", pageUrl);
                             continue;
                         }
@@ -87,12 +91,15 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[mj] {}-{}-{} find movie {} {}", page, total, count, movie.getName(), pageUrl);
+                            logger.info("[mj-{}] {}-{}-{} find movie {} {}", type, page, total, count, movie.getName(),
+                                pageUrl);
                             if (source == null) {
                                 source = new Source(pageUrl, movie.isCompleted());
                             }
                             source.setMovieId(movie.getId());
-                            count++;
+                            if (crawler == null || movie.getNewResources() > 0) {
+                                count++;
+                            }
                             total++;
                         } else {
                             if (source == null) {
@@ -107,6 +114,12 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                         service.publishEvent(pageUrl, e.getMessage());
                         logger.error("[mj-{}] Parse page failed: {}", type, pageUrl, e);
                     }
+                }
+
+                if (!doc.select("div#pages a").last().text().equals("尾页")) {
+                    crawler = saveCrawlerConfig(type);
+                    page = 1;
+                    continue;
                 }
 
                 if (crawler != null && count == 0) {

@@ -86,6 +86,7 @@ public class Movie {
 
     private transient Date sourceTime = new Date();
     private transient int size;
+    private transient int newResources;
     private transient int votes;
     private transient boolean completed = true;
 
@@ -310,6 +311,14 @@ public class Movie {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public int getNewResources() {
+        return newResources;
+    }
+
+    public void setNewResources(int newResources) {
+        this.newResources = newResources;
     }
 
     public int getVotes() {

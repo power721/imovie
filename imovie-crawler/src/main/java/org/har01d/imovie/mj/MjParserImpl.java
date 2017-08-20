@@ -47,6 +47,7 @@ public class MjParserImpl extends AbstractParser implements MjParser {
             int size = resources.size();
             resources.addAll(findResource(doc, movie.getName()));
 
+            m.setNewResources(resources.size() - size);
             logger.info("[mj] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
@@ -220,6 +221,16 @@ public class MjParserImpl extends AbstractParser implements MjParser {
             }
         }
         return values;
+    }
+
+    protected boolean isResource(String uri) {
+        return uri != null && (uri.startsWith("magnet") || uri.startsWith("ed2k://") || uri.startsWith("thunder://")
+            || uri.startsWith("ftp://") || uri.contains("pan.baidu.com")
+            || uri.endsWith(".mp4")
+            || uri.endsWith(".mkv")
+            || uri.endsWith(".avi")
+            || uri.endsWith(".rmvb")
+        );
     }
 
 }
