@@ -335,7 +335,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 6, TimeUnit.HOURS);
             }
 
-            if (/*types.contains("all") || */types.contains("yy")) {
+            if (types.contains("all") || types.contains("yy")) {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         yyCrawler.crawler();
