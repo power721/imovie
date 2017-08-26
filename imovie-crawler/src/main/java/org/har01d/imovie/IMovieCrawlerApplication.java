@@ -144,6 +144,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${offset:0}")
     private int offset = 0;
 
+    @Value("${poolSize:5}")
+    private int poolSize = 5;
+
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
     }
@@ -166,7 +169,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             service.fixDuplicateMovies();
 
             ScheduledExecutorService executorService = Executors
-                .newScheduledThreadPool(5, new MyThreadFactory("Crawler"));
+                .newScheduledThreadPool(poolSize, new MyThreadFactory("Crawler"));
 
             if (types.contains("all") || types.contains("rar")) {
                 executorService.scheduleWithFixedDelay(() -> {

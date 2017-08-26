@@ -68,7 +68,7 @@ public class HqcCrawlerImpl extends AbstractCrawler implements HqcCrawler {
 
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-                        if (source.isCompleted()) {
+                        if (source.isCompleted() || type.contains("[HQC电影]")) {
                             continue;
                         }
 
