@@ -52,9 +52,9 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
                 m = service.findByImdb(imdb);
             }
 
-            if (m == null) {
-                m = searchByImdb(movie);
-            }
+//            if (m == null) {
+//                m = searchByImdb(movie);
+//            }
 
             if (m == null) {
                 m = searchByName(movie);
@@ -109,19 +109,19 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
         for (Element element : elements.first().children()) {
             String text = element.text();
             if (element.tagName().equals("dt")) {
-                if (text.contains("更新：")) {
+                if (text.contains("更新:")) {
                     phase = 1;
-                } else if (text.contains("状态：")) {
+                } else if (text.contains("状态:")) {
                     phase = 2;
-                } else if (text.contains("类型：")) {
+                } else if (text.contains("类型:")) {
                     phase = 3;
-                } else if (text.contains("地区：")) {
+                } else if (text.contains("地区:")) {
                     phase = 4;
-                } else if (text.contains("语言：")) {
+                } else if (text.contains("语言:")) {
                     phase = 5;
-                } else if (text.contains("imdb：")) {
+                } else if (text.contains("imdb:")) {
                     phase = 6;
-                } else if (text.contains("主演：")) {
+                } else if (text.contains("主演:")) {
                     phase = 7;
                 }
             } else {
