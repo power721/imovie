@@ -46,6 +46,9 @@ public class RarBtCrawlerImpl extends AbstractCrawler implements RarBtCrawler {
             String url = String.format(baseUrl, page);
             try {
                 if (error >= 5) {
+                    if (error >= 10) {
+                        return;
+                    }
                     logger.warn("sleep {} seconds", error * 30L);
                     TimeUnit.SECONDS.sleep(error * 30L);
                 }

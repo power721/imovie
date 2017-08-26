@@ -51,6 +51,9 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
             String url = String.format(baseUrl, type, id, page);
             try {
                 if (error >= 5) {
+                    if (error >= 10) {
+                        return;
+                    }
                     logger.warn("[BtApple] sleep {} seconds", error * 30L);
                     TimeUnit.SECONDS.sleep(error * 30L);
                 }

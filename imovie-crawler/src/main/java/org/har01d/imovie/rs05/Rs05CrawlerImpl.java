@@ -45,6 +45,9 @@ public class Rs05CrawlerImpl extends AbstractCrawler implements Rs05Crawler {
             String url = baseUrl + page;
             try {
                 if (error >= 5) {
+                    if (error >= 10) {
+                        return;
+                    }
                     logger.warn("sleep {} seconds", error * 30L);
                     TimeUnit.SECONDS.sleep(error * 30L);
                 }
