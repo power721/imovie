@@ -41,20 +41,24 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 
-        getMovie(doc, movie);
-
         Movie m = null;
-        String imdb = movie.getImdbUrl();
-        if (imdb != null) {
-            m = service.findByImdb(imdb);
-        }
+        if (movie.getId() != null) {
+            m = service.findById(movie.getId());
+        } else {
+            getMovie(doc, movie);
 
-        if (m == null) {
-            m = searchByImdb(movie);
-        }
+            String imdb = movie.getImdbUrl();
+            if (imdb != null) {
+                m = service.findByImdb(imdb);
+            }
 
-        if (m == null) {
-            m = searchByName(movie);
+            if (m == null) {
+                m = searchByImdb(movie);
+            }
+
+            if (m == null) {
+                m = searchByName(movie);
+            }
         }
 
         if (m != null) {

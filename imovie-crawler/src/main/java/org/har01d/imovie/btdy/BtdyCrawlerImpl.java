@@ -81,6 +81,9 @@ public class BtdyCrawlerImpl extends AbstractCrawler implements BtdyCrawler {
                     }
 
                     Movie movie = new Movie();
+                    if (source != null && source.getMovieId() != null) {
+                        movie.setId(source.getMovieId());
+                    }
                     movie.setName(element.attr("title").replaceAll("全.季", ""));
                     try {
                         movie = parser.parse(pageUrl, movie);
