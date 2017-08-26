@@ -144,8 +144,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${offset:0}")
     private int offset = 0;
 
-    @Value("${poolSize:5}")
-    private int poolSize = 5;
+    @Value("${poolSize:3}")
+    private int poolSize = 3;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -262,7 +262,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 1, TimeUnit.HOURS);
             }
 
-            if (types.contains("all") || types.contains("btxf")) {
+            if (/*types.contains("all") || */types.contains("btxf")) {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btxfCrawler.crawler();

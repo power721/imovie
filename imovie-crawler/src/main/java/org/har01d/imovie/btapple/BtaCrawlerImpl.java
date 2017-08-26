@@ -1,11 +1,8 @@
 package org.har01d.imovie.btapple;
 
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
-import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -36,10 +33,13 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BtApple"));
-        executorService.submit(() -> work(1, "movie"));
-        executorService.submit(() -> work(3, "tv"));
-        executorService.shutdown();
+//        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BtApple"));
+//        executorService.submit(() -> work(1, "movie"));
+//        executorService.submit(() -> work(3, "tv"));
+//        executorService.shutdown();
+
+        work(1, "movie");
+        work(3, "tv");
     }
 
     private void work(int id, String type) {
