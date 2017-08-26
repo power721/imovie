@@ -231,16 +231,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 5, TimeUnit.HOURS);
             }
 
-            if (types.contains("all") || types.contains("xyw")) {
-                executorService.submit(() -> {
-                    try {
-                        xywCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
             if (types.contains("all") || types.contains("imdb")) {
                 executorService.submit(() -> {
                     try {
@@ -360,6 +350,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                         logger.error("", e);
                     }
                 }, 0, 6, TimeUnit.HOURS);
+            }
+
+            if (types.contains("all") || types.contains("xyw")) {
+                executorService.submit(() -> {
+                    try {
+                        xywCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                });
             }
 
             if (types.contains("ckd")) {

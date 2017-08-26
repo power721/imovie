@@ -1,10 +1,7 @@
 package org.har01d.imovie.xyw;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
-import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Source;
@@ -30,18 +27,21 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
     @Autowired
     private XywParser parser;
 
-    private ScheduledExecutorService executorService;
-
-    public XywCrawlerImpl() {
-        executorService = Executors.newScheduledThreadPool(2, new MyThreadFactory("xyw"));
-    }
+//    private ScheduledExecutorService executorService;
+//
+//    public XywCrawlerImpl() {
+//        executorService = Executors.newScheduledThreadPool(2, new MyThreadFactory("xyw"));
+//    }
 
     @Override
     public void crawler() throws InterruptedException {
-        executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
-        executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
-        executorService.awaitTermination(3L, TimeUnit.DAYS);
-        executorService.shutdown();
+//        executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
+//        executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
+//        executorService.awaitTermination(3L, TimeUnit.DAYS);
+//        executorService.shutdown();
+
+        work("movie");
+        work("tv");
     }
 
     private void work(String type) {
