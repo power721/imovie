@@ -1,5 +1,6 @@
 package org.har01d.imovie.inp;
 
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
@@ -69,22 +70,42 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
                     String pageUrl = siteUrl + element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-                        logger.info("skip {}", pageUrl);
-                        continue;
+                        if (source.isCompleted() || id != 2) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
+
+                        long time = System.currentTimeMillis();
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(24)) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
                     }
 
                     Movie movie = new Movie();
+                    if (source != null && source.getMovieId() != null) {
+                        movie.setId(source.getMovieId());
+                    }
                     movie.setName(getName(element));
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             logger.info("[inp-{}] {}-{}-{} find movie {}", id, page, total, count, movie.getName());
-                            source = new Source(pageUrl, movie.getSourceTime());
-                            count++;
+                            if (source == null) {
+                                source = new Source(pageUrl, movie.getSourceTime());
+                            }
+                            source.setCompleted(movie.isCompleted());
+                            source.setMovieId(movie.getId());
+                            if (crawler == null || movie.getNewResources() > 0) {
+                                count++;
+                            }
                             total++;
                         } else {
-                            source = new Source(pageUrl, false);
+                            if (source == null) {
+                                source = new Source(pageUrl, false);
+                            }
                         }
+                        source.setUpdatedTime(new Date());
                         service.save(source);
                         error = 0;
                     } catch (Exception e) {

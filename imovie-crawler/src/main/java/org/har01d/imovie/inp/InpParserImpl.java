@@ -39,27 +39,31 @@ public class InpParserImpl extends AbstractParser implements InpParser {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 
-        getMovie(doc, movie);
-
-        String dbUrl = movie.getDbUrl();
         Movie m = null;
-        if (dbUrl != null) {
-            m = getByDb(dbUrl);
-        }
+        if (movie.getId() != null) {
+            m = service.findById(movie.getId());
+        } else {
+            getMovie(doc, movie);
 
-        if (m == null) {
-            String imdb = movie.getImdbUrl();
-            if (imdb != null) {
-                m = service.findByImdb(imdb);
+            String dbUrl = movie.getDbUrl();
+            if (dbUrl != null) {
+                m = getByDb(dbUrl);
             }
-        }
 
-        if (m == null) {
-            m = searchByImdb(movie);
-        }
+            if (m == null) {
+                String imdb = movie.getImdbUrl();
+                if (imdb != null) {
+                    m = service.findByImdb(imdb);
+                }
+            }
 
-        if (m == null) {
-            m = searchByName(movie);
+//            if (m == null) {
+//                m = searchByImdb(movie);
+//            }
+
+            if (m == null) {
+                m = searchByName(movie);
+            }
         }
 
         if (m != null) {
@@ -69,6 +73,8 @@ public class InpParserImpl extends AbstractParser implements InpParser {
 
             logger.info("[inp] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
+            m.setNewResources(resources.size() - size);
+            m.setCompleted(movie.isCompleted());
             m.setSourceTime(movie.getSourceTime());
             service.save(m);
             return m;
