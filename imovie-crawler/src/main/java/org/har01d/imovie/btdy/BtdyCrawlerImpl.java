@@ -60,7 +60,7 @@ public class BtdyCrawlerImpl extends AbstractCrawler implements BtdyCrawler {
                     continue;
                 }
 
-                Elements elements = doc.select("div.list_su dl .title a");
+                Elements elements = doc.select("div.list_su ul .title a");
                 logger.info("[btbtdy] {}: {} movies", page, elements.size());
 
                 int count = 0;
