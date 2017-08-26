@@ -1,5 +1,6 @@
 package org.har01d.imovie.btdy;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
@@ -65,8 +66,18 @@ public class BtdyCrawlerImpl extends AbstractCrawler implements BtdyCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String pageUrl = siteUrl + element.attr("href");
-                    if (service.findSource(pageUrl) != null) {
-                        continue;
+                    Source source = service.findSource(pageUrl);
+                    if (source != null) {
+                        if (source.isCompleted()) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
+
+                        long time = System.currentTimeMillis();
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(24)) {
+                            logger.info("skip {}", pageUrl);
+                            continue;
+                        }
                     }
 
                     Movie movie = new Movie();
@@ -75,12 +86,22 @@ public class BtdyCrawlerImpl extends AbstractCrawler implements BtdyCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             logger.info("[btbtdy] {}-{}-{} find movie {}", page, total, count, movie.getName());
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
-                            count++;
+                            if (source == null) {
+                                source = new Source(pageUrl, movie.getSourceTime());
+                            }
+                            source.setCompleted(movie.isCompleted());
+                            source.setMovieId(movie.getId());
+                            if (crawler == null || movie.getNewResources() > 0) {
+                                count++;
+                            }
                             total++;
                         } else {
-                            service.save(new Source(pageUrl, false));
+                            if (source == null) {
+                                source = new Source(pageUrl, false);
+                            }
                         }
+                        source.setUpdatedTime(new Date());
+                        service.save(source);
                         error = 0;
                     } catch (Exception e) {
                         error++;

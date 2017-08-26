@@ -65,6 +65,8 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
             logger.info("[btbtdy] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
+            m.setNewResources(resources.size() - size);
+            m.setCompleted(movie.isCompleted());
             m.setSourceTime(movie.getSourceTime());
             return m;
         } else {
@@ -123,6 +125,9 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
                     movie.setSourceTime(getSourceTime(text));
                 } else if (phase == 2) {
                     movie.setEpisode(getEpisode(text));
+                    if (text.contains("完结")) {
+                        movie.setCompleted(true);
+                    }
                 } else if (phase == 3) {
                     movie.setCategories(getCategories(getValues(text.replace("电视剧", "").replace("电影", ""))));
                 } else if (phase == 4) {
