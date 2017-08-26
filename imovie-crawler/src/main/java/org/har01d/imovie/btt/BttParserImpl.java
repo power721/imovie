@@ -1530,7 +1530,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         return getValues(text, "/");
     }
 
-    private Set<String> getValues(String text, String delm) {
+    protected Set<String> getValues(String text, String delm) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split(delm);
         for (String val : vals) {

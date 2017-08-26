@@ -24,6 +24,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.douban.DouBanCrawler;
 import org.har01d.imovie.dyb.DybCrawler;
 import org.har01d.imovie.fix.FixCrawler;
+import org.har01d.imovie.hqc.HqcCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.inp.InpCrawler;
 import org.har01d.imovie.lg.LgCrawler;
@@ -118,6 +119,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private YyCrawler yyCrawler;
+
+    @Autowired
+    private HqcCrawler hqcCrawler;
 
     @Autowired
     private DouBanCrawler douBanCrawler;
@@ -339,6 +343,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         yyCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }, 0, 6, TimeUnit.HOURS);
+            }
+
+            if (types.contains("all") || types.contains("hqc")) {
+                executorService.scheduleWithFixedDelay(() -> {
+                    try {
+                        hqcCrawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }

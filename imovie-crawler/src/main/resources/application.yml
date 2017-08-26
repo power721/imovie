@@ -36,6 +36,12 @@ url:
   inp:
     site: http://www.inapian.com
     page: http://www.inapian.com/list/%d-%d.html
+  hqc:
+    site: http://www.gscq.me/
+    page: http://www.gscq.me/index-%d.htm
+  gg:
+    site: http://www.gagays.xyz
+    page: http://www.gagays.xyz/movie/asearch?category=&nation=&years=%d..%d&offset=%d
   mj:
     site: http://www.meijuxz.com
     page: http://www.meijuxz.com/%s-%d.html

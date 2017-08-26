@@ -83,7 +83,7 @@ public class YyParserImpl extends AbstractParser implements YyParser {
             }
         }
 
-        logger.info("[yy] get {} resources", resources.size());
+//        logger.info("[yy] get {} resources", resources.size());
         elements = doc.select("div.tab_set_info ul li a");
         for (Element element : elements) {
             String uri = element.attr("href");

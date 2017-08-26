@@ -155,6 +155,36 @@ public abstract class AbstractParser implements Parser {
         return regions;
     }
 
+    protected String getValue(String text, String prefix) {
+        if (!text.trim().startsWith(prefix)) {
+            return null;
+        }
+        return text.substring(prefix.length(), text.length()).trim();
+    }
+
+    protected Set<String> getValues(String text, String prefix) {
+        Set<String> values = new HashSet<>();
+        if (!text.trim().startsWith(prefix)) {
+            return values;
+        }
+
+        String value = text.substring(prefix.length(), text.length());
+        String regex = " / ";
+        String[] vals = value.split(regex);
+        if (vals.length == 1 && value.contains("/")) {
+            vals = value.split("/");
+        }
+
+        for (String val : vals) {
+            if (val.trim().equals("更多...")) {
+                continue;
+            }
+            values.add(val.trim());
+        }
+
+        return values;
+    }
+
     protected boolean isResource(String uri) {
         return uri != null && (uri.startsWith("magnet:?")
             || uri.startsWith("ed2k://")

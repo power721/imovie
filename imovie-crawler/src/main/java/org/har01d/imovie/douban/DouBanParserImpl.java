@@ -263,7 +263,7 @@ public class DouBanParserImpl implements DouBanParser {
             return true;
         } else if ((value = getValue(text, "首播:")) != null) {
             movie.setReleaseDate(value);
-            if(movie.getEpisode() == null) {
+            if (movie.getEpisode() == null) {
                 movie.setEpisode(0);
             }
         }
@@ -273,7 +273,7 @@ public class DouBanParserImpl implements DouBanParser {
             return true;
         } else if ((value = getValue(text, "单集片长:", 100)) != null) {
             movie.setRunningTime(value);
-            if(movie.getEpisode() == null) {
+            if (movie.getEpisode() == null) {
                 movie.setEpisode(0);
             }
         }
@@ -289,6 +289,11 @@ public class DouBanParserImpl implements DouBanParser {
 
         if (movie.getEpisode() == null && getValue(text, "季数:") != null) {
             movie.setEpisode(0);
+        }
+
+        if ((value = getValue(text, "官方网站:")) != null) {
+            movie.setWebsite(value);
+            return true;
         }
 
         if ((value = getValue(text, "IMDb链接:")) != null) {

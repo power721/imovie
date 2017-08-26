@@ -78,6 +78,8 @@ public class Movie {
     private String dbUrl;
     private String dbScore;
 
+    private String website;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime = new Date();
 
@@ -279,6 +281,14 @@ public class Movie {
 
     public void setDbScore(String dbScore) {
         this.dbScore = dbScore;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public Date getCreatedTime() {

@@ -426,6 +426,7 @@ public class MovieServiceImpl implements MovieService {
             }
         }
 
+        title = StringUtils.truncate(title, 200);
         if (uri == null) {
             resource = new Resource(original, title);
         } else {
@@ -557,6 +558,12 @@ public class MovieServiceImpl implements MovieService {
             if (movie.getImdbUrl() != null && m.getImdbUrl() != null) {
                 if (m.getImdbUrl().equals(movie.getImdbUrl())) {
                     match += 15;
+                }
+            }
+
+            if (movie.getWebsite() != null && m.getWebsite() != null) {
+                if (m.getWebsite().equals(movie.getWebsite())) {
+                    match += 5;
                 }
             }
 

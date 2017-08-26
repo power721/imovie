@@ -218,33 +218,6 @@ public class DybParserImpl extends AbstractParser implements DybParser {
         }
     }
 
-    private String getValue(String text, String prefix) {
-        if (!text.trim().startsWith(prefix)) {
-            return null;
-        }
-        return text.substring(prefix.length(), text.length()).trim();
-    }
-
-    private Set<String> getValues(String text, String prefix) {
-        if (!text.trim().startsWith(prefix)) {
-            return null;
-        }
-
-        Set<String> values = new HashSet<>();
-        String value = text.substring(prefix.length(), text.length());
-        String regex = " / ";
-        String[] vals = value.split(regex);
-        if (vals.length == 1 && value.contains("/")) {
-            vals = value.split("/");
-        }
-
-        for (String val : vals) {
-            values.add(val.trim());
-        }
-
-        return values;
-    }
-
     private Set<String> getValues(String text) {
         Set<String> values = new HashSet<>();
         for (String name : text.split(",")) {
