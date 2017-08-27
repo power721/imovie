@@ -68,6 +68,7 @@ public class GgParserImpl extends AbstractParser implements GgParser {
     private Set<Resource> findResource(Document doc, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
         Elements elements = doc.select("div.resource-res-list ul li.resource-res-li table.resource-res-table tr td");
+        logger.info("Resources: {}", elements.size());
         for (Element element : elements) {
             String uri = element.select("a").last().attr("href");
             String title = element.select("a").last().text();

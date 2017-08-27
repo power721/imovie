@@ -98,6 +98,7 @@ public class GgCrawlerImpl extends AbstractCrawler implements GgCrawler {
             saveConfig("offset", offset);
         }
         saveConfig("offset", 0);
+        logger.info("[GaGa] ===== get {} movies =====", total);
     }
 
     private boolean work(int offset, String url) throws InterruptedException {
@@ -112,6 +113,7 @@ public class GgCrawlerImpl extends AbstractCrawler implements GgCrawler {
         try {
             String html = HttpUtils.getHtml(url);
             Document doc = Jsoup.parse(html);
+            error = 0;
             Elements elements = doc.select("li div.movie-res-detail-label div.movie-res-detail-img p a");
             if (elements.size() == 0) {
                 saveCrawlerConfig();

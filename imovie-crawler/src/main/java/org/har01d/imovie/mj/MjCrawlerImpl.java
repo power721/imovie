@@ -62,6 +62,7 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
 
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
+                error = 0;
                 Elements elements = doc.select("div.wrap ul.list li a.name");
                 if (elements.size() == 0) {
                     crawler = saveCrawlerConfig(type);
