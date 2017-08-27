@@ -1,22 +1,27 @@
 package org.har01d.imovie;
 
 import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractCrawler {
 
+    protected int error;
+    protected long total;
+    protected Random random = new Random();
+
     @Autowired
     protected MovieService service;
 
-    protected int getPage(int defaultValue) {
-        Config config = service.getConfig(getPageKey() + "_page");
-        if (config == null) {
-            return defaultValue;
-        }
+    protected void sleep() throws InterruptedException {
+        TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
+    }
 
-        return Integer.valueOf(config.getValue());
+    protected int getPage(int defaultValue) {
+        return getConfig("page", defaultValue);
     }
 
     protected int getPage() {
@@ -24,11 +29,27 @@ public abstract class AbstractCrawler {
     }
 
     protected void savePage(int page) {
-        service.saveConfig(getPageKey() + "_page", String.valueOf(page));
+        saveConfig("page", page);
     }
 
     protected int getPage(String type, int defaultValue) {
-        String key = getPageKey() + "_page_" + type;
+        return getConfig("page_" + type, defaultValue);
+    }
+
+    protected int getPage(String type) {
+        return getPage(type, 1);
+    }
+
+    protected void savePage(String type, int page) {
+        saveConfig("page_" + type, page);
+    }
+
+    protected void saveConfig(String name, int value) {
+        service.saveConfig(getPageKey() + "_" + name, String.valueOf(value));
+    }
+
+    protected int getConfig(String name, int defaultValue) {
+        String key = getPageKey() + "_" + name;
         Config config = service.getConfig(key);
         if (config == null) {
             return defaultValue;
@@ -37,12 +58,8 @@ public abstract class AbstractCrawler {
         return Integer.valueOf(config.getValue());
     }
 
-    protected int getPage(String type) {
-        return getPage(type, 1);
-    }
-
-    protected void savePage(String type, int page) {
-        service.saveConfig(getPageKey() + "_page_" + type, String.valueOf(page));
+    protected void deleteConfig(String name) {
+        service.deleteConfig(getPageKey() + "_" + name);
     }
 
     protected Config getCrawlerConfig() {

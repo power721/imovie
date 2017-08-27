@@ -123,7 +123,7 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
             HttpUtils.downloadFile(uri, file);
             return new TorrentFile(file);
         } catch (Exception e) {
-            logger.error("convert torrent to magnet failed: " + title, e);
+            logger.error("[HQC] convert torrent to magnet failed: " + title, e);
             service.publishEvent(uri, "convert torrent to magnet failed: " + title);
         }
         return null;

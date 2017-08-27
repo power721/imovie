@@ -67,6 +67,8 @@ public interface MovieService {
 
     void deleteConfig(Config config);
 
+    void deleteConfig(String name);
+
     Resource saveResource(String uri, String title);
 
     Resource saveResource(String uri, String original, String title);

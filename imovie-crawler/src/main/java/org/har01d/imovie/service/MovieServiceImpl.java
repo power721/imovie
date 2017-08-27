@@ -407,6 +407,14 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public void deleteConfig(String name) {
+        Config config = configRepository.findOne(name);
+        if (config != null) {
+            configRepository.delete(config);
+        }
+    }
+
+    @Override
     public Resource saveResource(String uri, String title) {
         return saveResource(null, uri, title);
     }
@@ -588,7 +596,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         if (best != null) {
-            logger.info("find best matched movie {} for {}, match: {}", best.getName(), movie.getName(), maxMatch);
+            logger.info("find best matched movie {} for {}, match: {}", best.getTitle(), movie.getName(), maxMatch);
         }
         return best;
     }

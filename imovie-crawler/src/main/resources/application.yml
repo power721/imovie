@@ -41,7 +41,7 @@ url:
     page: http://www.gscq.me/index-%d.htm
   gg:
     site: http://www.gagays.xyz
-    page: http://www.gagays.xyz/movie/asearch?category=&nation=&years=%d..%d&offset=%d
+    page: http://www.gagays.xyz/movie/asearch
   mj:
     site: http://www.meijuxz.com
     page: http://www.meijuxz.com/%s-%d.html
