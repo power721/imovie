@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Source {
@@ -18,6 +19,8 @@ public class Source {
 
     private Integer movieId;
 
+    @NotNull
+    @Column(columnDefinition = "TEXT")
     private String uri;
 
     @Temporal(TemporalType.TIMESTAMP)

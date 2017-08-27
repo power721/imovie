@@ -25,6 +25,7 @@ public class Resource {
     @Column(columnDefinition = "TEXT")
     private String original;
 
+    @Column(columnDefinition = "VARCHAR(512)")
     private String title;
 
     @ManyToMany(mappedBy = "resources", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

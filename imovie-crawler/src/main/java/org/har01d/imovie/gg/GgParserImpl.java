@@ -57,12 +57,12 @@ public class GgParserImpl extends AbstractParser implements GgParser {
             service.save(m);
             return m;
         } else {
-            findResource(doc, url);
-        }
+            Set<Resource> resources = findResource(doc, url);
 
-        logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
-        service.publishEvent(url, "Cannot find movie for " + movie.getName());
-        return null;
+            logger.warn("Cannot find movie for {}:{} {}", movie.getName(), resources.size(), url);
+            service.publishEvent(url, "Cannot find movie for " + movie.getName());
+            return null;
+        }
     }
 
     private Set<Resource> findResource(Document doc, String pageUrl) {

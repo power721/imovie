@@ -79,12 +79,12 @@ public class InpParserImpl extends AbstractParser implements InpParser {
             service.save(m);
             return m;
         } else {
-            findResource(doc, movie.getName());
-        }
+            Set<Resource> resources = findResource(doc, movie.getName());
 
-        logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
-        service.publishEvent(url, "Cannot find movie for " + movie.getName());
-        return null;
+            logger.warn("Cannot find movie for {}:{} {}", movie.getName(), resources.size(), url);
+            service.publishEvent(url, "Cannot find movie for " + movie.getName());
+            return null;
+        }
     }
 
     private Set<Resource> findResource(Document doc, String name) {

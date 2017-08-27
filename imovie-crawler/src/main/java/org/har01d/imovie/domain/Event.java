@@ -16,6 +16,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(columnDefinition = "VARCHAR(1024)")
     private String source;
 
     @Column(columnDefinition = "TEXT")
