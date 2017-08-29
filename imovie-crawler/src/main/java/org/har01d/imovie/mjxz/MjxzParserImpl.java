@@ -1,4 +1,4 @@
-package org.har01d.imovie.mj;
+package org.har01d.imovie.mjxz;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MjParserImpl extends AbstractParser implements MjParser {
+public class MjxzParserImpl extends AbstractParser implements MjxzParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(MjParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(MjxzParser.class);
 
-    @Value("${url.mj.site}")
+    @Value("${url.mjxz.site}")
     private String siteUrl;
 
     @Override
@@ -47,7 +47,7 @@ public class MjParserImpl extends AbstractParser implements MjParser {
             resources.addAll(findResource(doc, movie.getName()));
 
             m.setNewResources(resources.size() - size);
-            logger.info("[mj] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+            logger.info("[mjxz] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
             return m;
@@ -85,7 +85,7 @@ public class MjParserImpl extends AbstractParser implements MjParser {
                     }
                 } catch (Exception e) {
                     service.publishEvent(name, e.getMessage());
-                    logger.error("[mj] get resource failed", e);
+                    logger.error("[mjxz] get resource failed", e);
                 }
             } else if (!uri.trim().isEmpty()) {
                 logger.warn("{} is not resource", uri);

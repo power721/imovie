@@ -3,10 +3,13 @@ package org.har01d.imovie;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.har01d.imovie.domain.Config;
+import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 public abstract class AbstractCrawler {
 
     protected int error;
@@ -18,6 +21,32 @@ public abstract class AbstractCrawler {
 
     protected void sleep() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
+    }
+
+    protected void handleError() throws InterruptedException {
+        if (error >= 5) {
+            if (error >= 10) {
+                throw new IllegalStateException();
+            }
+            log.warn("sleep {} seconds", error * 30L);
+            TimeUnit.SECONDS.sleep(error * 30L);
+        }
+    }
+
+    protected boolean addOrUpdate(String pageUrl) {
+        Source source = service.findSource(pageUrl);
+        if (source != null) {
+            if (source.isCompleted()) {
+                return false;
+            }
+
+            long time = System.currentTimeMillis();
+            if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(24)) {
+                log.info("skip {}", pageUrl);
+                return false;
+            }
+        }
+        return true;
     }
 
     protected int getPage(int defaultValue) {

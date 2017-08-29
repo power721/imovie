@@ -70,6 +70,7 @@ public class Movie {
 
     private String runningTime;
 
+    private Integer season;
     private Integer episode;
 
     private String imdbUrl;
@@ -164,6 +165,16 @@ public class Movie {
         this.resources = resources;
     }
 
+    public void addResources(Set<Resource> resources) {
+        this.resources.addAll(resources);
+        newResources += resources.size();
+    }
+
+    public void addResource(Resource resource) {
+        this.resources.add(resource);
+        newResources++;
+    }
+
     public Set<Category> getCategories() {
         return categories;
     }
@@ -178,6 +189,10 @@ public class Movie {
 
     public void setAliases(Set<String> aliases) {
         this.aliases = aliases;
+    }
+
+    public void addAliases(Set<String> aliases) {
+        this.aliases.addAll(aliases);
     }
 
     public Set<Person> getDirectors() {
@@ -241,6 +256,14 @@ public class Movie {
 
     public void setRunningTime(String runningTime) {
         this.runningTime = runningTime;
+    }
+
+    public Integer getSeason() {
+        return season;
+    }
+
+    public void setSeason(Integer season) {
+        this.season = season;
     }
 
     public Integer getEpisode() {

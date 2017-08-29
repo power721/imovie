@@ -42,9 +42,12 @@ url:
   gg:
     site: http://www.gagays.xyz
     page: http://www.gagays.xyz/movie/asearch
-  mj:
+  mjxz:
     site: http://www.meijuxz.com
     page: http://www.meijuxz.com/%s-%d.html
+  mjtt:
+    site: http://www.meijutt.com
+    page: http://www.meijutt.com/file/list%d_%d.html
   dyb:
     site: http://www.dybird.com
     page: http://www.dybird.com/listfilm/%d/%d.html

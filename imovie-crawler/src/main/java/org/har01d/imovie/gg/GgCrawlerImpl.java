@@ -1,7 +1,6 @@
 package org.har01d.imovie.gg;
 
 import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
 import org.apache.http.client.HttpResponseException;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
@@ -102,13 +101,7 @@ public class GgCrawlerImpl extends AbstractCrawler implements GgCrawler {
     }
 
     private boolean work(int offset, String url) throws InterruptedException {
-        if (error >= 5) {
-            if (error >= 10) {
-                throw new IllegalStateException();
-            }
-            logger.warn("sleep {} seconds", error * 30L);
-            TimeUnit.SECONDS.sleep(error * 30L);
-        }
+        handleError();
 
         try {
             String html = HttpUtils.getHtml(url);

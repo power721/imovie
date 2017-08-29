@@ -91,6 +91,10 @@ public final class HttpUtils {
         return getHtml(url, "UTF-8", cookieStore, null);
     }
 
+    public static String getHtml(String url, String encoding) throws IOException {
+        return getHtml(url, encoding, cookieStore, null);
+    }
+
     public static String getHtml(String url, HttpHost httpHost) throws IOException {
         return getHtml(url, "UTF-8", cookieStore, httpHost);
     }

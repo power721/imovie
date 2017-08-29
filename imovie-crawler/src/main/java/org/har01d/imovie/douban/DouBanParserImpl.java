@@ -118,6 +118,16 @@ public class DouBanParserImpl implements DouBanParser {
         for (String line : lines) {
             getMetadata(line, movie);
         }
+
+        String season = doc.select("select#season option[selected]").text();
+        if (season != null && !season.isEmpty()) {
+            try {
+                movie.setSeason(Integer.valueOf(season));
+            } catch (NumberFormatException e) {
+                movie.setSeason(0);
+            }
+        }
+
         if (year != null) {
             movie.setYear(service.getYear(year));
         } else {
@@ -287,8 +297,10 @@ public class DouBanParserImpl implements DouBanParser {
             }
         }
 
-        if (movie.getEpisode() == null && getValue(text, "季数:") != null) {
-            movie.setEpisode(0);
+        if (getValue(text, "季数:") != null) {
+            if (movie.getEpisode() == null) {
+                movie.setEpisode(0);
+            }
         }
 
         if ((value = getValue(text, "官方网站:")) != null) {

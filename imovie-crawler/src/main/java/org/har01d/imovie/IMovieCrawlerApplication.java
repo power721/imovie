@@ -29,7 +29,8 @@ import org.har01d.imovie.hqc.HqcCrawler;
 import org.har01d.imovie.imdb.ImdbCrawler;
 import org.har01d.imovie.inp.InpCrawler;
 import org.har01d.imovie.lg.LgCrawler;
-import org.har01d.imovie.mj.MjCrawler;
+import org.har01d.imovie.mjtt.MjttCrawler;
+import org.har01d.imovie.mjxz.MjxzCrawler;
 import org.har01d.imovie.mp4.Mp4Crawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
@@ -113,7 +114,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private CkDramaCrawler ckDramaCrawler;
 
     @Autowired
-    private MjCrawler mjCrawler;
+    private MjxzCrawler mjxzCrawler;
 
     @Autowired
     private DybCrawler dybCrawler;
@@ -126,6 +127,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private GgCrawler ggCrawler;
+
+    @Autowired
+    private MjttCrawler mjttCrawler;
 
     @Autowired
     private DouBanCrawler douBanCrawler;
@@ -316,10 +320,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 }, 0, 6, TimeUnit.HOURS);
             }
 
-            if (types.contains("all") || types.contains("mj")) {
+            if (types.contains("all") || types.contains("mjxz")) {
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
-                        mjCrawler.crawler();
+                        mjxzCrawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }
@@ -370,6 +374,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 executorService.submit(() -> {
                     try {
                         ggCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                });
+            }
+
+            if (types.contains("all") || types.contains("mjtt")) {
+                executorService.submit(() -> {
+                    try {
+                        mjttCrawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }

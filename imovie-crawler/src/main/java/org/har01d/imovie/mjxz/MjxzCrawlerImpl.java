@@ -1,7 +1,6 @@
-package org.har01d.imovie.mj;
+package org.har01d.imovie.mjxz;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
@@ -19,20 +18,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
+public class MjxzCrawlerImpl extends AbstractCrawler implements MjxzCrawler {
 
-    private static final Logger logger = LoggerFactory.getLogger(MjCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MjxzCrawler.class);
 
-    @Value("${url.mj.site}")
+    @Value("${url.mjxz.site}")
     private String siteUrl;
 
-    @Value("${url.mj.page}")
+    @Value("${url.mjxz.page}")
     private String baseUrl;
 
     @Autowired
-    private MjParser parser;
-
-    private Random random = new Random();
+    private MjxzParser parser;
 
     @Override
     public void crawler() throws InterruptedException {
@@ -40,25 +37,17 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
         work("HDDY");
     }
 
-    private void work(String type) {
-        int total = 0;
-        int error = 0;
+    private void work(String type) throws InterruptedException {
         int page = getPage(type);
         Config crawler = getCrawlerConfig(type);
         while (true) {
+            handleError();
             String url = String.format(baseUrl, type, page);
             if (page == 1) {
                 url = url.replace("-1", "");
             }
 
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
 
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
@@ -69,7 +58,7 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                     page = 1;
                     continue;
                 }
-                logger.info("[mj-{}] {}: {} movies", type, page, elements.size());
+                logger.info("[mjxz-{}] {}: {} movies", type, page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
@@ -95,8 +84,9 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[mj-{}] {}-{}-{} find movie {} {}", type, page, total, count, movie.getName(),
-                                pageUrl);
+                            logger
+                                .info("[mjxz-{}] {}-{}-{} find movie {} {}", type, page, total, count, movie.getName(),
+                                    pageUrl);
                             if (source == null) {
                                 source = new Source(pageUrl, movie.isCompleted());
                             }
@@ -116,7 +106,7 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
                     } catch (Exception e) {
                         error++;
                         service.publishEvent(pageUrl, e.getMessage());
-                        logger.error("[mj-{}] Parse page failed: {}", type, pageUrl, e);
+                        logger.error("[mjxz-{}] Parse page failed: {}", type, pageUrl, e);
                     }
                 }
 
@@ -135,13 +125,13 @@ public class MjCrawlerImpl extends AbstractCrawler implements MjCrawler {
             } catch (Exception e) {
                 error++;
                 service.publishEvent(url, e.getMessage());
-                logger.error("[mj-{}] Get HTML failed: {}", type, url, e);
+                logger.error("[mjxz-{}] Get HTML failed: {}", type, url, e);
             }
         }
 
         saveCrawlerConfig(type);
         savePage(type, 1);
-        logger.info("[mj-{}] ===== get {} movies =====", type, total);
+        logger.info("[mjxz-{}] ===== get {} movies =====", type, total);
     }
 
     private String getName(Element element) {
