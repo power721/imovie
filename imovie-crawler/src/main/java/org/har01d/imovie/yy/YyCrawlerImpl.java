@@ -1,7 +1,6 @@
 package org.har01d.imovie.yy;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
@@ -29,7 +28,6 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
     @Autowired
     private YyParser parser;
 
-    private Random random = new Random();
     private String[] types = {"", "lishi", "mohuan", "jingsong", "dushi"};
 
     @Override
@@ -40,24 +38,16 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
         work(4);
     }
 
-    private void work(int id) {
-        int total = 0;
-        int error = 0;
+    private void work(int id) throws InterruptedException {
         int page = getPage(String.valueOf(id));
         Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {
+            handleError();
             String url = String.format(baseUrl, types[id], page);
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
+                error = 0;
                 Elements elements = doc.select("div.container .row .col-md-9 .row .min-height-category div a");
                 if (elements.size() == 0) {
                     crawler = saveCrawlerConfig(String.valueOf(id));
@@ -119,7 +109,7 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
                 }
                 page++;
                 savePage(String.valueOf(id), page);
-                TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
+                sleep();
             } catch (Exception e) {
                 error++;
                 service.publishEvent(url, e.getMessage());

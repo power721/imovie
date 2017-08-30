@@ -104,7 +104,8 @@ public class DouBanServiceImpl implements DouBanService {
         params.put("form_password", password.getValue());
         params.put("remember", "on");
         params.put("login", "登录");
-        BasicCookieStore cookieStore1 = HttpUtils.post4Cookie("https://accounts.douban.com/login?source=movie", params);
+        BasicCookieStore cookieStore1 = new BasicCookieStore();
+        String html = HttpUtils.post4Cookie("https://accounts.douban.com/login?source=movie", params, cookieStore);
         List<Cookie> cookies = cookieStore1.getCookies();
         for (Cookie cookie : cookies) {
             logger.info("cookie {}: {}", cookie.getName(), cookie.getValue());
@@ -120,6 +121,7 @@ public class DouBanServiceImpl implements DouBanService {
 
         if (!isLogin) {
             logger.warn("Login to DouBan failed, user: " + user.getValue());
+            logger.warn(html);
         }
     }
 

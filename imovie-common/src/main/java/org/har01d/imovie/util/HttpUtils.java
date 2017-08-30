@@ -401,9 +401,8 @@ public final class HttpUtils {
         }
     }
 
-    public static BasicCookieStore post4Cookie(String url, Map<String, String> params) throws IOException {
-        BasicCookieStore cookieStore = new BasicCookieStore();
-
+    public static String post4Cookie(String url, Map<String, String> params, BasicCookieStore cookieStore)
+        throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultCookieStore(cookieStore)
             .setUserAgent(getAgent())
@@ -418,11 +417,9 @@ public final class HttpUtils {
             LOGGER.info("Executing request {}", request.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 HttpEntity entity = response.getEntity();
-                String html = entity != null ? EntityUtils.toString(entity) : null;
-                LOGGER.debug(html);
+                return entity != null ? EntityUtils.toString(entity) : null;
             }
         }
-        return cookieStore;
     }
 
 }
