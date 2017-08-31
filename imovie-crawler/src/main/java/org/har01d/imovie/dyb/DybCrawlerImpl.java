@@ -41,26 +41,20 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
         work(4);
     }
 
-    private void work(int id) {
-        int total = 0;
-        int error = 0;
+    private void work(int id) throws InterruptedException {
         int page = getPage(String.valueOf(id));
         Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {
+            handleError();
             String url = String.format(baseUrl, id, page);
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.list3_cn_box div.cn_box2 ul li.title h2 a");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig(String.valueOf(id));
                     page = 1;
                     continue;

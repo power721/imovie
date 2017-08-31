@@ -54,9 +54,7 @@ public class MjxzCrawlerImpl extends AbstractCrawler implements MjxzCrawler {
                 error = 0;
                 Elements elements = doc.select("div.wrap ul.list li a.name");
                 if (elements.size() == 0) {
-                    crawler = saveCrawlerConfig(type);
-                    page = 1;
-                    continue;
+                    break;
                 }
                 logger.info("[mjxz-{}] {}: {} movies", type, page, elements.size());
 

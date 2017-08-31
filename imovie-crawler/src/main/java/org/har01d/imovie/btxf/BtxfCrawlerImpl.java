@@ -1,6 +1,5 @@
 package org.har01d.imovie.btxf;
 
-import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -32,25 +31,16 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int error = 0;
-        int total = 0;
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {
+            handleError();
             String url = String.format(baseUrl, page);
             if (page == 1) {
                 url = url.replace("index-1", "index");
             }
 
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
 

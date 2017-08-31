@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -36,25 +35,19 @@ public class BtttCrawlerImpl extends AbstractCrawler implements BtttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int total = 0;
-        int error = 0;
         int page = getPage(0);
         Config crawler = getCrawlerConfig();
         while (true) {
+            handleError();
             String url = String.format(baseUrl, page);
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.ml .item .title");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig();
                     page = 0;
                     continue;

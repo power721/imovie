@@ -1,6 +1,5 @@
 package org.har01d.imovie.xyw;
 
-import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -44,26 +43,20 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
         work("tv");
     }
 
-    private void work(String type) {
-        int total = 0;
-        int error = 0;
+    private void work(String type) throws InterruptedException {
         int page = getPage(type);
         Config crawler = getCrawlerConfig(type);
         while (true) {
+            handleError();
             String url = baseUrl + "/" + type + "/?page=" + page;
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .movie-item .meta h1 a");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig(type);
                     page = 1;
                     continue;

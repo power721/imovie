@@ -1,6 +1,5 @@
 package org.har01d.imovie.fix;
 
-import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -29,25 +28,19 @@ public class FixCrawlerImpl extends AbstractCrawler implements FixCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int total = 0;
-        int error = 0;
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {
+            handleError();
             String url = baseUrl + page;
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div#portfolio-gallery .pg-items .pg-item a");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig();
                     page = 1;
                     continue;

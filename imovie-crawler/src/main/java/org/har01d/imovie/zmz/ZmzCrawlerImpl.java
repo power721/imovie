@@ -33,25 +33,19 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        int total = 0;
-        int error = 0;
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {
+            handleError();
             String url = baseUrl + page;
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.resource-showlist ul li .fl-info");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig();
                     page = 1;
                     continue;

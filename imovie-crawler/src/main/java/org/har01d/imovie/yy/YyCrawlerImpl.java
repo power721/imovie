@@ -50,6 +50,9 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
                 error = 0;
                 Elements elements = doc.select("div.container .row .col-md-9 .row .min-height-category div a");
                 if (elements.size() == 0) {
+                    if (crawler != null) {
+                        break;
+                    }
                     crawler = saveCrawlerConfig(String.valueOf(id));
                     page = 1;
                     continue;

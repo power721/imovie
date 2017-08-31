@@ -31,8 +31,8 @@ url:
   douban: https://movie.douban.com
   imdb: http://www.imdb.com/search/title?count=100&title_type=feature,tv_series&view=simple&page=
   mp4:
-    site: http://www.mp4ba.tv
-    page: http://www.mp4ba.tv/search.php?searchtype=5&page=
+    site: https://www.mp4ba.tv
+    page: https://www.mp4ba.tv/search.php?searchtype=5&page=
   inp:
     site: http://www.inapian.com
     page: http://www.inapian.com/list/%d-%d.html

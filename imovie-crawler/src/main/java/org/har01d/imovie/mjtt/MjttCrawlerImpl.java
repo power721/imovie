@@ -1,6 +1,7 @@
 package org.har01d.imovie.mjtt;
 
 import java.util.Date;
+import org.apache.http.client.HttpResponseException;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -104,6 +105,9 @@ public class MjttCrawlerImpl extends AbstractCrawler implements MjttCrawler {
                     }
                     sleep();
                 } catch (Exception e) {
+                    if (e instanceof HttpResponseException && ((HttpResponseException) e).getStatusCode() == 404) {
+                        break;
+                    }
                     error++;
                     service.publishEvent(url, e.getMessage());
                     logger.error("[mjtt-{}] Get HTML failed: {}", index, url, e);

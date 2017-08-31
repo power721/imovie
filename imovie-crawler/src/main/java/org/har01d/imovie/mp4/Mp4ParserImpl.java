@@ -60,7 +60,6 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
             m = searchByName(movie);
         }
 
-
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();

@@ -1,7 +1,6 @@
 package org.har01d.imovie.btapple;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -42,26 +41,20 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
         work(3, "tv");
     }
 
-    private void work(int id, String type) {
-        int total = 0;
-        int error = 0;
+    private void work(int id, String type) throws InterruptedException {
         int page = getPage(type, 0);
         Config full = getCrawlerConfig(type);
         while (true) {
+            handleError();
             String url = String.format(baseUrl, type, id, page);
             try {
-                if (error >= 5) {
-                    if (error >= 10) {
-                        return;
-                    }
-                    logger.warn("[BtApple] sleep {} seconds", error * 30L);
-                    TimeUnit.SECONDS.sleep(error * 30L);
-                }
-
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .info a");
                 if (elements.size() == 0) {
+                    if (full != null) {
+                        break;
+                    }
                     full = saveCrawlerConfig(type);
                     page = 0;
                     continue;
