@@ -51,6 +51,9 @@ url:
   dyb:
     site: http://www.dybird.com
     page: http://www.dybird.com/listfilm/%d/%d.html
+  lyw:
+    site: http://www.leyowo.com
+    page: http://www.leyowo.com/Class_%d/Default_%d.aspx
   ck:
     movie: http://www.ck180.net/sift/?page=
     drama: http://www.ck180.net/drama/page/

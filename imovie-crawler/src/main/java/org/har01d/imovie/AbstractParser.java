@@ -1,11 +1,13 @@
 package org.har01d.imovie;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.Language;
 import org.har01d.imovie.domain.Movie;
@@ -13,6 +15,9 @@ import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Region;
 import org.har01d.imovie.douban.DouBanParser;
 import org.har01d.imovie.service.MovieService;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +173,8 @@ public abstract class AbstractParser implements Parser {
 
     protected Set<String> getValues(String text, String prefix) {
         Set<String> values = new HashSet<>();
-        if (!text.trim().startsWith(prefix)) {
+        text = text.trim();
+        if (!text.startsWith(prefix)) {
             return values;
         }
 
@@ -180,10 +186,14 @@ public abstract class AbstractParser implements Parser {
         }
 
         for (String val : vals) {
-            if (val.trim().equals("更多...")) {
+            val = val.trim();
+            if (val.equals("更多...")) {
                 continue;
             }
-            values.add(val.trim());
+            if (val.isEmpty()) {
+                continue;
+            }
+            values.add(val);
         }
 
         return values;
@@ -201,6 +211,36 @@ public abstract class AbstractParser implements Parser {
             || uri.endsWith(".rmvb")
             || uri.endsWith(".torrent")
         );
+    }
+
+    protected List<String> convertElement2Lines(Element element) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (Node node : element.childNodes()) {
+            if ("br".equals(node.nodeName())) {
+                String text = sb.toString();
+                if (StringUtils.isNotBlank(text)) {
+                    lines.add(text);
+                }
+                sb = new StringBuilder();
+            } else {
+                String text = "";
+                if (node instanceof Element) {
+                    text = ((Element) node).text();
+                } else if (node instanceof TextNode) {
+                    text = ((TextNode) node).text();
+                } else {
+                    log.warn("not support: {}", node.nodeName());
+                }
+
+                if (StringUtils.isBlank(text)) {
+                    continue;
+                }
+
+                sb.append(text.replaceAll(" ", " "));
+            }
+        }
+        return lines;
     }
 
 }

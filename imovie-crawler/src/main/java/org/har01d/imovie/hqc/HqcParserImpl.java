@@ -146,14 +146,8 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
         for (Element element : elements) {
             String text = element.text();
             if (text.contains("导演:") && text.contains("类型:") && text.contains("语言:")) {
-                StringBuilder sb = new StringBuilder();
-                for (Element e : element.children()) {
-                    if ("br".equals(e.nodeName())) {
-                        getMetadata(movie, sb.toString());
-                        sb = new StringBuilder();
-                    } else {
-                        sb.append(e.text().replaceAll(" ", " "));
-                    }
+                for (String line : convertElement2Lines(element)) {
+                    getMetadata(movie, line);
                 }
                 return;
             } else {
@@ -164,17 +158,17 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
 
     private void getMetadata(Movie movie, String text) {
         if (text.contains("导演:")) {
-            movie.setDirectors(service.getPersons(getValues(text, "导演:")));
+            movie.setDirectors(getPeople(getValues(text, "导演:")));
         } else if (text.contains("编剧:")) {
-            movie.setEditors(service.getPersons(getValues(text, "编剧:")));
+            movie.setEditors(getPeople(getValues(text, "编剧:")));
         } else if (text.contains("主演:")) {
-            movie.setActors(service.getPersons(getValues(text, "主演:")));
+            movie.setActors(getPeople(getValues(text, "主演:")));
         } else if (text.contains("类型:")) {
-            movie.setCategories(service.getCategories(getValues(text, "类型:")));
+            movie.setCategories(getCategories(getValues(text, "类型:")));
         } else if (text.contains("制片国家/地区:")) {
-            movie.setRegions(service.getRegions(getValues(text, "制片国家/地区:")));
+            movie.setRegions(getRegions(getValues(text, "制片国家/地区:")));
         } else if (text.contains("语言:")) {
-            movie.setLanguages(service.getLanguages(getValues(text, "语言:")));
+            movie.setLanguages(getLanguages(getValues(text, "语言:")));
         } else if (text.contains("又名:")) {
             movie.setAliases(getValues(text, "又名:"));
         } else if (text.contains("上映日期:")) {
