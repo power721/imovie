@@ -84,6 +84,10 @@ public class XywParserImpl extends AbstractParser implements XywParser {
 
     private Set<Resource> getResource(String resUri, String name) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         try {
             String html = HttpUtils.getHtml(resUri);
             Document doc = Jsoup.parse(html);

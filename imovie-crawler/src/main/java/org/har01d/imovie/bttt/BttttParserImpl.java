@@ -62,6 +62,10 @@ public class BttttParserImpl extends AbstractParser implements BttttParser {
 
     private Set<Resource> getResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("#download_links .dl_item");
         for (Element element : elements) {
             String uri = baseUrl + element.select(".dl_item_cell_dld a").attr("href");

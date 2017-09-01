@@ -84,6 +84,10 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
 
     private Set<Resource> getResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select(".p_list ul li");
         for (Element element : elements) {
             String uri = element.select("span a").attr("href");

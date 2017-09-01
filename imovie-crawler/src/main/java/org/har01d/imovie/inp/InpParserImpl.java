@@ -89,6 +89,10 @@ public class InpParserImpl extends AbstractParser implements InpParser {
 
     private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.downbox .zylistbox table tr td.td_thunder");
         for (Element element : elements) {
             String uri = element.select("input").val();

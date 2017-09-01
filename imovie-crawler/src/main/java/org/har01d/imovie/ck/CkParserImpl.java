@@ -65,6 +65,10 @@ public class CkParserImpl extends AbstractParser implements CkParser {
 
     private Set<Resource> findResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         String id = doc.select("input#comment_post_ID").val();
         String uri = "http://api.hzxdr.cn/api/json_" + id + ".json";
         findResource(uri, resources);

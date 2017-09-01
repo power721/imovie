@@ -81,6 +81,10 @@ public class RarBtParserImpl extends AbstractParser implements RarBtParser {
 
     private Set<Resource> getResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select(".sl .tinfo a");
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");

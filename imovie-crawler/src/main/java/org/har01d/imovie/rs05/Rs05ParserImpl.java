@@ -1,6 +1,7 @@
 package org.har01d.imovie.rs05;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.har01d.imovie.AbstractParser;
@@ -47,6 +48,22 @@ public class Rs05ParserImpl extends AbstractParser implements Rs05Parser {
         Set<Resource> resources = m.getRes();
         int size = resources.size();
 
+        resources.addAll(findResource(doc, url));
+
+        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), movie.getName());
+
+        if (m.getId() != null) {
+            movieRepository.save(m);
+        }
+        return m;
+    }
+
+    private Set<Resource> findResource(Document doc, String url) {
+        Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         for (Element element : doc.select(".movie-txt a")) {
             Resource resource = findResource(url, element);
             if (resource != null) {
@@ -61,12 +78,7 @@ public class Rs05ParserImpl extends AbstractParser implements Rs05Parser {
             }
         }
 
-        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), movie.getName());
-
-        if (m.getId() != null) {
-            movieRepository.save(m);
-        }
-        return m;
+        return resources;
     }
 
     private Resource findResource(String original, Element element) {

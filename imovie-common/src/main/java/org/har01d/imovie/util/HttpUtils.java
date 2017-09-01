@@ -2,11 +2,15 @@ package org.har01d.imovie.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import javax.net.ssl.SSLContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -20,11 +24,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +120,20 @@ public final class HttpUtils {
         }
         final RequestConfig requestConfig = builder.build();
 
+        SSLContext context;
+        try {
+            context = SSLContexts.custom()
+                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
+                .build();
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+            throw new IOException(e);
+        }
+
         CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
             .setDefaultCookieStore(cookieStore)
             .setDefaultHeaders(HEADERS)
+            .setSSLContext(context)
             .setUserAgent(getAgent())
             .build();
         HttpGet httpget = new HttpGet(url);

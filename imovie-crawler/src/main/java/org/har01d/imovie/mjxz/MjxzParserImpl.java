@@ -62,6 +62,10 @@ public class MjxzParserImpl extends AbstractParser implements MjxzParser {
 
     private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.block ul.downloadlist li.down-item a.down-link");
         for (Element element : elements) {
             String uri = element.attr("href");

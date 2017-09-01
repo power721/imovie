@@ -81,6 +81,10 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
 
     private Set<Resource> getResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div#download ul.downloadlist li.d_todo");
         for (Element element : elements) {
             String title = element.previousElementSibling().text();

@@ -81,6 +81,10 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
 
     private Set<Resource> findResource(Document doc, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.message ul.attachlist li a");
         for (Element element : elements) {
             String uri = siteUrl + element.attr("href");

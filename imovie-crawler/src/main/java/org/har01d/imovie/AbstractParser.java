@@ -16,6 +16,7 @@ import org.har01d.imovie.service.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public abstract class AbstractParser implements Parser {
 
@@ -28,6 +29,9 @@ public abstract class AbstractParser implements Parser {
 
     @Autowired
     protected MovieService service;
+
+    @Value("${skipResource:false}")
+    protected boolean skipResource;
 
     protected Movie getByDb(String dbUrl) {
         Movie m = null;

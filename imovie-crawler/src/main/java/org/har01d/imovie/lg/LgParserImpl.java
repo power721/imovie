@@ -73,6 +73,10 @@ public class LgParserImpl extends AbstractParser implements LgParser {
 
     private Set<Resource> findResource(Document doc, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div#dwonBT ul li a");
         for (Element element : elements) {
             String uri = element.attr("href");

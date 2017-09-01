@@ -81,6 +81,10 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
 
     private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("ul#ul1 li a");
         for (Element element : elements) {
             String uri = element.attr("href");

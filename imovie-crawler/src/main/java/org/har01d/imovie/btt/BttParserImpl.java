@@ -1626,6 +1626,10 @@ public class BttParserImpl extends AbstractParser implements BttParser {
     }
 
     private void findResource(String original, Document doc, Set<Resource> resources, String name) {
+        if (skipResource) {
+            return;
+        }
+
         Elements elements = doc.select(".post a");
         for (Element element : elements) {
             String uri = element.attr("href");
@@ -1658,6 +1662,10 @@ public class BttParserImpl extends AbstractParser implements BttParser {
     }
 
     private void findResource(String text, Set<Resource> resources, String name) {
+        if (skipResource) {
+            return;
+        }
+
         for (String magnet : UrlUtils.findMagnet(text)) {
             String title = magnet;
             if (name != null && !title.contains(name)) {
@@ -1676,6 +1684,10 @@ public class BttParserImpl extends AbstractParser implements BttParser {
     }
 
     private void findAttachments(Document doc, Set<Resource> resources, String name) {
+        if (skipResource) {
+            return;
+        }
+
         Elements elements = doc.select(".attachlist a");
         for (Element element : elements) {
             String href = element.attr("href");

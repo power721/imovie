@@ -152,8 +152,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${offset:0}")
     private int offset = 0;
 
-    @Value("${poolSize:3}")
-    private int poolSize = 3;
+    @Value("${threads:3}")
+    private int threads = 3;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -176,8 +176,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 //            updateImdbTop250();
             service.fixDuplicateMovies();
 
+            logger.info("Threads: {}", threads);
             ScheduledExecutorService executorService = Executors
-                .newScheduledThreadPool(poolSize, new MyThreadFactory("Crawler"));
+                .newScheduledThreadPool(threads, new MyThreadFactory("Crawler"));
 
             if (types.contains("all") || types.contains("rar")) {
                 executorService.scheduleWithFixedDelay(() -> {

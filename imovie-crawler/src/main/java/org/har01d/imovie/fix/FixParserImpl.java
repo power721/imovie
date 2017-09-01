@@ -78,6 +78,10 @@ public class FixParserImpl extends AbstractParser implements FixParser {
 
     private Set<Resource> findResource(Document doc, String name, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.content-box a");
         for (Element element : elements) {
             String uri = element.attr("href");

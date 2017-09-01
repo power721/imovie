@@ -80,6 +80,10 @@ public class DybParserImpl extends AbstractParser implements DybParser {
 
     private Set<Resource> findResource(Document doc, String name) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.down_list ul li a");
         for (Element element : elements) {
             String uri = element.attr("href");

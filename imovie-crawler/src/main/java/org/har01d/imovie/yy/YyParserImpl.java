@@ -67,6 +67,10 @@ public class YyParserImpl extends AbstractParser implements YyParser {
 
     private Set<Resource> findResource(Document doc, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select("div.tab_set_info table.table tbody tr a img");
         for (Element element : elements) {
             String uri = element.parent().attr("href");

@@ -97,6 +97,10 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
 
     private Set<Resource> findResource(String resourceUri, String name, String pageUrl) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         if (resourceUri.contains("http://xiazai002.com/")) {
             int count = 0;
             try {

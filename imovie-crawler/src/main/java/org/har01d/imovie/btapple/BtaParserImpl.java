@@ -77,6 +77,10 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
 
     private Set<Resource> getResource(Document doc) {
         Set<Resource> resources = new HashSet<>();
+        if (skipResource) {
+            return resources;
+        }
+
         Elements elements = doc.select(".related table td a");
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");
