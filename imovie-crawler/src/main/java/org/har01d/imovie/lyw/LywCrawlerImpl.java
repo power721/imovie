@@ -56,7 +56,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
                     if (elements.size() == 0) {
                         break;
                     }
-                    logger.info("[lyw-{}] {}: {} movies", id, page, elements.size());
+                    logger.info("[lyw-{}]{}/{} {}: {} movies", id, index + 1, ids.length, page, elements.size());
 
                     int count = 0;
                     for (Element element : elements) {
@@ -70,7 +70,8 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
                         try {
                             movie = parser.parse(pageUrl, movie);
                             if (movie != null) {
-                                logger.info("[lyw-{}] {}-{}-{} find movie {} {}", id, page, total, count,
+                                logger.info("[lyw-{}]{}/{} {}-{}-{} find movie {} {}", id, index + 1, ids.length, page,
+                                    total, count,
                                     movie.getName(),
                                     pageUrl);
                                 if (source == null) {

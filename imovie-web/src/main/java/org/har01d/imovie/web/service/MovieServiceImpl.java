@@ -31,6 +31,7 @@ public class MovieServiceImpl implements MovieService {
         Resource resource = resourceRepository.getOne(id);
         for (Movie movie : resource.getMovies()) {
             movie.getRes().remove(resource);
+            movie.setSize(movie.getRes().size());
             movieRepository.save(movie);
             log.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(), movie.getRes().size());
         }
@@ -50,6 +51,7 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = movieRepository.getOne(id);
         if (movie != null) {
             movie.getRes().add(resource);
+            movie.setSize(movie.getRes().size());
             movieRepository.save(movie);
             log.info("update movie {}: add resource {}:{}", movie.getId(), resource.getId(), resource.getUri());
         }
@@ -65,6 +67,7 @@ public class MovieServiceImpl implements MovieService {
             if (resource != null) {
                 for (Movie movie : resource.getMovies()) {
                     movie.getRes().remove(resource);
+                    movie.setSize(movie.getRes().size());
                     movieRepository.save(movie);
                     log.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
                         movie.getRes().size());
@@ -79,6 +82,7 @@ public class MovieServiceImpl implements MovieService {
                 int size = movie.getResourcesSize();
                 movie.getRes().addAll(resources);
                 size = movie.getResourcesSize() - size;
+                movie.setSize(movie.getRes().size());
                 movieRepository.save(movie);
                 log.info("update movie {}: {} Resources: +{}/{}", movie.getId(), movie.getName(), size,
                     movie.getRes().size());

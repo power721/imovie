@@ -108,6 +108,7 @@ public class MovieServiceImpl implements MovieService {
                 continue;
             }
 
+            m.setSize(m.getRes().size());
             movieRepository.save(m);
             logger.info("update movie {}: {} Resources: {}", m.getId(), m.getName(), m.getRes().size());
 
@@ -166,6 +167,7 @@ public class MovieServiceImpl implements MovieService {
     public void delete(Resource resource) {
         for (Movie movie : resource.getMovies()) {
             movie.getRes().remove(resource);
+            movie.setSize(movie.getRes().size());
             movieRepository.save(movie);
             logger.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
                 movie.getRes().size());
@@ -317,6 +319,7 @@ public class MovieServiceImpl implements MovieService {
         if (updateTime) {
             movie.setUpdatedTime(new Date());
         }
+        movie.setSize(movie.getRes().size());
         return movieRepository.save(movie);
     }
 
@@ -456,8 +459,10 @@ public class MovieServiceImpl implements MovieService {
             m.setEditors(movie.getEditors());
             m.setActors(movie.getActors());
             m.setSynopsis(movie.getSynopsis());
+            m.setSize(m.getRes().size());
             return movieRepository.save(m);
         }
+        movie.setSize(movie.getRes().size());
         return movieRepository.save(movie);
     }
 

@@ -45,6 +45,7 @@ public class Movie {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Resource> resources;
+    private int size;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Category> categories;
@@ -156,6 +157,14 @@ public class Movie {
 
     public int getResourcesSize() {
         return resources.size();
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public void setResources(List<Resource> resources) {

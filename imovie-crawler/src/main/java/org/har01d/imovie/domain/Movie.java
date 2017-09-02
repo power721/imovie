@@ -43,6 +43,7 @@ public class Movie {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Resource> resources = new HashSet<>();
+    private int size;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Category> categories;
@@ -88,7 +89,6 @@ public class Movie {
     private Date updatedTime;
 
     private transient Date sourceTime = new Date();
-    private transient int size;
     private transient int newResources;
     private transient int votes;
     private transient boolean completed = true;

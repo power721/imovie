@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
@@ -98,8 +99,16 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         }
 
         Element element = doc.select("div.myContent div.col-lg-7").first();
-        for (String text : convertElement2Lines(element)) {
+        List<String> lines = convertElement2Lines(element);
+        for (String text : lines) {
             getMetadata(movie, text);
+        }
+
+        if (!lines.isEmpty()) {
+            String text = lines.get(lines.size() - 1);
+            if (text.startsWith("http")) {
+                movie.setWebsite(text);
+            }
         }
     }
 

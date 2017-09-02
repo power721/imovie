@@ -223,24 +223,35 @@ public abstract class AbstractParser implements Parser {
                     lines.add(text);
                 }
                 sb = new StringBuilder();
+            } else if (node.nodeName().startsWith("h")) {
+                appendText(sb, node);
+                String text = sb.toString();
+                if (StringUtils.isNotBlank(text)) {
+                    lines.add(text);
+                }
+                sb = new StringBuilder();
             } else {
-                String text = "";
-                if (node instanceof Element) {
-                    text = ((Element) node).text();
-                } else if (node instanceof TextNode) {
-                    text = ((TextNode) node).text();
-                } else {
-                    log.warn("not support: {}", node.nodeName());
-                }
-
-                if (StringUtils.isBlank(text)) {
-                    continue;
-                }
-
-                sb.append(text.replaceAll(" ", " "));
+                appendText(sb, node);
             }
         }
         return lines;
+    }
+
+    private void appendText(StringBuilder sb, Node node) {
+        String text = "";
+        if (node instanceof Element) {
+            text = ((Element) node).text();
+        } else if (node instanceof TextNode) {
+            text = ((TextNode) node).text();
+        } else {
+            log.warn("not support: {}", node.nodeName());
+        }
+
+        if (StringUtils.isBlank(text)) {
+            return;
+        }
+
+        sb.append(text.replaceAll(" ", " "));
     }
 
 }
