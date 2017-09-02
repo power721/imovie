@@ -149,7 +149,7 @@ public class MjxzParserImpl extends AbstractParser implements MjxzParser {
         }
     }
 
-    private Set<String> getValues(Element element) {
+    protected Set<String> getValues(Element element) {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
             String name = a.text().trim();
@@ -163,7 +163,7 @@ public class MjxzParserImpl extends AbstractParser implements MjxzParser {
         return values;
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new HashSet<>();
         String[] temp = text.split("/");
         if (temp.length > 1) {

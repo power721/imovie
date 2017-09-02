@@ -175,7 +175,7 @@ public class BtdyParserImpl extends AbstractParser implements BtdyParser {
         return 0;
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split("[  ]");
         for (String val : vals) {

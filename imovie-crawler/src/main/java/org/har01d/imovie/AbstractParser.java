@@ -28,6 +28,7 @@ public abstract class AbstractParser implements Parser {
     private static final Logger log = LoggerFactory.getLogger(Parser.class);
     protected static final Pattern NAME = Pattern.compile("([^ ]+)(第.+季)");
     private static final Pattern NAME1 = Pattern.compile("([^ ]+)第(.+)至.+季");
+    private static final Pattern NAME2 = Pattern.compile("([^ ]+)\\[(第.+季)\\]");
 
     @Autowired
     protected DouBanParser douBanParser;
@@ -83,6 +84,11 @@ public abstract class AbstractParser implements Parser {
         }
 
         matcher = NAME.matcher(name);
+        if (matcher.matches()) {
+            return matcher.group(1) + " " + matcher.group(2);
+        }
+
+        matcher = NAME2.matcher(name);
         if (matcher.matches()) {
             return matcher.group(1) + " " + matcher.group(2);
         }
@@ -196,6 +202,37 @@ public abstract class AbstractParser implements Parser {
             values.add(val);
         }
 
+        return values;
+    }
+
+    protected Set<String> getValues(String text) {
+        Set<String> values = new HashSet<>();
+        for (String name : text.split("/|,")) {
+            name = name.trim();
+            if (!name.isEmpty()) {
+                values.add(name);
+            }
+        }
+        return values;
+    }
+
+    protected String getValue(Element element) {
+        StringBuilder text = new StringBuilder();
+        for (Element a : element.select("a")) {
+            text.append(a.text()).append(" ");
+        }
+        return text.toString();
+    }
+
+    protected Set<String> getValues(Element element) {
+        Set<String> values = new HashSet<>();
+        for (Element a : element.select("a")) {
+            String name = a.text().trim();
+            if (name.equals("言情")) {
+                name = "爱情";
+            }
+            values.add(name);
+        }
         return values;
     }
 

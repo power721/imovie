@@ -3,6 +3,7 @@ package org.har01d.imovie;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -35,6 +36,7 @@ import org.har01d.imovie.mjxz.MjxzCrawler;
 import org.har01d.imovie.mp4.Mp4Crawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
+import org.har01d.imovie.s80.S80Crawler;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
@@ -136,6 +138,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private LywCrawler lywCrawler;
 
     @Autowired
+    private S80Crawler s80Crawler;
+
+    @Autowired
     private DouBanCrawler douBanCrawler;
 
     @Autowired
@@ -148,7 +153,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private ImdbRepository imdbRepository;
 
     @Value("${crawlers:all}")
-    private Set<String> types;
+    private String type;
 
     @Value("${fix:0}")
     private int fix = 0;
@@ -176,6 +181,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 return;
             }
 
+            Set<String> types = new HashSet<>();
+            types.addAll(Arrays.asList(type.split(",")));
             douBanService.tryLogin();
 //            updateImdbTop250();
             service.fixDuplicateMovies();
@@ -399,6 +406,16 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 executorService.submit(() -> {
                     try {
                         lywCrawler.crawler();
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                });
+            }
+
+            if (types.contains("all") || types.contains("s80")) {
+                executorService.submit(() -> {
+                    try {
+                        s80Crawler.crawler();
                     } catch (Exception e) {
                         logger.error("", e);
                     }

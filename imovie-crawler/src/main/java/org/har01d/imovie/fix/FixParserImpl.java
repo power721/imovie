@@ -203,7 +203,7 @@ public class FixParserImpl extends AbstractParser implements FixParser {
         return StringUtils.truncate(text, len);
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split(" / ");
         for (String val : vals) {

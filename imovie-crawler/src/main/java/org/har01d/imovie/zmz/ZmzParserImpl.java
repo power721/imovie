@@ -238,7 +238,7 @@ public class ZmzParserImpl extends AbstractParser implements ZmzParser {
         movie.setSynopsis(doc.select("div.resource-desc div.con span").text().trim());
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split("/");
         for (String val : vals) {

@@ -222,7 +222,7 @@ public class DybParserImpl extends AbstractParser implements DybParser {
         }
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new HashSet<>();
         for (String name : text.split(",")) {
             name = name.trim();

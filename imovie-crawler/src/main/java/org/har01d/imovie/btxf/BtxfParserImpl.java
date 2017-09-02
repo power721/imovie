@@ -159,7 +159,7 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
         return index;
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split(" ");
         for (String val : vals) {

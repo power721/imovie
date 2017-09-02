@@ -178,7 +178,7 @@ public class CkParserImpl extends AbstractParser implements CkParser {
         return new Date();
     }
 
-    private Set<String> getValues(Element element) {
+    protected Set<String> getValues(Element element) {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
             values.add(a.text());
@@ -186,7 +186,7 @@ public class CkParserImpl extends AbstractParser implements CkParser {
         return values;
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split("/");
         for (String val : vals) {

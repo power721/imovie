@@ -126,20 +126,4 @@ public class LgParserImpl extends AbstractParser implements LgParser {
         }
     }
 
-    private String getValue(Element element) {
-        StringBuilder text = new StringBuilder();
-        for (Element a : element.select("a")) {
-            text.append(a.text()).append(" ");
-        }
-        return text.toString();
-    }
-
-    private Set<String> getValues(Element element) {
-        Set<String> values = new HashSet<>();
-        for (Element a : element.select("a")) {
-            values.add(a.text());
-        }
-        return values;
-    }
-
 }

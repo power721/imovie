@@ -1,4 +1,4 @@
-package org.har01d.imovie.lyw;
+package org.har01d.imovie.s80;
 
 import java.util.Date;
 import org.har01d.imovie.AbstractCrawler;
@@ -17,20 +17,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
+public class S80CrawlerImpl extends AbstractCrawler implements S80Crawler {
 
-    private static final Logger logger = LoggerFactory.getLogger(LywCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(S80Crawler.class);
 
-    @Value("${url.lyw.site}")
+    @Value("${url.s80.site}")
     private String siteUrl;
 
-    @Value("${url.lyw.page}")
+    @Value("${url.s80.page}")
     private String baseUrl;
 
     @Autowired
-    private LywParser parser;
+    private S80Parser parser;
 
-    private int[] ids = {99, 86, 84, 98, 97, 96, 95, 94, 93, 92, 91, 89, 81, 80, 83, 82, 90, 79, 13, 12, 11, 10, 9, 8};
+    private String[] types = {"movie/list/-----p", "ju/list/----0--p", "dm/list/----14--p", "zy/list/----4--p"};
 
     @Override
     public void crawler() throws InterruptedException {
@@ -41,21 +41,21 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
         int index = getConfig("index", 0);
         int page = getPage();
         Config crawler = getCrawlerConfig();
-        while (index < ids.length) {
+        while (index < types.length) {
             while (true) {
                 handleError();
-                int id = ids[index];
-                String url = String.format(baseUrl, id, page);
+                String type = types[index];
+                String url = String.format(baseUrl, type, page);
 
                 try {
                     String html = HttpUtils.getHtml(url);
                     Document doc = Jsoup.parse(html);
                     error = 0;
-                    Elements elements = doc.select("div.news_con ul li div.col-lg-9 h2 a");
+                    Elements elements = doc.select("ul.me1 li h3 a");
                     if (elements.size() == 0) {
                         break;
                     }
-                    logger.info("[lyw-{}]{}/{} {}: {} movies", id, index + 1, ids.length, page, elements.size());
+                    logger.info("[80s]{}/{} {}: {} movies", index + 1, types.length, page, elements.size());
 
                     int count = 0;
                     for (Element element : elements) {
@@ -69,7 +69,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
                         try {
                             movie = parser.parse(pageUrl, movie);
                             if (movie != null) {
-                                logger.info("[lyw-{}]{}/{} {}-{}-{} find movie {} {}", id, index + 1, ids.length, page,
+                                logger.info("[80s]{}/{} {}-{}-{} find movie {} {}", index + 1, types.length, page,
                                     total, count,
                                     movie.getName(),
                                     pageUrl);
@@ -92,8 +92,14 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
                         } catch (Exception e) {
                             error++;
                             service.publishEvent(pageUrl, e.getMessage());
-                            logger.error("[lyw-{}] Parse page failed: {}", id, pageUrl, e);
+                            logger.error("[80s] Parse page failed: {}", pageUrl, e);
                         }
+                    }
+
+                    String text = doc.select(".pager a").last().text();
+                    if (!(text.equals("尾页") || text.equals("下一页"))) {
+                        logger.info("[80s] last page");
+                        break;
                     }
 
                     if (crawler != null && count == 0) {
@@ -103,7 +109,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
                 } catch (Exception e) {
                     error++;
                     service.publishEvent(url, e.getMessage());
-                    logger.error("[lyw-{}] Get HTML failed: {}", id, url, e);
+                    logger.error("[80s] Get HTML failed: {}", url, e);
                 }
                 savePage(++page);
             }
@@ -115,7 +121,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
         saveCrawlerConfig();
         saveConfig("index", 1);
         savePage(1);
-        logger.info("[lyw] ===== get {} movies =====", total);
+        logger.info("[80s] ===== get {} movies =====", total);
     }
 
     private Movie initMovie(Element element, Source source) {
@@ -123,7 +129,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
         if (source != null && source.getMovieId() != null) {
             movie.setId(source.getMovieId());
         }
-        movie.setName(element.attr("title"));
+        movie.setName(element.text().replace("未删减版", ""));
         return movie;
     }
 

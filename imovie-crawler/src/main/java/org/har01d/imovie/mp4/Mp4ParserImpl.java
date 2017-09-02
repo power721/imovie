@@ -205,7 +205,7 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         return null;
     }
 
-    private Set<String> getValues(Element element) {
+    protected Set<String> getValues(Element element) {
         Set<String> values = new HashSet<>();
         for (Element a : element.select("a")) {
             String name = a.text().trim();

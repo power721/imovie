@@ -37,6 +37,7 @@ public abstract class AbstractCrawler {
         Source source = service.findSource(pageUrl);
         if (source != null) {
             if (source.isCompleted()) {
+                log.info("skip {}", pageUrl);
                 return false;
             }
 

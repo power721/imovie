@@ -1526,7 +1526,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         return 0;
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         return getValues(text, "/");
     }
 

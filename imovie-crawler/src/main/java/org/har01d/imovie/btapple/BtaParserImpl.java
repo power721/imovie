@@ -117,7 +117,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         movie.setEpisode(getEpisode(text));
     }
 
-    private Set<String> getValues(String text) {
+    protected Set<String> getValues(String text) {
         Set<String> values = new LinkedHashSet<>();
         String[] vals = text.split(",");
         for (String val : vals) {
