@@ -113,7 +113,7 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
         }
 
         saveCrawlerConfig();
-        saveConfig("index", 1);
+        saveConfig("index", 0);
         savePage(1);
         logger.info("[lyw] ===== get {} movies =====", total);
     }

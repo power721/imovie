@@ -119,7 +119,7 @@ public class S80CrawlerImpl extends AbstractCrawler implements S80Crawler {
         }
 
         saveCrawlerConfig();
-        saveConfig("index", 1);
+        saveConfig("index", 0);
         savePage(1);
         logger.info("[80s] ===== get {} movies =====", total);
     }
