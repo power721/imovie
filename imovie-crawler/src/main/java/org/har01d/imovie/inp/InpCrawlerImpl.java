@@ -36,10 +36,6 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
-            return;
-        }
-
         work(1);
         work(2);
         work(3);
@@ -47,6 +43,10 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
     }
 
     private void work(int id) throws InterruptedException {
+        if (!checkTime(String.valueOf(id))) {
+            return;
+        }
+
         int page = getPage(String.valueOf(id));
         Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {

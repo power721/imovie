@@ -92,6 +92,10 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     }
 
     private void work(int fid) {
+        if (!checkTime(String.valueOf(fid))) {
+            return;
+        }
+
         int zero = 0;
         int error = 0;
         int total = 0;

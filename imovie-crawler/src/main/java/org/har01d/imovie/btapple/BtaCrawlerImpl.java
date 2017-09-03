@@ -32,10 +32,6 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
-            return;
-        }
-
 //        ExecutorService executorService = Executors.newFixedThreadPool(2, new MyThreadFactory("BtApple"));
 //        executorService.submit(() -> work(1, "movie"));
 //        executorService.submit(() -> work(3, "tv"));
@@ -46,6 +42,10 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
     }
 
     private void work(int id, String type) throws InterruptedException {
+        if (!checkTime(type)) {
+            return;
+        }
+
         int page = getPage(type, 0);
         Config full = getCrawlerConfig(type);
         while (true) {

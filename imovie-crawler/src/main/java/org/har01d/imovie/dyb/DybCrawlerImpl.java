@@ -35,10 +35,6 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
-            return;
-        }
-
         work(1);
         work(2);
         work(3);
@@ -46,6 +42,10 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
     }
 
     private void work(int id) throws InterruptedException {
+        if (!checkTime(String.valueOf(id))) {
+            return;
+        }
+
         int page = getPage(String.valueOf(id));
         Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {

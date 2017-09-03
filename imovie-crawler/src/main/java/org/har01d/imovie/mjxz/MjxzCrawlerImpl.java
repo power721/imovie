@@ -33,15 +33,15 @@ public class MjxzCrawlerImpl extends AbstractCrawler implements MjxzCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
-            return;
-        }
-
         work("meiju");
         work("HDDY");
     }
 
     private void work(String type) throws InterruptedException {
+        if (!checkTime(type)) {
+            return;
+        }
+
         int page = getPage(type);
         Config crawler = getCrawlerConfig(type);
         while (true) {
