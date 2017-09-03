@@ -86,6 +86,10 @@
         {{ search.text.val }}
         <i class="delete icon" @click="resetSearch('text', search.text.val)"></i>
       </div>
+      <div class="ui blue label" v-if="search.type!=='all'">
+        {{ search.type==='movie' ? $tc('token.movie') : $tc('token.episodes') }}
+        <i class="delete icon" @click="resetSearch('type', search.type)"></i>
+      </div>
       <div class="ui blue label" v-if="search.year.val">
         {{ search.year.val }}
         <i class="delete icon" @click="resetSearch('year', search.year.val)"></i>
@@ -137,8 +141,8 @@
           <div class="ui blue circular label" v-if="movie.episode">
             {{ movie.episode }}
           </div>
-          <div class="ui label" v-if="$auth.user.authenticated && movie.resourcesSize">
-            {{ movie.resourcesSize }}
+          <div class="ui label" v-if="$auth.user.authenticated && movie.size">
+            {{ movie.size }}
           </div>
           <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove icon"></i></a>
           <div class="description">
@@ -873,9 +877,9 @@ export default {
       }
 
       if (this.search.resources === 'notempty') {
-        q.push('resources=n=0')
+        q.push('size>0')
       } else if (this.search.resources === 'empty') {
-        q.push('resources=e=0')
+        q.push('size==0')
       }
 
       this.currentPage = 0

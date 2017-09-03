@@ -1,5 +1,6 @@
 package org.har01d.imovie.web.domain;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -87,6 +88,8 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    private transient int newResources;
+
     public Integer getId() {
         return id;
     }
@@ -155,10 +158,6 @@ public class Movie {
         return resources;
     }
 
-    public int getResourcesSize() {
-        return resources.size();
-    }
-
     public int getSize() {
         return size;
     }
@@ -169,6 +168,27 @@ public class Movie {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public void addResources(Collection<Resource> resources) {
+        this.resources.addAll(resources);
+        this.newResources += resources.size();
+        this.size = this.resources.size();
+    }
+
+    public void addResource(Resource resource) {
+        this.resources.add(resource);
+        this.newResources++;
+        this.size = this.resources.size();
+    }
+
+    public void removeResource(Resource resource) {
+        this.resources.remove(resource);
+        this.size = this.resources.size();
+    }
+
+    public int getNewResources() {
+        return newResources;
     }
 
     public Set<Category> getCategories() {

@@ -30,8 +30,7 @@ public class MovieServiceImpl implements MovieService {
     public void deleteResource(Integer id) {
         Resource resource = resourceRepository.getOne(id);
         for (Movie movie : resource.getMovies()) {
-            movie.getRes().remove(resource);
-            movie.setSize(movie.getRes().size());
+            movie.removeResource(resource);
             movieRepository.save(movie);
             log.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(), movie.getRes().size());
         }
@@ -50,8 +49,7 @@ public class MovieServiceImpl implements MovieService {
 
         Movie movie = movieRepository.getOne(id);
         if (movie != null) {
-            movie.getRes().add(resource);
-            movie.setSize(movie.getRes().size());
+            movie.addResource(resource);
             movieRepository.save(movie);
             log.info("update movie {}: add resource {}:{}", movie.getId(), resource.getId(), resource.getUri());
         }
@@ -66,8 +64,7 @@ public class MovieServiceImpl implements MovieService {
             Resource resource = resourceRepository.getOne(id);
             if (resource != null) {
                 for (Movie movie : resource.getMovies()) {
-                    movie.getRes().remove(resource);
-                    movie.setSize(movie.getRes().size());
+                    movie.removeResource(resource);
                     movieRepository.save(movie);
                     log.info("update movie {}: {} Resources: {}", movie.getId(), movie.getName(),
                         movie.getRes().size());
@@ -79,13 +76,10 @@ public class MovieServiceImpl implements MovieService {
         if (movieId != null && movieId != 0) {
             Movie movie = movieRepository.getOne(movieId);
             if (movie != null) {
-                int size = movie.getResourcesSize();
-                movie.getRes().addAll(resources);
-                size = movie.getResourcesSize() - size;
-                movie.setSize(movie.getRes().size());
+                movie.addResources(resources);
                 movieRepository.save(movie);
-                log.info("update movie {}: {} Resources: +{}/{}", movie.getId(), movie.getName(), size,
-                    movie.getRes().size());
+                log.info("update movie {}: {} Resources: +{}/{}", movie.getId(), movie.getName(),
+                    movie.getNewResources(), movie.getRes().size());
             }
         }
         return resources.stream().map(Resource::getId).collect(Collectors.toSet());

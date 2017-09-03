@@ -118,13 +118,13 @@ public class GenericRsqlSpecification<T> implements Specification<T> {
         Class<?> type = path.getJavaType();
 
         for (String argument : arguments) {
-            if (type.equals(Integer.class)) {
+            if (type.equals(Integer.class) || type.equals(int.class)) {
                 try {
                     args.add(Integer.parseInt(argument));
                 } catch (NumberFormatException e) {
                     args.add(null);
                 }
-            } else if (type.equals(Long.class)) {
+            } else if (type.equals(Long.class) || type.equals(long.class)) {
                 try {
                     args.add(Long.parseLong(argument));
                 } catch (NumberFormatException e) {

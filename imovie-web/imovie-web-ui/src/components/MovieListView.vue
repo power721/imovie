@@ -100,8 +100,8 @@
           <div class="ui blue circular label" v-if="movie.episode">
             {{ movie.episode }}
           </div>
-          <div class="ui label" v-if="$auth.user.authenticated && movie.resourcesSize">
-            {{ movie.resourcesSize }}
+          <div class="ui label" v-if="$auth.user.authenticated && movie.size">
+            {{ movie.size }}
           </div>
           <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove icon"></i></a>
           <div class="description">

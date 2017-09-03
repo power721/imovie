@@ -1,5 +1,6 @@
 package org.har01d.imovie.domain;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -165,7 +166,7 @@ public class Movie {
         this.resources = resources;
     }
 
-    public void addResources(Set<Resource> resources) {
+    public void addResources(Collection<Resource> resources) {
         this.resources.addAll(resources);
         newResources += resources.size();
     }

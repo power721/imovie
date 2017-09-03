@@ -17,7 +17,7 @@ public interface MovieExcerpt {
 
     Set<Category> getCategories();
 
-    int getResourcesSize();
+    int getSize();
 
     String getDbUrl();
 
