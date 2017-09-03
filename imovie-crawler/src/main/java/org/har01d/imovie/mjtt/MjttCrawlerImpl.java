@@ -33,6 +33,10 @@ public class MjttCrawlerImpl extends AbstractCrawler implements MjttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         work();
     }
 

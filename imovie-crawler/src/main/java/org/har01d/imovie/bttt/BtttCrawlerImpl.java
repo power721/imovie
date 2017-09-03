@@ -35,6 +35,10 @@ public class BtttCrawlerImpl extends AbstractCrawler implements BtttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage(0);
         Config crawler = getCrawlerConfig();
         while (true) {

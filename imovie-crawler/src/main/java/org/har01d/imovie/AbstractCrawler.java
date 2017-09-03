@@ -50,6 +50,17 @@ public abstract class AbstractCrawler {
         return true;
     }
 
+    protected boolean checkTime() {
+        Config crawler = getCrawlerConfig();
+        if (crawler == null) {
+            return true;
+        }
+
+        Date date = new Date(crawler.getValue());
+        long time = System.currentTimeMillis();
+        return (time - date.getTime()) >= TimeUnit.HOURS.toMillis(3);
+    }
+
     protected int getPage(int defaultValue) {
         return getConfig("page", defaultValue);
     }

@@ -36,6 +36,10 @@ public class HqcCrawlerImpl extends AbstractCrawler implements HqcCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

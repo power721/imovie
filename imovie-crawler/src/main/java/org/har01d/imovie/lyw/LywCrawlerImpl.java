@@ -34,6 +34,10 @@ public class LywCrawlerImpl extends AbstractCrawler implements LywCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         work();
     }
 

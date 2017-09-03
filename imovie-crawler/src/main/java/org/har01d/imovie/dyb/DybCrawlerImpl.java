@@ -35,6 +35,10 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         work(1);
         work(2);
         work(3);

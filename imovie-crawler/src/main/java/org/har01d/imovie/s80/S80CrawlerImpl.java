@@ -34,6 +34,10 @@ public class S80CrawlerImpl extends AbstractCrawler implements S80Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         work();
     }
 

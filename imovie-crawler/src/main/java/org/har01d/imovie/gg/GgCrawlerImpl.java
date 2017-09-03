@@ -37,6 +37,10 @@ public class GgCrawlerImpl extends AbstractCrawler implements GgCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         Config crawler = getCrawlerConfig();
         if (crawler != null) {
             work();

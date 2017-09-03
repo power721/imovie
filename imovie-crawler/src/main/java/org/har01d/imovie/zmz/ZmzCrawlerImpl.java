@@ -33,6 +33,10 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

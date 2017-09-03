@@ -36,6 +36,10 @@ public class Rs05CrawlerImpl extends AbstractCrawler implements Rs05Crawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

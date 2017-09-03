@@ -37,6 +37,10 @@ public class RarBtCrawlerImpl extends AbstractCrawler implements RarBtCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

@@ -31,6 +31,10 @@ public class CkCrawlerImpl extends AbstractCrawler implements CkCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

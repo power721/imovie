@@ -31,6 +31,10 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         int page = getPage();
         Config crawler = getCrawlerConfig();
         while (true) {

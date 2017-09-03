@@ -32,6 +32,10 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
         work(1);
         work(2);
         work(3);

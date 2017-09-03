@@ -34,6 +34,10 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
+        if (!checkTime()) {
+            return;
+        }
+
 //        executorService.scheduleWithFixedDelay(() -> work("movie"), 0, 5, TimeUnit.HOURS);
 //        executorService.scheduleWithFixedDelay(() -> work("tv"), 0, 6, TimeUnit.HOURS);
 //        executorService.awaitTermination(3L, TimeUnit.DAYS);
