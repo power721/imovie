@@ -33,17 +33,17 @@ public class MjttCrawlerImpl extends AbstractCrawler implements MjttCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
-            return;
-        }
-
         work();
     }
 
     private void work() throws InterruptedException {
+        Config crawler = getCrawlerConfig();
+        if (!checkTime(crawler)) {
+            return;
+        }
+
         int index = getConfig("index", 1);
         int page = getPage();
-        Config crawler = getCrawlerConfig();
         while (index <= 6) {
             while (true) {
                 handleError();

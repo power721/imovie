@@ -42,12 +42,12 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
     }
 
     private void work(int id) throws InterruptedException {
-        if (!checkTime(String.valueOf(id))) {
+        Config crawler = getCrawlerConfig(String.valueOf(id));
+        if (!checkTime(crawler)) {
             return;
         }
 
         int page = getPage(String.valueOf(id));
-        Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {
             handleError();
             String url = String.format(baseUrl, id, page);

@@ -44,12 +44,12 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
     }
 
     private void work(String type) throws InterruptedException {
-        if (!checkTime(type)) {
+        Config crawler = getCrawlerConfig(type);
+        if (!checkTime(crawler)) {
             return;
         }
 
         int page = getPage(type);
-        Config crawler = getCrawlerConfig(type);
         while (true) {
             handleError();
             String url = baseUrl + "/" + type + "/?page=" + page;

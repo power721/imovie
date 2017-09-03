@@ -28,12 +28,12 @@ public class LgCrawlerImpl extends AbstractCrawler implements LgCrawler {
 
     @Override
     public void crawler() throws InterruptedException {
-        if (!checkTime()) {
+        Config crawler = getCrawlerConfig();
+        if (!checkTime(crawler)) {
             return;
         }
 
         int page = getPage();
-        Config crawler = getCrawlerConfig();
         while (true) {
             handleError();
             String url = baseUrl + page;

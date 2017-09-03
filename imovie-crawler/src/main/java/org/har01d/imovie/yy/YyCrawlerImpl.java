@@ -39,12 +39,12 @@ public class YyCrawlerImpl extends AbstractCrawler implements YyCrawler {
     }
 
     private void work(int id) throws InterruptedException {
-        if (!checkTime(String.valueOf(id))) {
+        Config crawler = getCrawlerConfig(String.valueOf(id));
+        if (!checkTime(crawler)) {
             return;
         }
 
         int page = getPage(String.valueOf(id));
-        Config crawler = getCrawlerConfig(String.valueOf(id));
         while (true) {
             handleError();
             String url = String.format(baseUrl, types[id], page);

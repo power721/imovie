@@ -42,12 +42,12 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
     }
 
     private void work(int id, String type) throws InterruptedException {
-        if (!checkTime(type)) {
+        Config crawler = getCrawlerConfig(type);
+        if (!checkTime(crawler)) {
             return;
         }
 
         int page = getPage(type, 0);
-        Config full = getCrawlerConfig(type);
         while (true) {
             handleError();
             String url = String.format(baseUrl, type, id, page);
@@ -56,10 +56,10 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.row .info a");
                 if (elements.size() == 0) {
-                    if (full != null) {
+                    if (crawler != null) {
                         break;
                     }
-                    full = saveCrawlerConfig(type);
+                    crawler = saveCrawlerConfig(type);
                     page = 0;
                     continue;
                 }
@@ -104,7 +104,7 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     }
                 }
 
-                if (full != null && count == 0) {
+                if (crawler != null && count == 0) {
                     break;
                 }
                 page++;

@@ -92,7 +92,8 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     }
 
     private void work(int fid) {
-        if (!checkTime(String.valueOf(fid))) {
+        Config crawler = getCrawlerConfig(String.valueOf(fid));
+        if (!checkTime(crawler)) {
             return;
         }
 
@@ -100,7 +101,6 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
         int error = 0;
         int total = 0;
         int page = getPage(String.valueOf(fid));
-        Config crawler = getCrawlerConfig(String.valueOf(fid));
         while (true) {
             String url = String.format(baseUrl, fid, page);
             try {
