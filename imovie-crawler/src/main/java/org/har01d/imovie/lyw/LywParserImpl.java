@@ -68,7 +68,9 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         }
 
         Elements elements = doc.select("div.movie div#more-tables table tbody tr");
-        logger.info("Resources: {}", elements.size());
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.select("td a").first().attr("href");
             if (isResource(uri)) {

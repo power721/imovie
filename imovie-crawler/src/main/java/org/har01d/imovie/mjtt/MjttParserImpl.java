@@ -70,6 +70,9 @@ public class MjttParserImpl extends AbstractParser implements MjttParser {
         }
 
         Elements elements = doc.select("div.down_list ul li p a");
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.attr("href");
             if (isResource(uri)) {
@@ -90,6 +93,9 @@ public class MjttParserImpl extends AbstractParser implements MjttParser {
         }
 
         elements = doc.select("div.wp-list ul li");
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.select("a").attr("href");
             if (isResource(uri)) {

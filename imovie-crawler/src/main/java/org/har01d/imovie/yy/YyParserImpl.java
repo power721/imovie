@@ -71,6 +71,9 @@ public class YyParserImpl extends AbstractParser implements YyParser {
         }
 
         Elements elements = doc.select("div.tab_set_info table.table tbody tr a img");
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.parent().attr("href");
             if (isResource(uri)) {
@@ -88,6 +91,9 @@ public class YyParserImpl extends AbstractParser implements YyParser {
 
 //        logger.info("[yy] get {} resources", resources.size());
         elements = doc.select("div.tab_set_info ul li a");
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.attr("href");
             if (isResource(uri)) {

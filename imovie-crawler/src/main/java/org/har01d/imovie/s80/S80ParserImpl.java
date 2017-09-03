@@ -116,7 +116,9 @@ public class S80ParserImpl extends AbstractParser implements S80Parser {
     private Set<Resource> getResource(Document doc, String url) {
         Set<Resource> resources = new HashSet<>();
         Elements elements = doc.select("ul.dllist1 li span.dlname span a");
-        logger.info("Resources: {}", elements.size());
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.attr("href");
             if (isResource(uri)) {
