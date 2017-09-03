@@ -87,7 +87,9 @@ public class ZmzCrawlerImpl extends AbstractCrawler implements ZmzCrawler {
                                 source = new Source(pageUrl, getSourceTime(element));
                             }
                             source.setMovieId(movie.getId());
-                            count++;
+                            if (crawler == null || movie.getNewResources() > 0) {
+                                count++;
+                            }
                             total++;
                         } else {
                             if (source == null) {
