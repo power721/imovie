@@ -65,7 +65,7 @@ public class RarBtParserImpl extends AbstractParser implements RarBtParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(getResource(doc));
+            m.addResources(getResource(doc));
 
             logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
             service.save(m);

@@ -44,12 +44,12 @@ public class MjxzParserImpl extends AbstractParser implements MjxzParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, movie.getName()));
-
-            m.setNewResources(resources.size() - size);
+            m.addResources(findResource(doc, movie.getName()));
             logger.info("[mjxz] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
+            m.setCompleted(movie.isCompleted());
+            m.setSourceTime(movie.getSourceTime());
             return m;
         } else {
             findResource(doc, movie.getName());

@@ -61,7 +61,7 @@ public class FixParserImpl extends AbstractParser implements FixParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, movie.getName(), url));
+            m.addResources(findResource(doc, movie.getName(), url));
 
             logger.info("[fix] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

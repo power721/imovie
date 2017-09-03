@@ -62,7 +62,7 @@ public class DybParserImpl extends AbstractParser implements DybParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, movie.getName()));
+            m.addResources(findResource(doc, movie.getName()));
 
             logger.info("[dyb] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

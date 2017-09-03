@@ -63,9 +63,9 @@ public class Mp4ParserImpl extends AbstractParser implements Mp4Parser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, movie.getName()));
+            m.addResources(findResource(doc, movie.getName()));
 
-            logger.info("[MP4] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+            logger.info("[mp4] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             m.setSourceTime(movie.getSourceTime());
             service.save(m);

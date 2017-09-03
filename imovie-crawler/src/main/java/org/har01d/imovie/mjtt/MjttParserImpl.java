@@ -51,6 +51,8 @@ public class MjttParserImpl extends AbstractParser implements MjttParser {
             logger.info("[mjtt] get {}/{} resources for movie {}", m.getNewResources(), m.getRes().size(),
                 m.getName());
             service.save(m);
+            m.setCompleted(movie.isCompleted());
+            m.setSourceTime(movie.getSourceTime());
             return m;
         } else {
             findResource(doc, movie.getName());

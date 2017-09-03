@@ -50,7 +50,7 @@ public class GgParserImpl extends AbstractParser implements GgParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, url));
+            m.addResources(findResource(doc, url));
 
             logger.info("[GaGa] get {}/{} resources for movie {} {}", (resources.size() - size), resources.size(),
                 m.getName(), url);

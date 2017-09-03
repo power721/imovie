@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -64,9 +65,6 @@ public class BttParserImpl extends AbstractParser implements BttParser {
     @Value("${file.download}")
     private File downloadDir;
 
-    @Value("${no-resource:false}")
-    private boolean noResource;
-
     private AtomicInteger id = new AtomicInteger();
 
     @Override
@@ -89,28 +87,22 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         if (m == null) {
             logger.warn("Cannot find movie for {}-{}: {}", movie.getName(), movie.getTitle(), url);
             service.publishEvent(url, "Cannot find movie for " + movie.getName() + " - " + movie.getTitle());
-            if (!noResource) {
-                Set<Resource> resources = movie.getRes();
-                Elements elements = doc.select("div.post p");
-                findResource(elements.text(), resources, movie.getName());
-                findResource(url, doc, resources, movie.getName());
-                findAttachments(doc, resources, movie.getName());
-                logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
-            }
+            Set<Resource> resources = movie.getRes();
+            Elements elements = doc.select("div.post p");
+            findResource(elements.text(), movie.getName());
+            findResource(url, doc, movie.getName());
+            findAttachments(doc, movie.getName());
+            logger.info("get {}/{} resources for {}", resources.size(), resources.size(), movie.getName());
             return null;
         }
 
-        if (!noResource) {
-            Set<Resource> resources = m.getRes();
-            int size = resources.size();
-            Elements elements = doc.select("div.post p");
-            findResource(elements.text(), resources, null);
-
-            findResource(url, doc, resources, null);
-            findAttachments(doc, resources, null);
-            m.setSize(resources.size());
-            logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
-        }
+        Set<Resource> resources = m.getRes();
+        int size = resources.size();
+        Elements elements = doc.select("div.post p");
+        m.addResources(findResource(elements.text(), null));
+        m.addResources(findResource(url, doc, null));
+        m.addResources(findAttachments(doc, null));
+        logger.info("get {}/{} resources for movie {}", (resources.size() - size), resources.size(), m.getName());
 
         service.save(m);
         m.setSourceTime(getSourceTime(doc));
@@ -1625,11 +1617,12 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         return null;
     }
 
-    private void findResource(String original, Document doc, Set<Resource> resources, String name) {
+    private Set<Resource> findResource(String original, Document doc, String name) {
         if (skipResource) {
-            return;
+            return Collections.emptySet();
         }
 
+        Set<Resource> resources = new HashSet<>();
         Elements elements = doc.select(".post a");
         for (Element element : elements) {
             String uri = element.attr("href");
@@ -1659,13 +1652,15 @@ public class BttParserImpl extends AbstractParser implements BttParser {
                 }
             }
         }
+        return resources;
     }
 
-    private void findResource(String text, Set<Resource> resources, String name) {
+    private Set<Resource> findResource(String text, String name) {
         if (skipResource) {
-            return;
+            return Collections.emptySet();
         }
 
+        Set<Resource> resources = new HashSet<>();
         for (String magnet : UrlUtils.findMagnet(text)) {
             String title = magnet;
             if (name != null && !title.contains(name)) {
@@ -1681,13 +1676,15 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             }
             resources.add(service.saveResource(ed2k, StringUtils.truncate(title, 100)));
         }
+        return resources;
     }
 
-    private void findAttachments(Document doc, Set<Resource> resources, String name) {
+    private Set<Resource> findAttachments(Document doc, String name) {
         if (skipResource) {
-            return;
+            return Collections.emptySet();
         }
 
+        Set<Resource> resources = new HashSet<>();
         Elements elements = doc.select(".attachlist a");
         for (Element element : elements) {
             String href = element.attr("href");
@@ -1720,6 +1717,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
                 resources.add(service.saveResource(magnet, fixUrl(uri), title));
             }
         }
+        return resources;
     }
 
     private TorrentFile convertTorrent(String uri, String title, boolean isTorrent) {

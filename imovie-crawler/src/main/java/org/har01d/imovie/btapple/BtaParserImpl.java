@@ -60,7 +60,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(getResource(doc));
+            m.addResources(getResource(doc));
 
             logger.info("[BtApple] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

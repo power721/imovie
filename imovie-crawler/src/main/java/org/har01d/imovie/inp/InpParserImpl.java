@@ -69,7 +69,7 @@ public class InpParserImpl extends AbstractParser implements InpParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, movie.getName()));
+            m.addResources(findResource(doc, movie.getName()));
 
             logger.info("[inp] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

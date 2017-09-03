@@ -246,10 +246,22 @@ public class MovieServiceImpl implements MovieService {
                     name = "悬疑";
                 } else if ("紀錄片 Documentary".equals(name)) {
                     name = "纪录片";
-                } else if ("惊栗".equals(name)) {
+                } else if ("惊栗".equals(name) || "驚悚 Thriller".equals(name)) {
                     name = "惊悚";
                 } else if ("Adult".equals(name)) {
                     name = "情色";
+                } else if ("音樂 Music".equals(name)) {
+                    name = "音乐";
+                } else if ("Short".equals(name)) {
+                    name = "短片";
+                } else if ("戰爭 War".equals(name)) {
+                    name = "战争";
+                } else if ("懸疑 Mystery".equals(name)) {
+                    name = "悬疑";
+                } else if ("记录".equals(name)) {
+                    name = "纪录片";
+                } else if ("鬼怪".equals(name)) {
+                    name = "恐怖";
                 }
                 Category c = new Category(name);
                 categoryRepository.save(c);

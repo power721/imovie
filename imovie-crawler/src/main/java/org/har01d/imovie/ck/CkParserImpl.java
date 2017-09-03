@@ -48,7 +48,7 @@ public class CkParserImpl extends AbstractParser implements CkParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc));
+            m.addResources(findResource(doc));
 
             logger.info("[ck] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

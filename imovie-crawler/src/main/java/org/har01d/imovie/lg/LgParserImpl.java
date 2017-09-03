@@ -56,7 +56,7 @@ public class LgParserImpl extends AbstractParser implements LgParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, url));
+            m.addResources(findResource(doc, url));
 
             logger.info("[lg] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

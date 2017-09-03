@@ -58,6 +58,8 @@ public class S80ParserImpl extends AbstractParser implements S80Parser {
             logger.info("[80s] get {}/{} resources for movie {}", m.getNewResources(), m.getRes().size(),
                 m.getName());
             service.save(m);
+            m.setCompleted(movie.isCompleted());
+            m.setSourceTime(movie.getSourceTime());
             return m;
         } else {
             findResource(doc, url);

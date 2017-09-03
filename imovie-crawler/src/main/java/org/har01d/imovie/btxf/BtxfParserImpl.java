@@ -63,7 +63,7 @@ public class BtxfParserImpl extends AbstractParser implements BtxfParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(getResource(doc));
+            m.addResources(getResource(doc));
 
             logger.info("[btxf] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

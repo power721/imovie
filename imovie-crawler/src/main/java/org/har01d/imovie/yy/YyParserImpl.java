@@ -47,12 +47,11 @@ public class YyParserImpl extends AbstractParser implements YyParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, url));
+            m.addResources(findResource(doc, url));
 
             logger.info("[yy] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             service.save(m);
-            m.setNewResources(resources.size() - size);
             m.setCompleted(movie.isCompleted());
             m.setSourceTime(movie.getSourceTime());
             return m;

@@ -61,7 +61,7 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(findResource(doc, url));
+            m.addResources(findResource(doc, url));
 
             logger.info("[HQC] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());

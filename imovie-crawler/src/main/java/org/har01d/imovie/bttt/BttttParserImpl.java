@@ -45,7 +45,7 @@ public class BttttParserImpl extends AbstractParser implements BttttParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            resources.addAll(getResource(doc));
+            m.addResources(getResource(doc));
 
             logger.info("[bttiantang] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
