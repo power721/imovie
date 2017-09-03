@@ -81,6 +81,42 @@
       </div>
     </div>
 
+    <div v-if="query.search">
+      <div class="ui blue label" v-if="search.text.val">
+        {{ search.text.val }}
+        <i class="delete icon" @click="resetSearch('text', search.text.val)"></i>
+      </div>
+      <div class="ui blue label" v-if="search.year.val">
+        {{ search.year.val }}
+        <i class="delete icon" @click="resetSearch('year', search.year.val)"></i>
+      </div>
+      <div class="ui label" v-for="category in search.category.val">
+        {{ category }}
+        <i class="delete icon" @click="resetSearch(search.category.val, category)"></i>
+      </div>
+      <div class="ui label" v-for="region in search.region.val">
+        {{ region }}
+        <i class="delete icon" @click="resetSearch(search.region.val, region)"></i>
+      </div>
+      <div class="ui label" v-for="language in search.language.val">
+        {{ language }}
+        <i class="delete icon" @click="resetSearch(search.language.val, language)"></i>
+      </div>
+      <div class="ui label" v-for="director in search.director.val">
+        {{ director }}
+        <i class="delete icon" @click="resetSearch(search.director.val, director)"></i>
+      </div>
+      <div class="ui label" v-for="editor in search.editor.val">
+        {{ editor }}
+        <i class="delete icon" @click="resetSearch(search.editor.val, editor)"></i>
+      </div>
+      <div class="ui label" v-for="actor in search.actor.val">
+        {{ actor }}
+        <i class="delete icon" @click="resetSearch(search.actor.val, actor)"></i>
+      </div>
+      <i class="red delete link icon" @click="clearAdvanceSearch"></i>
+    </div>
+
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
       <div class="ui input">
@@ -523,11 +559,11 @@ export default {
           val: ''
         },
         db: {
-          op: '==',
+          op: '>=',
           val: 'all'
         },
         imdb: {
-          op: '==',
+          op: '>=',
           val: 'all'
         },
         director: {
@@ -716,7 +752,6 @@ export default {
       })
     },
     advanceSearch: function () {
-      this.currentPage = 0
       var q = []
       if (this.search.text.val) {
         var op = '=='
@@ -772,31 +807,31 @@ export default {
         }
       }
 
-      if (this.search.director.val) {
+      if (this.search.director.val && this.search.director.val.length > 0) {
         if (this.search.director.op === 'any') {
-          q.push('directors.name=in=(' + this.search.director.val.join(',') + ')')
+          q.push('directors.name=in=(' + this.search.director.val.map(e => '"' + e + '"').join(',') + ')')
         } else {
           this.search.director.val.forEach(e => q.push('directors.name=="' + e + '"'))
         }
       }
 
-      if (this.search.editor.val) {
+      if (this.search.editor.val && this.search.editor.val.length > 0) {
         if (this.search.editor.op === 'any') {
-          q.push('editors.name=in=(' + this.search.editor.val.join(',') + ')')
+          q.push('editors.name=in=(' + this.search.editor.val.map(e => '"' + e + '"').join(',') + ')')
         } else {
           this.search.editor.val.forEach(e => q.push('editors.name=="' + e + '"'))
         }
       }
 
-      if (this.search.actor.val) {
+      if (this.search.actor.val && this.search.actor.val.length > 0) {
         if (this.search.actor.op === 'any') {
-          q.push('actors.name=in=(' + this.search.actor.val.join(',') + ')')
+          q.push('actors.name=in=(' + this.search.actor.val.map(e => '"' + e + '"').join(',') + ')')
         } else {
           this.search.actor.val.forEach(e => q.push('actors.name=="' + e + '"'))
         }
       }
 
-      if (this.search.category.val) {
+      if (this.search.category.val && this.search.category.val.length > 0) {
         if (this.search.category.op === 'any') {
           q.push('categories.name=in=(' + this.search.category.val.join(',') + ')')
         } else {
@@ -807,7 +842,7 @@ export default {
         this.query.category = 'all'
       }
 
-      if (this.search.region.val) {
+      if (this.search.region.val && this.search.region.val.length > 0) {
         if (this.search.region.op === 'any') {
           q.push('regions.name=in=(' + this.search.region.val.join(',') + ')')
         } else {
@@ -815,7 +850,7 @@ export default {
         }
       }
 
-      if (this.search.language.val) {
+      if (this.search.language.val && this.search.language.val.length > 0) {
         if (this.search.language.op === 'any') {
           q.push('languages.name=in=(' + this.search.language.val.join(',') + ')')
         } else {
@@ -839,9 +874,47 @@ export default {
         q.push('resources=e=0')
       }
 
+      this.currentPage = 0
       this.query.search = q.join(';')
       this.query.text = ''
       this.showModal = false
+      this.loadData()
+    },
+    resetSearch: function (type, value) {
+      console.log(type + ': ' + value)
+      if (Array.isArray(type)) {
+        var index = type.indexOf(value)
+        if (index > -1) {
+          type.splice(index, 1)
+        }
+      } else {
+        if (type === 'text') {
+          this.search.text.val = ''
+        } else if (type === 'year') {
+          this.search.year.val = ''
+        } else if (type === 'type') {
+          this.search.type = 'all'
+        }
+      }
+      this.advanceSearch()
+    },
+    clearAdvanceSearch: function () {
+      this.search.text.val = ''
+      this.search.year.val = ''
+      this.search.updated.val = ''
+      this.search.episode.val = ''
+      this.search.director.val = []
+      this.search.editor.val = []
+      this.search.actor.val = []
+      this.search.category.val = []
+      this.search.region.val = []
+      this.search.language.val = []
+      this.search.db.val = 'all'
+      this.search.imdb.val = 'all'
+      this.search.type = 'all'
+      this.search.resources = 'all'
+      this.currentPage = 0
+      this.query.search = ''
       this.loadData()
     }
   }
