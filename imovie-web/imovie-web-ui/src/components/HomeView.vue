@@ -84,49 +84,54 @@
     <div v-if="query.search">
       <div class="ui blue label" v-if="search.text.val">
         {{ search.text.val }}
-        <i class="delete icon" @click="resetSearch('text', search.text.val)"></i>
+        <i class="delete icon" @click="reSearch('text', search.text.val)"></i>
       </div>
-      <div class="ui teal label" v-if="search.type!=='all'">
-        {{ search.type==='movie' ? $tc('token.movie') : $tc('token.episodes') }}
-        <i class="delete icon" @click="resetSearch('type', search.type)"></i>
+      <div class="ui teal label" v-if="search.type==='movie'">
+        {{ $tc('token.movie') }}
+        <i class="delete icon" @click="reSearch('type', search.type)"></i>
+      </div>
+      <div class="ui teal label" v-if="search.type==='episode'">
+        {{ $tc('token.episodes') }}
+        <div class="detail" v-if="search.episode.val">{{ search.episode.val }}</div>
+        <i class="delete icon" @click="reSearch('type', search.type)"></i>
       </div>
       <div class="ui olive label" v-if="search.year.val">
         {{ search.year.val }}
-        <i class="delete icon" @click="resetSearch('year', search.year.val)"></i>
+        <i class="delete icon" @click="reSearch('year', search.year.val)"></i>
       </div>
       <div class="ui red label" v-if="search.db.val!=='all'">
         DB
         <div class="detail">{{ search.db.val }}</div>
-        <i class="delete icon" @click="resetSearch('db', search.db.val)"></i>
+        <i class="delete icon" @click="reSearch('db', search.db.val)"></i>
       </div>
       <div class="ui orange label" v-if="search.imdb.val!=='all'">
         IMDB
         <div class="detail">{{ search.imdb.val }}</div>
-        <i class="delete icon" @click="resetSearch('imdb', search.imdb.val)"></i>
+        <i class="delete icon" @click="reSearch('imdb', search.imdb.val)"></i>
       </div>
       <div class="ui label" v-for="category in search.category.val">
         {{ category }}
-        <i class="delete icon" @click="resetSearch(search.category.val, category)"></i>
+        <i class="delete icon" @click="reSearch(search.category.val, category)"></i>
       </div>
       <div class="ui label" v-for="region in search.region.val">
         {{ region }}
-        <i class="delete icon" @click="resetSearch(search.region.val, region)"></i>
+        <i class="delete icon" @click="reSearch(search.region.val, region)"></i>
       </div>
       <div class="ui label" v-for="language in search.language.val">
         {{ language }}
-        <i class="delete icon" @click="resetSearch(search.language.val, language)"></i>
+        <i class="delete icon" @click="reSearch(search.language.val, language)"></i>
       </div>
       <div class="ui label" v-for="director in search.director.val">
         {{ director }}
-        <i class="delete icon" @click="resetSearch(search.director.val, director)"></i>
+        <i class="delete icon" @click="reSearch(search.director.val, director)"></i>
       </div>
       <div class="ui label" v-for="editor in search.editor.val">
         {{ editor }}
-        <i class="delete icon" @click="resetSearch(search.editor.val, editor)"></i>
+        <i class="delete icon" @click="reSearch(search.editor.val, editor)"></i>
       </div>
       <div class="ui label" v-for="actor in search.actor.val">
         {{ actor }}
-        <i class="delete icon" @click="resetSearch(search.actor.val, actor)"></i>
+        <i class="delete icon" @click="reSearch(search.actor.val, actor)"></i>
       </div>
       <i class="red delete link icon" @click="clearAdvanceSearch"></i>
     </div>
@@ -898,7 +903,7 @@ export default {
       this.showModal = false
       this.loadData()
     },
-    resetSearch: function (type, value) {
+    reSearch: function (type, value) {
       console.log(type + ': ' + value)
       if (Array.isArray(type)) {
         var index = type.indexOf(value)

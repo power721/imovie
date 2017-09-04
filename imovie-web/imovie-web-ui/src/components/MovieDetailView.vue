@@ -14,73 +14,73 @@
       </h2>
       <img id="thumb" class="ui image" :src="movie.thumb">
       <div class="ui items">
-        <div class="item" v-if="isNotEmpty(movie._embedded.directors)">
+        <div class="item directors" v-if="isNotEmpty(movie._embedded.directors)">
           <div class="content">
             <div class="header">{{ $tc("token.director", movie._embedded.directors.length) }}</div>
             <div class="description">{{ movie._embedded.directors | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie._embedded.editors)">
+        <div class="item editors" v-if="isNotEmpty(movie._embedded.editors)">
           <div class="content">
             <div class="header">{{ $tc("token.editor", movie._embedded.editors.length) }}</div>
             <div class="description">{{ movie._embedded.editors | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie._embedded.actors)">
+        <div class="item actors" v-if="isNotEmpty(movie._embedded.actors)">
           <div class="content">
             <div class="header">{{ $tc("token.actor", movie._embedded.actors.length) }}</div>
             <div class="description">{{ movie._embedded.actors | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie._embedded.categories)">
+        <div class="item categories" v-if="isNotEmpty(movie._embedded.categories)">
           <div class="content">
             <div class="header">{{ $tc("token.category", movie._embedded.categories.length) }}</div>
             <div class="description">{{ movie._embedded.categories | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie._embedded.regions)">
+        <div class="item regions" v-if="isNotEmpty(movie._embedded.regions)">
           <div class="content">
             <div class="header">{{ $tc("token.region", movie._embedded.regions.length) }}</div>
             <div class="description">{{ movie._embedded.regions | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie._embedded.languages)">
+        <div class="item languages" v-if="isNotEmpty(movie._embedded.languages)">
           <div class="content">
             <div class="header">{{ $tc("token.language", movie._embedded.languages.length) }}</div>
             <div class="description">{{ movie._embedded.languages | join }}</div>
           </div>
         </div>
-        <div class="item" v-if="movie.releaseDate">
+        <div class="item releaseDate" v-if="movie.releaseDate">
           <div class="content">
             <div class="header">{{ $t("token.releaseDate") }}</div>
             <div class="description">{{ movie.releaseDate }}</div>
           </div>
         </div>
-        <div class="item" v-if="movie.runningTime">
+        <div class="item runningTime" v-if="movie.runningTime">
           <div class="content">
             <div class="header">{{ $t("token.runningTime") }}</div>
             <div class="description">{{ movie.runningTime }}</div>
           </div>
         </div>
-        <div class="item" v-if="movie.episode">
+        <div class="item episode" v-if="movie.episode">
           <div class="content">
             <div class="header">{{ $t("token.episode") }}</div>
             <div class="description">{{ movie.episode }}</div>
           </div>
         </div>
-        <div class="item" v-if="isNotEmpty(movie.aliases)">
+        <div class="item aliases" v-if="isNotEmpty(movie.aliases)">
           <div class="content">
             <div class="header">{{ $tc("token.alias", movie.aliases.length) }}</div>
             <div class="description">{{ movie.aliases | join }}</div>
           </div>
         </div>
-        <div class="item">
+        <div class="item db">
           <div class="content">
             <div class="header">{{ $t("token.dbScore") }}</div>
             <div class="description"><a :href="movie.dbUrl" target="_blank">{{ movie.dbScore || '0.0' }}</a></div>
           </div>
         </div>
-        <div class="item" v-if="movie.imdbUrl">
+        <div class="item imdb" v-if="movie.imdbUrl">
           <div class="content">
             <div class="header">{{ $t("token.imdbScore") }}</div>
             <div class="description"><a :href="movie.imdbUrl" target="_blank">{{ movie.imdbScore || '0.0' }}</a>
@@ -89,7 +89,7 @@
         </div>
       </div>
 
-      <div class="ui message">
+      <div class="ui message synopsis">
         <div class="header">{{ $t("token.synopsis") }}</div>
         <p>{{ movie.synopsis || $t("message.noIntro") }}</p>
       </div>
@@ -102,7 +102,7 @@
       <template v-if="isAccessible(movie)">
         <div class="ui horizontal divider">{{ $tc("token.resource", movie.res.length) }}</div>
         <div class="ui relaxed divided list" id="resources">
-          <div class="item" v-for="resource in movie.res" :key="resource.id">
+          <div class="item resource" v-for="resource in movie.res" :key="resource.id">
             <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
             <div class="content">
               <div class="header">
