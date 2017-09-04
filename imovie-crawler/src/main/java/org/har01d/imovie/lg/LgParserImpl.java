@@ -7,7 +7,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -82,7 +82,7 @@ public class LgParserImpl extends AbstractParser implements LgParser {
             String uri = element.attr("href");
             if (isResource(uri)) {
                 String title = element.text();
-                resources.add(service.saveResource(uri, pageUrl, StringUtils.truncate(title, 120)));
+                resources.add(service.saveResource(uri, pageUrl, TextUtils.truncate(title, 120)));
             }
         }
         return resources;

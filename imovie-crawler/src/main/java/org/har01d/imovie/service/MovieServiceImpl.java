@@ -30,7 +30,7 @@ import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.domain.Source;
 import org.har01d.imovie.domain.SourceRepository;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,6 @@ public class MovieServiceImpl implements MovieService {
 
     private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
 
-    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
-    private static final Pattern YEAR_PATTERN = Pattern.compile("\\s*(\\d{4})\\D*");
     private Pattern DATE1 = Pattern.compile("(\\d{4})-(\\d{1,2})-(\\d{1,2})");
     private Pattern DATE2 = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})");
     private Pattern DATE3 = Pattern.compile("(\\d{4})年(\\d{1,2})月(\\d{1,2})日");
@@ -178,20 +176,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Integer getYear(String yearStr) {
-        if (yearStr == null) {
-            return null;
-        }
-
-        Matcher matcher = DATE_PATTERN.matcher(yearStr);
-        if (matcher.find()) {
-            return Integer.valueOf(matcher.group(1));
-        }
-
-        matcher = YEAR_PATTERN.matcher(yearStr);
-        if (matcher.find()) {
-            return Integer.valueOf(matcher.group(1));
-        }
-        return null;
+        return TextUtils.getYear(yearStr);
     }
 
     @Override
@@ -449,7 +434,7 @@ public class MovieServiceImpl implements MovieService {
             }
         }
 
-        title = StringUtils.truncate(title, 200);
+        title = TextUtils.truncate(title, 200);
         if (uri == null) {
             resource = new Resource(original, title);
         } else {
@@ -491,7 +476,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Event publishEvent(String source, String message) {
-        return eventRepository.save(new Event(StringUtils.truncate(source, 255), message));
+        return eventRepository.save(new Event(TextUtils.truncate(source, 255), message));
     }
 
     @Override

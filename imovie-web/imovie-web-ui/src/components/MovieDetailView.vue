@@ -9,7 +9,9 @@
     </div>
     <div v-if="movie" id="movie">
       <h2>
+        <i class="ui yellow circular label" v-if="movie.db250">{{ movie.db250 }}</i>
         {{ movie.title }}
+        <a v-if="$auth.user.isAdmin" @click="refreshMovie(movie.id)"><i class="small refresh link icon"></i></a>
         <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove link icon"></i></a>
       </h2>
       <img id="thumb" class="ui image" :src="movie.thumb">
@@ -77,7 +79,10 @@
         <div class="item db">
           <div class="content">
             <div class="header">{{ $t("token.dbScore") }}</div>
-            <div class="description"><a :href="movie.dbUrl" target="_blank">{{ movie.dbScore || '0.0' }}</a></div>
+            <div class="description">
+              <a :href="movie.dbUrl" target="_blank">{{ movie.dbScore || '0.0' }}</a>
+              <template v-if="movie.votes">({{ movie.votes }})</template>
+            </div>
           </div>
         </div>
         <div class="item imdb" v-if="movie.imdbUrl">
@@ -262,7 +267,18 @@ export default {
         if (success) {
           this.$router.push('/')
         } else {
-          console.log('delete ' + id + ' failed: ' + data)
+          console.log('delete ' + id + ' failed: ')
+          console.log(data)
+        }
+      })
+    },
+    refreshMovie: function (id) {
+      movieService.refreshMovie(id, (success, data) => {
+        if (success) {
+          this.$router.go(this.$router.currentRoute)
+        } else {
+          console.log('refresh ' + id + ' failed: ')
+          console.log(data)
         }
       })
     },
@@ -297,7 +313,8 @@ export default {
                 that.$router.go(that.$router.currentRoute)
               }
             } else {
-              console.log('transfer resources failed: ' + data)
+              console.log('transfer resources failed: ')
+              console.log(data)
             }
           })
         }
@@ -309,7 +326,8 @@ export default {
         if (success) {
           this.$router.go(this.$router.currentRoute)
         } else {
-          console.log('Add resources failed: ' + data)
+          console.log('Add resources failed: ')
+          console.log(data)
         }
       })
     }

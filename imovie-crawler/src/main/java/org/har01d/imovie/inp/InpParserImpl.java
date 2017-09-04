@@ -12,7 +12,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -108,7 +108,7 @@ public class InpParserImpl extends AbstractParser implements InpParser {
                 }
                 try {
                     resources
-                        .add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
+                        .add(service.saveResource(UrlUtils.convertUrl(uri), uri, TextUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(name, e.getMessage());
                     logger.error("[inp] get resource failed", e);
@@ -139,15 +139,15 @@ public class InpParserImpl extends AbstractParser implements InpParser {
             if (uri.isEmpty()) {
                 uri = doc.select("iframe#play_area").attr("src");
                 if (isResource(uri)) {
-                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
                 } else if (doc.select("h3 a").text().contains("中文字幕")) {
                     uri = doc.select("div#down_verify_box li a.btn-orange").attr("href");
                     title = "中文字幕-" + title;
-                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
                 }
             } else if (isResource(uri)) {
                 String original = siteUrl + doc.select("div#down_verify_box li a.btn-orange").attr("href");
-                resources.add(service.saveResource(uri, original, StringUtils.truncate(title, 120)));
+                resources.add(service.saveResource(uri, original, TextUtils.truncate(title, 120)));
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());

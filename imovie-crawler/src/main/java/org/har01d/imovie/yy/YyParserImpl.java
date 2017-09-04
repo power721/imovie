@@ -7,7 +7,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -79,7 +79,7 @@ public class YyParserImpl extends AbstractParser implements YyParser {
             if (isResource(uri)) {
                 String title = element.attr("title") + "-" + element.parent().parent().nextElementSibling().text();
                 try {
-                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(pageUrl, e.getMessage());
                     logger.error("[yy] get resource failed", e);
@@ -99,7 +99,7 @@ public class YyParserImpl extends AbstractParser implements YyParser {
             if (isResource(uri)) {
                 String title = element.text();
                 try {
-                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(pageUrl, e.getMessage());
                     logger.error("[yy] get resource failed", e);

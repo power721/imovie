@@ -6,5 +6,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(excerptProjection = MyExcerpt.class)
 public interface PersonRepository extends MyRepository<Person, Integer> {
+
     List<Person> findTop20ByNameContains(@Param("name") String name);
 }

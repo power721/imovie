@@ -1,26 +1,16 @@
-package org.har01d.imovie.douban;
+package org.har01d.imovie.web.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.har01d.imovie.domain.Movie;
-import org.har01d.imovie.domain.Source;
-import org.har01d.imovie.service.DouBanService;
-import org.har01d.imovie.service.MovieService;
 import org.har01d.imovie.util.HttpUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
+import org.har01d.imovie.web.domain.Movie;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,41 +26,10 @@ public class DouBanParserImpl implements DouBanParser {
     @Autowired
     private MovieService service;
 
-    @Autowired
-    private BasicCookieStore cookieStore;
-
-    @Autowired
-    private DouBanService douBanService;
-
-    @Autowired
-    private DouBanListParser douBanListParser;
-
-    private volatile int errorCount;
-    private volatile int count;
-
     @Override
-    public Movie parse(String url) throws IOException {
-        return parse(url, false);
-    }
-
-    @Override
-    public synchronized Movie parse(String url, boolean includeDbList) throws IOException {
-        if (count++ > 0) {
-            if (count % 100 == 0) {
-                douBanService.updateCookie();
-            } else if (count % 1000 == 0) {
-                douBanService.tryLogin();
-            }
-        }
-
-        String html;
-        try {
-            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
-            errorCount = 0;
-        } catch (HttpResponseException e) {
-            handle403(e);
-            throw e;
-        }
+    public Movie parse(Movie movie) throws IOException {
+        String url = movie.getDbUrl();
+        String html = HttpUtils.getHtml(url, "UTF-8");
 
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
@@ -88,7 +47,6 @@ public class DouBanParserImpl implements DouBanParser {
         Element info = subject.select("#info").first();
         Element synopsis = content.select(".related-info #link-report").first();
 
-        Movie movie = new Movie();
         movie.setName(fixTitle(name));
         movie.setTitle(fixTitle(header.text()));
         movie.setThumb(thumb);
@@ -138,76 +96,12 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         if (year != null) {
-            movie.setYear(service.getYear(year));
+            movie.setYear(TextUtils.getYear(year));
         } else {
-            movie.setYear(service.getYear(movie.getReleaseDate()));
+            movie.setYear(TextUtils.getYear(movie.getReleaseDate()));
         }
 
-        if (includeDbList) {
-            service.updateMovie(url, movie);
-            parseDouList(doc, movie.getTitle());
-        }
         return movie;
-    }
-
-    @Override
-    public synchronized List<Movie> search(String text) throws IOException {
-        String url;
-        List<Movie> movies = new ArrayList<>();
-        try {
-            url = "https://m.douban.com/search/?type=movie&query=" + URLEncoder.encode(text, "UTF-8");
-//            url = "https://movie.douban.com/subject_search?search_text=" + URLEncoder.encode(text, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("search movie failed: " + text, e);
-            return movies;
-        }
-
-        String html;
-        try {
-            html = HttpUtils.getHtml(url, null, cookieStore);
-        } catch (HttpResponseException e) {
-            handle403(e);
-            throw e;
-        }
-
-        Document doc = Jsoup.parse(html);
-        Elements elements = doc.select("ul.search_results_subjects li a");
-
-        for (Element element : elements) {
-            String dbUrl = element.attr("href");
-            if (dbUrl.contains("/movie/subject/")) {
-                dbUrl = "https://movie.douban.com" + dbUrl.replace("/movie", "");
-                Movie m = service.findByDbUrl(dbUrl);
-                if (m != null) {
-                    movies.add(m);
-                }
-
-                if (m == null) {
-                    try {
-                        m = parse(dbUrl);
-                        service.save(new Source(dbUrl));
-                        if (m != null) {
-                            movies.add(service.save(m));
-                        }
-                    } catch (Exception e) {
-                        service.publishEvent(dbUrl, e.getMessage());
-                        logger.error("Parse page failed: " + dbUrl, e);
-                    }
-                }
-            }
-        }
-        return movies;
-    }
-
-    private void handle403(HttpResponseException e) {
-        if (e.getStatusCode() == 403) {
-            if (errorCount == 0) {
-                douBanService.reLogin();
-            }
-            if (errorCount++ >= 3) {
-                throw new Error("403 Forbidden", e);
-            }
-        }
     }
 
     private String fixTitle(String text) {
@@ -242,17 +136,17 @@ public class DouBanParserImpl implements DouBanParser {
     private boolean getMetadata(String text, Movie movie) {
         Set<String> values;
         if ((values = getValues(text, "导演:")) != null) {
-            movie.setDirectors(service.getPersons(values));
+            movie.setDirectors(service.getPeople(values));
             return true;
         }
 
         if ((values = getValues(text, "编剧:")) != null) {
-            movie.setEditors(service.getPersons(values));
+            movie.setEditors(service.getPeople(values));
             return true;
         }
 
         if ((values = getValues(text, "主演:")) != null) {
-            movie.setActors(service.getPersons(values));
+            movie.setActors(service.getPeople(values));
             return true;
         }
 
@@ -358,21 +252,6 @@ public class DouBanParserImpl implements DouBanParser {
         }
 
         return values;
-    }
-
-    private void parseDouList(Document doc, String title) {
-        Elements elements = doc.select("div#subject-doulist ul li a");
-        for (Element element : elements) {
-            String url = element.attr("href");
-            if (service.findSource(url) == null) {
-                try {
-                    logger.info("{}:{}", title, url);
-                    douBanListParser.parse(url);
-                } catch (IOException | ParseException e) {
-                    logger.warn("parse DouBan list failed.", e);
-                }
-            }
-        }
     }
 
 }

@@ -20,7 +20,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -1502,12 +1502,12 @@ public class BttParserImpl extends AbstractParser implements BttParser {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").replace("–", "")
             .replace("-", "")
             .trim();
-        return StringUtils.truncate(text, len);
+        return TextUtils.truncate(text, len);
     }
 
     private String getValue2(String text, int len) {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").trim();
-        return StringUtils.truncate(text, len);
+        return TextUtils.truncate(text, len);
     }
 
     private int getNumber(String text) {
@@ -1646,9 +1646,9 @@ public class BttParserImpl extends AbstractParser implements BttParser {
                 }
 
                 if (uri.contains("pan.baidu.com")) {
-                    resources.add(service.saveResource(uri, fixUrl(original), StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, fixUrl(original), TextUtils.truncate(title, 120)));
                 } else {
-                    resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
                 }
             }
         }
@@ -1666,7 +1666,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             if (name != null && !title.contains(name)) {
                 title = name + "-" + title;
             }
-            resources.add(service.saveResource(magnet, StringUtils.truncate(title, 100)));
+            resources.add(service.saveResource(magnet, TextUtils.truncate(title, 100)));
         }
 
         for (String ed2k : UrlUtils.findED2K(text)) {
@@ -1674,7 +1674,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
             if (name != null && !title.contains(name)) {
                 title = name + "-" + title;
             }
-            resources.add(service.saveResource(ed2k, StringUtils.truncate(title, 100)));
+            resources.add(service.saveResource(ed2k, TextUtils.truncate(title, 100)));
         }
         return resources;
     }
@@ -1705,7 +1705,7 @@ public class BttParserImpl extends AbstractParser implements BttParser {
                 TorrentFile info = convertTorrent(uri, title, isTorrent);
                 if (info != null) {
                     magnet = info.getMagnet();
-                    String fileSize = StringUtils.convertFileSize(info.getTotalLength());
+                    String fileSize = TextUtils.convertFileSize(info.getTotalLength());
                     if (!title.contains(fileSize)) {
                         title = title + " " + fileSize;
                     }

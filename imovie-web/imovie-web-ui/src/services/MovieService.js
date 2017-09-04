@@ -65,6 +65,19 @@ export default {
     })
   },
 
+  refreshMovie (id, cb) {
+    return Vue.http.post('/api/movies/' + id + '/refresh')
+    .then(({data}) => {
+      if (cb) {
+        cb(true, data)
+      }
+    }, ({data}) => {
+      if (cb) {
+        cb(false, data)
+      }
+    })
+  },
+
   findPersonsByName (name, cb) {
     return Vue.http.get('/api/persons/search/?name=' + name.trim())
     .then(({data}) => {

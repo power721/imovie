@@ -74,6 +74,7 @@ public class Movie {
 
     private String runningTime;
 
+    private Integer season;
     private Integer episode;
 
     private String imdbUrl;
@@ -81,6 +82,10 @@ public class Movie {
 
     private String dbUrl;
     private String dbScore;
+    private Integer db250;
+    private Integer votes;
+
+    private String website;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime = new Date();
@@ -270,6 +275,14 @@ public class Movie {
         this.runningTime = runningTime;
     }
 
+    public Integer getSeason() {
+        return season;
+    }
+
+    public void setSeason(Integer season) {
+        this.season = season;
+    }
+
     public Integer getEpisode() {
         return episode;
     }
@@ -308,6 +321,30 @@ public class Movie {
 
     public void setDbScore(String dbScore) {
         this.dbScore = dbScore;
+    }
+
+    public Integer getDb250() {
+        return db250;
+    }
+
+    public void setDb250(Integer db250) {
+        this.db250 = db250;
+    }
+
+    public Integer getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Integer votes) {
+        this.votes = votes;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public Date getCreatedTime() {

@@ -4,6 +4,7 @@ import static org.springframework.data.rest.webmvc.ControllerUtils.EMPTY_RESOURC
 
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,18 +64,26 @@ public class CustomRepositoryRestController {
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/resources/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteResource(@PathVariable Integer id) {
         service.deleteResource(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/movies/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMovie(@PathVariable Integer id) {
         service.deleteMovie(id);
     }
 
+    @PostMapping("/movies/{id}/refresh")
+    public void refresh(@PathVariable Integer id) throws IOException {
+        service.refreshMovie(id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/movies/{id}/resources")
     public Resource addResource(@PathVariable Integer id, @RequestBody ResourceDTO resourceDTO) {
         return service.addResource(id, resourceDTO);
@@ -88,7 +97,8 @@ public class CustomRepositoryRestController {
 
     @GetMapping("/persons/search")
     public List<String> findPersons(String name) {
-        return personRepository.findTop20ByNameContains(name).stream().map(Person::getName).collect(Collectors.toList());
+        return personRepository.findTop20ByNameContains(name).stream().map(Person::getName)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/movies")

@@ -80,6 +80,8 @@ public class Movie {
 
     private String dbUrl;
     private String dbScore;
+    private Integer db250;
+    private Integer votes;
 
     private String website;
 
@@ -91,7 +93,6 @@ public class Movie {
 
     private transient Date sourceTime = new Date();
     private transient int newResources;
-    private transient int votes;
     private transient boolean completed = true;
 
     public Integer getId() {
@@ -313,6 +314,14 @@ public class Movie {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public Integer getDb250() {
+        return db250;
+    }
+
+    public void setDb250(Integer db250) {
+        this.db250 = db250;
     }
 
     public Date getCreatedTime() {

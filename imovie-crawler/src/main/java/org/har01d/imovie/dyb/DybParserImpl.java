@@ -10,7 +10,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -91,7 +91,7 @@ public class DybParserImpl extends AbstractParser implements DybParser {
                 String title = element.text();
                 try {
                     resources
-                        .add(service.saveResource(UrlUtils.convertUrl(uri), uri, StringUtils.truncate(title, 120)));
+                        .add(service.saveResource(UrlUtils.convertUrl(uri), uri, TextUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(name, e.getMessage());
                     logger.error("[dyb] get resource failed", e);
@@ -119,7 +119,7 @@ public class DybParserImpl extends AbstractParser implements DybParser {
             Document doc = Jsoup.parse(html);
             String uri = doc.select("div.kp_flash_box .explaywrap a.explaylink").attr("href");
             if (isResource(uri)) {
-                resources.add(service.saveResource(uri, StringUtils.truncate(title, 120)));
+                resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
             }
         } catch (Exception e) {
             service.publishEvent(url, e.getMessage());

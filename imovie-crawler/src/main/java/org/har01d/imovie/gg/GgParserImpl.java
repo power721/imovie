@@ -10,7 +10,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -93,7 +93,7 @@ public class GgParserImpl extends AbstractParser implements GgParser {
                 TorrentFile info = convertTorrent(uri, title, title.contains(".torrent"));
                 if (info != null) {
                     String magnet = info.getMagnet();
-                    String fileSize = StringUtils.convertFileSize(info.getTotalLength());
+                    String fileSize = TextUtils.convertFileSize(info.getTotalLength());
                     if (!title.contains(fileSize)) {
                         title = title + " " + fileSize;
                     }

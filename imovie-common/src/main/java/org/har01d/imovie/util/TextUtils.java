@@ -1,6 +1,12 @@
 package org.har01d.imovie.util;
 
-public final class StringUtils {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public final class TextUtils {
+
+    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{4})-\\d{2}-\\d{2}");
+    private static final Pattern YEAR_PATTERN = Pattern.compile("\\s*(\\d{4})\\D*");
 
     public static String truncate(String text, int maxLen) {
         if (text == null) {
@@ -27,6 +33,23 @@ public final class StringUtils {
         } else {
             return String.valueOf(size);
         }
+    }
+
+    public static Integer getYear(String yearStr) {
+        if (yearStr == null) {
+            return null;
+        }
+
+        Matcher matcher = DATE_PATTERN.matcher(yearStr);
+        if (matcher.find()) {
+            return Integer.valueOf(matcher.group(1));
+        }
+
+        matcher = YEAR_PATTERN.matcher(yearStr);
+        if (matcher.find()) {
+            return Integer.valueOf(matcher.group(1));
+        }
+        return null;
     }
 
 }

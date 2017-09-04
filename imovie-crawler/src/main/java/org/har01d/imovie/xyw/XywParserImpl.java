@@ -15,7 +15,7 @@ import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Person;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -153,7 +153,7 @@ public class XywParserImpl extends AbstractParser implements XywParser {
 
     private String getValue(String text, int len) {
         text = text.replaceAll("　", "").replaceAll(" ", "").replaceAll("：", "").replaceAll(" ", "").trim();
-        return StringUtils.truncate(text, len);
+        return TextUtils.truncate(text, len);
     }
 
     protected Set<String> getValues(String text) {

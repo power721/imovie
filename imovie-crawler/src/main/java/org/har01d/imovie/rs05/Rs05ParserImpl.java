@@ -10,7 +10,7 @@ import org.har01d.imovie.domain.MovieRepository;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.domain.ResourceRepository;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -94,7 +94,7 @@ public class Rs05ParserImpl extends AbstractParser implements Rs05Parser {
                 title = temp;
             }
         }
-        title = StringUtils.truncate(title, 120);
+        title = TextUtils.truncate(title, 120);
 
         String newUri = UrlUtils.convertUrl(uri);
         Resource resource = resourceRepository.findFirstByUri(newUri);

@@ -18,7 +18,7 @@ import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
 import org.har01d.imovie.util.HttpUtils;
-import org.har01d.imovie.util.StringUtils;
+import org.har01d.imovie.util.TextUtils;
 import org.har01d.imovie.util.UrlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -99,7 +99,7 @@ public class RarBtParserImpl extends AbstractParser implements RarBtParser {
                 title = title.replace("本地下载.", "").replace("[本地下载].", "").replace("【种子下载】.", "").trim();
                 TorrentFile info = convertTorrent(uri, title);
                 if (info != null) {
-                    String fileSize = StringUtils.convertFileSize(info.getTotalLength());
+                    String fileSize = TextUtils.convertFileSize(info.getTotalLength());
                     String temp = fileSize;
                     if (temp.length() > 2) {
                         temp = fileSize.substring(fileSize.length() - 2, fileSize.length());
