@@ -86,13 +86,23 @@
         {{ search.text.val }}
         <i class="delete icon" @click="resetSearch('text', search.text.val)"></i>
       </div>
-      <div class="ui blue label" v-if="search.type!=='all'">
+      <div class="ui teal label" v-if="search.type!=='all'">
         {{ search.type==='movie' ? $tc('token.movie') : $tc('token.episodes') }}
         <i class="delete icon" @click="resetSearch('type', search.type)"></i>
       </div>
-      <div class="ui blue label" v-if="search.year.val">
+      <div class="ui olive label" v-if="search.year.val">
         {{ search.year.val }}
         <i class="delete icon" @click="resetSearch('year', search.year.val)"></i>
+      </div>
+      <div class="ui red label" v-if="search.db.val!=='all'">
+        DB
+        <div class="detail">{{ search.db.val }}</div>
+        <i class="delete icon" @click="resetSearch('db', search.db.val)"></i>
+      </div>
+      <div class="ui orange label" v-if="search.imdb.val!=='all'">
+        IMDB
+        <div class="detail">{{ search.imdb.val }}</div>
+        <i class="delete icon" @click="resetSearch('imdb', search.imdb.val)"></i>
       </div>
       <div class="ui label" v-for="category in search.category.val">
         {{ category }}
@@ -900,8 +910,16 @@ export default {
           this.search.text.val = ''
         } else if (type === 'year') {
           this.search.year.val = ''
+        } else if (type === 'episode') {
+          this.search.episode.val = ''
         } else if (type === 'type') {
           this.search.type = 'all'
+        } else if (type === 'db') {
+          this.search.db.val = 'all'
+        } else if (type === 'imdb') {
+          this.search.imdb.val = 'all'
+        } else if (type === 'resources') {
+          this.search.resources = 'all'
         }
       }
       this.advanceSearch()
