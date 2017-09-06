@@ -91,7 +91,7 @@
     <div class="ui divided items movie-list">
       <div v-for="movie in movies" class="item movie" :data-id="movie.id" style="min-height: 225px;">
         <router-link :to="getLink(movie)" class="ui small image" :title="movie.title">
-          <img v-lazy="movie.thumb">
+          <img :src="movie.thumb">
         </router-link>
         <div class="content">
           <router-link :to="getLink(movie)" class="header">

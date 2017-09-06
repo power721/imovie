@@ -26,7 +26,7 @@ public abstract class AbstractCrawler {
     protected void handleError() throws InterruptedException {
         if (error >= 5) {
             if (error >= 10) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Too many errors.");
             }
             log.warn("sleep {} seconds", error * 30L);
             TimeUnit.SECONDS.sleep(error * 30L);
