@@ -118,6 +118,7 @@ public class GenericRsqlSpecification<T> implements Specification<T> {
         Class<?> type = path.getJavaType();
 
         for (String argument : arguments) {
+            argument = argument.trim();
             if (type.equals(Integer.class) || type.equals(int.class)) {
                 try {
                     args.add(Integer.parseInt(argument));

@@ -67,6 +67,9 @@ public class MjxzParserImpl extends AbstractParser implements MjxzParser {
         }
 
         Elements elements = doc.select("div.block ul.downloadlist li.down-item a.down-link");
+        if (elements.size() >= 50) {
+            logger.info("Resources: {}", elements.size());
+        }
         for (Element element : elements) {
             String uri = element.attr("href");
             if (uri.startsWith("d2k://")) {

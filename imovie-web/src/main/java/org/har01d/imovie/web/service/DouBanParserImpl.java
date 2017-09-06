@@ -29,12 +29,12 @@ public class DouBanParserImpl implements DouBanParser {
     @Override
     public Movie parse(Movie movie) throws IOException {
         String url = movie.getDbUrl();
+        logger.info("parse {} {}", url, movie.getTitle());
         String html = HttpUtils.getHtml(url, "UTF-8");
 
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
         Element header = content.select("h1").first();
-        logger.info("parse {} {}", url, header.text());
         String name = header.child(0).text();
         String year = null;
         if (header.children().size() > 1) {
@@ -133,47 +133,47 @@ public class DouBanParserImpl implements DouBanParser {
         return synopsis.text();
     }
 
-    private boolean getMetadata(String text, Movie movie) {
+    private void getMetadata(String text, Movie movie) {
         Set<String> values;
         if ((values = getValues(text, "导演:")) != null) {
             movie.setDirectors(service.getPeople(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "编剧:")) != null) {
             movie.setEditors(service.getPeople(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "主演:")) != null) {
             movie.setActors(service.getPeople(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "类型:")) != null) {
             movie.setCategories(service.getCategories(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "制片国家/地区:")) != null) {
             movie.setRegions(service.getRegions(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "语言:")) != null) {
             movie.setLanguages(service.getLanguages(values));
-            return true;
+            return;
         }
 
         if ((values = getValues(text, "又名:")) != null) {
             movie.setAliases(values);
-            return true;
+            return;
         }
 
         String value;
         if ((value = getValue(text, "上映日期:", 120)) != null) {
             movie.setReleaseDate(value);
-            return true;
+            return;
         } else if ((value = getValue(text, "首播:")) != null) {
             movie.setReleaseDate(value);
             if (movie.getEpisode() == null) {
@@ -183,7 +183,7 @@ public class DouBanParserImpl implements DouBanParser {
 
         if ((value = getValue(text, "片长:", 100)) != null) {
             movie.setRunningTime(value);
-            return true;
+            return;
         } else if ((value = getValue(text, "单集片长:", 100)) != null) {
             movie.setRunningTime(value);
             if (movie.getEpisode() == null) {
@@ -194,7 +194,7 @@ public class DouBanParserImpl implements DouBanParser {
         if ((value = getValue(text, "集数:")) != null) {
             try {
                 movie.setEpisode(Integer.valueOf(value));
-                return true;
+                return;
             } catch (NumberFormatException e) {
                 movie.setEpisode(0);
             }
@@ -208,14 +208,12 @@ public class DouBanParserImpl implements DouBanParser {
 
         if ((value = getValue(text, "官方网站:")) != null) {
             movie.setWebsite(value);
-            return true;
+            return;
         }
 
         if ((value = getValue(text, "IMDb链接:")) != null) {
             movie.setImdbUrl(UrlUtils.getImdbUrl(value));
-            return true;
         }
-        return false;
     }
 
     private String getValue(String text, String prefix) {
@@ -235,7 +233,8 @@ public class DouBanParserImpl implements DouBanParser {
     }
 
     private Set<String> getValues(String text, String prefix) {
-        if (!text.trim().startsWith(prefix)) {
+        text = text.trim();
+        if (!text.startsWith(prefix)) {
             return null;
         }
 
