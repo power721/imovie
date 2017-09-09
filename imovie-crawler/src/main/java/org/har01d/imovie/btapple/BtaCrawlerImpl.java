@@ -64,21 +64,21 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     page = 0;
                     continue;
                 }
-                logger.info("[BtApple] {}: {} movies", page, elements.size());
+                logger.info("[BtApple-{}] {}: {} movies", type, page, elements.size());
 
                 int count = 0;
                 for (Element element : elements) {
                     String pageUrl = siteUrl + element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-                        if ("movie".equals(type)) {
+                        if (source.isCompleted() || "movie".equals(type)) {
                             continue;
                         }
 
                         long time = System.currentTimeMillis();
                         if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
-                        logger.info("skip {}", pageUrl);
-                        continue;
+                            logger.info("skip {}", pageUrl);
+                            continue;
                         }
                     }
 
@@ -91,7 +91,8 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            logger.info("[BtApple] {}-{}-{} find movie {}", page, total, count, movie.getName());
+                            logger
+                                .info("[BtApple-{}] {}-{}-{} find movie {}", type, page, total, count, movie.getName());
                             if (source == null) {
                                 source = new Source(pageUrl, movie.getSourceTime());
                             }
