@@ -37,24 +37,29 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         String html = HttpUtils.getHtml(url);
         Document doc = Jsoup.parse(html);
 
-        getMovie(doc, movie);
+        Movie m;
+        if (movie.getId() != null) {
+            m = service.findById(movie.getId());
+        } else {
+            getMovie(doc, movie);
 
-        String dbUrl = movie.getDbUrl();
-        Movie m = getByDb(dbUrl);
+            String dbUrl = movie.getDbUrl();
+            m = getByDb(dbUrl);
 
-        if (m == null) {
-            String imdb = movie.getImdbUrl();
-            if (imdb != null) {
-                m = service.findByImdb(imdb);
+            if (m == null) {
+                String imdb = movie.getImdbUrl();
+                if (imdb != null) {
+                    m = service.findByImdb(imdb);
+                }
             }
-        }
 
-        if (m == null) {
-            m = searchByImdb(movie);
-        }
+            if (m == null) {
+                m = searchByImdb(movie);
+            }
 
-        if (m == null) {
-            m = searchByName(movie);
+            if (m == null) {
+                m = searchByName(movie);
+            }
         }
 
         if (m != null) {

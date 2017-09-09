@@ -1,6 +1,7 @@
 package org.har01d.imovie.btapple;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
@@ -70,14 +71,21 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     String pageUrl = siteUrl + element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-//                        long time = System.currentTimeMillis();
-//                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
+                        if ("movie".equals(type)) {
+                            continue;
+                        }
+
+                        long time = System.currentTimeMillis();
+                        if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(12)) {
                         logger.info("skip {}", pageUrl);
                         continue;
-//                        }
+                        }
                     }
 
                     Movie movie = new Movie();
+                    if (source != null && source.getMovieId() != null) {
+                        movie.setId(source.getMovieId());
+                    }
                     movie.setTitle(element.attr("title"));
                     movie.setName(element.text());
                     try {
@@ -87,7 +95,10 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                             if (source == null) {
                                 source = new Source(pageUrl, movie.getSourceTime());
                             }
-                            count++;
+                            source.setMovieId(movie.getId());
+                            if (crawler == null || movie.getNewResources() > 0) {
+                                count++;
+                            }
                             total++;
                         } else {
                             if (source == null) {
