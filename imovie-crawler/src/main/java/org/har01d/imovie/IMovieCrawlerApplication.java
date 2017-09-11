@@ -161,8 +161,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${offset:0}")
     private int offset = 0;
 
-    @Value("${threads:3}")
-    private int threads = 3;
+    @Value("${threads:2}")
+    private int threads = 2;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -175,7 +175,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        if (!Arrays.asList(environment.getActiveProfiles()).contains("test")) {
+        if (!environment.acceptsProfiles("test")) {
             if (fix > 0) {
                 service.fixDuplicateResources(offset, fix);
                 return;
@@ -188,10 +188,13 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             service.fixDuplicateMovies();
 
             logger.info("Threads: {}", threads);
-            ScheduledExecutorService executorService = Executors
+            ScheduledExecutorService executorService;
+            ScheduledExecutorService executorServiceOld = Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService executorServiceNew = Executors
                 .newScheduledThreadPool(threads, new MyThreadFactory("Crawler"));
 
             if (types.contains("all") || types.contains("rar")) {
+                executorService = rarBtCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         rarBtCrawler.crawler();
@@ -202,6 +205,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("rs05")) {
+                executorService = rs05Crawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         rs05Crawler.crawler();
@@ -212,6 +216,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("bttt")) {
+                executorService = btttCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btttCrawler.crawler();
@@ -222,6 +227,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("bta")) {
+                executorService = btaCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btaCrawler.crawler();
@@ -232,6 +238,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("btdy")) {
+                executorService = btdyCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btdyCrawler.crawler();
@@ -242,6 +249,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("btp")) {
+                executorService = btPanCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btPanCrawler.crawler();
@@ -252,6 +260,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("imdb")) {
+                executorService = imdbCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         imdbCrawler.crawler();
@@ -263,6 +272,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("fix")) {
+                executorService = fixCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         fixCrawler.crawler();
@@ -273,6 +283,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("zmz")) {
+                executorService = zmzCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         zmzCrawler.crawler();
@@ -283,6 +294,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (/*types.contains("all") || */types.contains("btxf")) {
+                executorService = btxfCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         btxfCrawler.crawler();
@@ -293,6 +305,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("lg")) {
+                executorService = lgCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         lgCrawler.crawler();
@@ -303,6 +316,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("ck")) {
+                executorService = ckCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         ckCrawler.crawler();
@@ -313,6 +327,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("mp4")) {
+                executorService = mp4Crawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         mp4Crawler.crawler();
@@ -323,6 +338,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("inp")) {
+                executorService = inpCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         inpCrawler.crawler();
@@ -333,6 +349,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("mjxz")) {
+                executorService = mjxzCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         mjxzCrawler.crawler();
@@ -343,6 +360,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (/*types.contains("all") || */types.contains("dyb")) {
+                executorService = dybCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         dybCrawler.crawler();
@@ -353,6 +371,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("yy")) {
+                executorService = yyCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         yyCrawler.crawler();
@@ -363,6 +382,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("hqc")) {
+                executorService = hqcCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.scheduleWithFixedDelay(() -> {
                     try {
                         hqcCrawler.crawler();
@@ -373,6 +393,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("xyw")) {
+                executorService = xywCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         xywCrawler.crawler();
@@ -383,6 +404,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("gg")) {
+                executorService = ggCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         ggCrawler.crawler();
@@ -393,6 +415,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("mjtt")) {
+                executorService = mjttCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         mjttCrawler.crawler();
@@ -403,6 +426,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("lyw")) {
+                executorService = lywCrawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         lywCrawler.crawler();
@@ -413,6 +437,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("s80")) {
+                executorService = s80Crawler.isNew() ? executorServiceNew : executorServiceOld;
                 executorService.submit(() -> {
                     try {
                         s80Crawler.crawler();

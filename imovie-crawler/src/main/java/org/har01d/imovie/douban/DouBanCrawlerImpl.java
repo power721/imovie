@@ -1,6 +1,7 @@
 package org.har01d.imovie.douban;
 
 import org.apache.http.impl.client.BasicCookieStore;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.domain.Config;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.service.MovieService;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DouBanCrawlerImpl implements DouBanCrawler {
+public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanCrawler.class);
     private static final int LIMIT = 20;

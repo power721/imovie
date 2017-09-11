@@ -42,6 +42,14 @@ public class InpCrawlerImpl extends AbstractCrawler implements InpCrawler {
         work(4);
     }
 
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig("1") == null
+            && getCrawlerConfig("2") == null
+            && getCrawlerConfig("3") == null
+            && getCrawlerConfig("4") == null;
+    }
+
     private void work(int id) throws InterruptedException {
         Config crawler = getCrawlerConfig(String.valueOf(id));
         if (!checkTime(crawler)) {

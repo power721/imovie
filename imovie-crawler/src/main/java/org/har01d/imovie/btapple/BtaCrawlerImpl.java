@@ -42,6 +42,11 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
         work(3, "tv");
     }
 
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig("movie") == null && getCrawlerConfig("tv") == null;
+    }
+
     private void work(int id, String type) throws InterruptedException {
         Config crawler = getCrawlerConfig(type);
         if (!checkTime(crawler)) {

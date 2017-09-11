@@ -10,7 +10,7 @@ import org.har01d.imovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-public abstract class AbstractCrawler {
+public abstract class AbstractCrawler implements Crawler {
 
     protected int error;
     protected long total;
@@ -85,11 +85,11 @@ public abstract class AbstractCrawler {
     }
 
     protected void saveConfig(String name, int value) {
-        service.saveConfig(getPageKey() + "_" + name, String.valueOf(value));
+        service.saveConfig(getCrawlerKey() + "_" + name, String.valueOf(value));
     }
 
     protected int getConfig(String name, int defaultValue) {
-        String key = getPageKey() + "_" + name;
+        String key = getCrawlerKey() + "_" + name;
         Config config = service.getConfig(key);
         if (config == null) {
             return defaultValue;
@@ -99,26 +99,31 @@ public abstract class AbstractCrawler {
     }
 
     protected void deleteConfig(String name) {
-        service.deleteConfig(getPageKey() + "_" + name);
+        service.deleteConfig(getCrawlerKey() + "_" + name);
     }
 
     protected Config getCrawlerConfig() {
-        return service.getConfig(getPageKey() + "_crawler");
+        return service.getConfig(getCrawlerKey() + "_crawler");
     }
 
     protected Config getCrawlerConfig(String type) {
-        return service.getConfig(getPageKey() + "_crawler_" + type);
+        return service.getConfig(getCrawlerKey() + "_crawler_" + type);
     }
 
     protected Config saveCrawlerConfig() {
-        return service.saveConfig(getPageKey() + "_crawler", new Date().toString());
+        return service.saveConfig(getCrawlerKey() + "_crawler", new Date().toString());
     }
 
     protected Config saveCrawlerConfig(String type) {
-        return service.saveConfig(getPageKey() + "_crawler_" + type, new Date().toString());
+        return service.saveConfig(getCrawlerKey() + "_crawler_" + type, new Date().toString());
     }
 
-    private String getPageKey() {
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig() == null;
+    }
+
+    private String getCrawlerKey() {
         return getClass().getSimpleName().replace("CrawlerImpl", "").toLowerCase();
     }
 

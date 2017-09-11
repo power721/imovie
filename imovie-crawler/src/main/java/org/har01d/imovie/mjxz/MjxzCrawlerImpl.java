@@ -37,6 +37,11 @@ public class MjxzCrawlerImpl extends AbstractCrawler implements MjxzCrawler {
         work("HDDY");
     }
 
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig("meiju") == null && getCrawlerConfig("HDDY") == null;
+    }
+
     private void work(String type) throws InterruptedException {
         Config crawler = getCrawlerConfig(type);
         if (!checkTime(crawler)) {

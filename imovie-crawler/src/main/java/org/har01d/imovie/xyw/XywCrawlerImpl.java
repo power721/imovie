@@ -43,6 +43,11 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
         work("tv");
     }
 
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig("movie") == null && getCrawlerConfig("tv") == null;
+    }
+
     private void work(String type) throws InterruptedException {
         Config crawler = getCrawlerConfig(type);
         if (!checkTime(crawler)) {

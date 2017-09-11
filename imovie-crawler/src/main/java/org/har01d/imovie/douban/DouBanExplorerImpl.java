@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.har01d.imovie.AbstractCrawler;
 import org.har01d.imovie.MyThreadFactory;
 import org.har01d.imovie.domain.Explorer;
 import org.har01d.imovie.domain.Movie;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Service;
 
 @Deprecated
 @Service
-public class DouBanExplorerImpl implements DouBanExplorer {
+public class DouBanExplorerImpl extends AbstractCrawler implements DouBanExplorer {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanExplorer.class);
     private static final String TYPE = "db";
