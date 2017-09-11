@@ -88,7 +88,7 @@ public class HqcParserImpl extends AbstractParser implements HqcParser {
         Elements elements = doc.select("div.message ul.attachlist li a");
         for (Element element : elements) {
             String uri = siteUrl + element.attr("href");
-            if (uri.contains("attach-download-")) {
+            if (uri.contains("attach-download-") && service.findResource(uri) == null) {
                 String title = element.text();
                 try {
                     String magnet = null;
