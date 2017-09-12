@@ -76,7 +76,7 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     String pageUrl = siteUrl + element.attr("href");
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
-                        if (source.isCompleted() || "movie".equals(type)) {
+                        if (/*source.isCompleted() || */"movie".equals(type)) {
                             logger.info("skip {}", pageUrl);
                             continue;
                         }
@@ -102,6 +102,7 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                             if (source == null) {
                                 source = new Source(pageUrl, movie.getSourceTime());
                             }
+                            source.setCompleted(movie.isCompleted());
                             source.setMovieId(movie.getId());
                             if (crawler == null || movie.getNewResources() > 0) {
                                 count++;
