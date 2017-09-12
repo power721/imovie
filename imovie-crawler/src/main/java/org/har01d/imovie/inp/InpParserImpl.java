@@ -96,7 +96,7 @@ public class InpParserImpl extends AbstractParser implements InpParser {
             String uri = element.select("input").val();
             if (uri.isEmpty()) {
                 uri = element.select("a").attr("href");
-                if (uri.startsWith("/down/")) {
+                if (uri.startsWith("/down/") && service.findResource(uri) == null) {
                     resources.addAll(findResource(siteUrl + uri, element.text()));
                 }
             } else if (isResource(uri)) {
@@ -117,7 +117,7 @@ public class InpParserImpl extends AbstractParser implements InpParser {
         elements = doc.select("div.moiveinfobox .movieall ul.movieplaylist li a");
         for (Element element : elements) {
             String uri = element.attr("href");
-            if (uri.startsWith("/down/")) {
+            if (uri.startsWith("/down/") && service.findResource(uri) == null) {
                 String title = element.text();
                 if (!title.contains(name)) {
                     title = name + "-" + title;
@@ -137,11 +137,11 @@ public class InpParserImpl extends AbstractParser implements InpParser {
             if (uri.isEmpty()) {
                 uri = doc.select("iframe#play_area").attr("src");
                 if (isResource(uri)) {
-                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, url, TextUtils.truncate(title, 120)));
                 } else if (doc.select("h3 a").text().contains("中文字幕")) {
                     uri = doc.select("div#down_verify_box li a.btn-orange").attr("href");
                     title = "中文字幕-" + title;
-                    resources.add(service.saveResource(uri, TextUtils.truncate(title, 120)));
+                    resources.add(service.saveResource(uri, url, TextUtils.truncate(title, 120)));
                 }
             } else if (isResource(uri)) {
                 String original = siteUrl + doc.select("div#down_verify_box li a.btn-orange").attr("href");
