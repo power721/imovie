@@ -77,6 +77,7 @@ public class BtaCrawlerImpl extends AbstractCrawler implements BtaCrawler {
                     Source source = service.findSource(pageUrl);
                     if (source != null) {
                         if (source.isCompleted() || "movie".equals(type)) {
+                            logger.info("skip {}", pageUrl);
                             continue;
                         }
 
