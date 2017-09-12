@@ -425,6 +425,7 @@ public class MovieServiceImpl implements MovieService {
         if (uri != null) {
             resource = resourceRepository.findFirstByUri(uri);
             if (resource != null) {
+                resource.setOriginal(original);
                 return resource;
             }
         } else {
