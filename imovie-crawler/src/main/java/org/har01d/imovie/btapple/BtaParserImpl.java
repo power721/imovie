@@ -90,7 +90,9 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");
             String title = element.text();
-            getResource(uri, title, resources);
+            if (service.findResource(uri) == null) {
+                getResource(uri, title, resources);
+            }
         }
         return resources;
     }
@@ -167,7 +169,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
                     if (original != null) {
                         resources.add(service.saveResource(href, original, title));
                     } else {
-                        resources.add(service.saveResource(href, title));
+                        resources.add(service.saveResource(href, uri, title));
                     }
                 } else if (href.startsWith("/d_")) {
                     original = baseUrl + href;
