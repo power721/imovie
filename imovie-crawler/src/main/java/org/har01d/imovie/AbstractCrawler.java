@@ -57,7 +57,7 @@ public abstract class AbstractCrawler implements Crawler {
 
         Date date = new Date(crawler.getValue());
         long time = System.currentTimeMillis();
-        return (time - date.getTime()) >= TimeUnit.HOURS.toMillis(3);
+        return (time - date.getTime()) >= TimeUnit.HOURS.toMillis(1);
     }
 
     protected int getPage(int defaultValue) {

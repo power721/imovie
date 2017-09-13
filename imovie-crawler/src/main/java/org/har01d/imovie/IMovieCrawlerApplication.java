@@ -163,6 +163,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Value("${threads:2}")
     private int threads = 2;
+    private ScheduledExecutorService executorServiceOld;
+    private ScheduledExecutorService executorServiceNew;
 
     public static void main(String[] args) {
         SpringApplication.run(IMovieCrawlerApplication.class, args);
@@ -189,74 +191,99 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             logger.info("Threads: {}", threads);
             ScheduledExecutorService executorService;
-            ScheduledExecutorService executorServiceOld = Executors.newSingleThreadScheduledExecutor();
-            ScheduledExecutorService executorServiceNew = Executors
-                .newScheduledThreadPool(threads, new MyThreadFactory("Crawler"));
+            executorServiceOld = Executors.newSingleThreadScheduledExecutor();
+            executorServiceNew = Executors.newScheduledThreadPool(threads, new MyThreadFactory("Crawler"));
 
             if (types.contains("all") || types.contains("rar")) {
-                executorService = rarBtCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        rarBtCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 5, TimeUnit.HOURS);
+                scheduleCrawler(rarBtCrawler, 5);
             }
 
             if (types.contains("all") || types.contains("rs05")) {
-                executorService = rs05Crawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        rs05Crawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 3, TimeUnit.HOURS);
+                scheduleCrawler(rs05Crawler, 5);
             }
 
             if (types.contains("all") || types.contains("bttt")) {
-                executorService = btttCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        btttCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 5, TimeUnit.HOURS);
+                scheduleCrawler(btttCrawler, 5);
             }
 
             if (types.contains("all") || types.contains("bta")) {
-                executorService = btaCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        btaCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 5, TimeUnit.HOURS);
+                scheduleCrawler(btaCrawler, 5);
             }
 
             if (types.contains("all") || types.contains("btdy")) {
-                executorService = btdyCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        btdyCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 5, TimeUnit.HOURS);
+                scheduleCrawler(btdyCrawler, 5);
             }
 
             if (types.contains("all") || types.contains("btp")) {
-                executorService = btPanCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        btPanCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 5, TimeUnit.HOURS);
+                scheduleCrawler(btPanCrawler, 5);
+            }
+
+            if (types.contains("all") || types.contains("fix")) {
+                scheduleCrawler(fixCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("zmz")) {
+                scheduleCrawler(zmzCrawler, 4);
+            }
+
+            if (/*types.contains("all") || */types.contains("btxf")) {
+                scheduleCrawler(btxfCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("lg")) {
+                scheduleCrawler(lgCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("ck")) {
+                scheduleCrawler(ckCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("mp4")) {
+                scheduleCrawler(mp4Crawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("inp")) {
+                scheduleCrawler(inpCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("mjxz")) {
+                scheduleCrawler(mjxzCrawler, 6);
+            }
+
+            if (/*types.contains("all") || */types.contains("dyb")) {
+                scheduleCrawler(dybCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("yy")) {
+                scheduleCrawler(yyCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("hqc")) {
+                scheduleCrawler(hqcCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("xyw")) {
+                scheduleCrawler(xywCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("gg")) {
+                scheduleCrawler(ggCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("mjtt")) {
+                scheduleCrawler(mjttCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("lyw")) {
+                scheduleCrawler(lywCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("s80")) {
+                scheduleCrawler(s80Crawler, 6);
+            }
+
+            if (types.contains("ckd")) {
+                ckDramaCrawler.crawler();
             }
 
             if (types.contains("all") || types.contains("imdb")) {
@@ -271,186 +298,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 });
             }
 
-            if (types.contains("all") || types.contains("fix")) {
-                executorService = fixCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        fixCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("zmz")) {
-                executorService = zmzCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        zmzCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 1, TimeUnit.HOURS);
-            }
-
-            if (/*types.contains("all") || */types.contains("btxf")) {
-                executorService = btxfCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        btxfCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("lg")) {
-                executorService = lgCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        lgCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("ck")) {
-                executorService = ckCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        ckCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("mp4")) {
-                executorService = mp4Crawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        mp4Crawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("inp")) {
-                executorService = inpCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        inpCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("mjxz")) {
-                executorService = mjxzCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        mjxzCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (/*types.contains("all") || */types.contains("dyb")) {
-                executorService = dybCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        dybCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("yy")) {
-                executorService = yyCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        yyCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("hqc")) {
-                executorService = hqcCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.scheduleWithFixedDelay(() -> {
-                    try {
-                        hqcCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                }, 0, 6, TimeUnit.HOURS);
-            }
-
-            if (types.contains("all") || types.contains("xyw")) {
-                executorService = xywCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.submit(() -> {
-                    try {
-                        xywCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
-            if (types.contains("all") || types.contains("gg")) {
-                executorService = ggCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.submit(() -> {
-                    try {
-                        ggCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
-            if (types.contains("all") || types.contains("mjtt")) {
-                executorService = mjttCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.submit(() -> {
-                    try {
-                        mjttCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
-            if (types.contains("all") || types.contains("lyw")) {
-                executorService = lywCrawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.submit(() -> {
-                    try {
-                        lywCrawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
-            if (types.contains("all") || types.contains("s80")) {
-                executorService = s80Crawler.isNew() ? executorServiceNew : executorServiceOld;
-                executorService.submit(() -> {
-                    try {
-                        s80Crawler.crawler();
-                    } catch (Exception e) {
-                        logger.error("", e);
-                    }
-                });
-            }
-
-            if (types.contains("ckd")) {
-                ckDramaCrawler.crawler();
-            }
-
             if (types.contains("douban")) {
                 douBanCrawler.crawler();
             }
@@ -459,6 +306,20 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 bttCrawler.crawler();
             }
         }
+    }
+
+    private void scheduleCrawler(Crawler crawler, int delay) {
+        if (crawler.isNew()) {
+            delay /= 2;
+        }
+        ScheduledExecutorService executorService = crawler.isNew() ? executorServiceNew : executorServiceOld;
+        executorService.scheduleWithFixedDelay(() -> {
+            try {
+                crawler.crawler();
+            } catch (Exception e) {
+                logger.error("crawler failed", e);
+            }
+        }, 0, delay, TimeUnit.HOURS);
     }
 
     private void updateImdbTop250() {
