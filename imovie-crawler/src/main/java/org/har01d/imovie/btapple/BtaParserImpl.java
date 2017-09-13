@@ -86,12 +86,20 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
             return resources;
         }
 
+        int zero = 0;
         Elements elements = doc.select(".related table td a");
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");
             String title = element.text();
             if (service.findResource(uri) == null) {
-                getResource(uri, title, resources);
+                if (getResource(uri, title, resources) == 0) {
+                    zero++;
+                } else {
+                    zero = 0;
+                }
+            }
+            if (zero > 10) {
+                break;
             }
         }
         return resources;
@@ -158,19 +166,25 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         return people;
     }
 
-    private void getResource(String uri, String title, Set<Resource> resources) {
+    private int getResource(String uri, String title, Set<Resource> resources) {
+        int count = 0;
         try {
             String html = HttpUtils.getHtml(uri);
             Document doc = Jsoup.parse(html);
             String original = null;
+            Resource resource;
             for (Element element : doc.select(".rinfo .tdown a")) {
                 String href = element.attr("href");
                 if (isResource(href)) {
                     if (original != null) {
-                        resources.add(service.saveResource(href, original, title));
+                        resource = service.saveResource(href, original, title);
                     } else {
-                        resources.add(service.saveResource(href, uri, title));
+                        resource = service.saveResource(href, uri, title);
                     }
+                    if (resource.isNew()) {
+                        count++;
+                    }
+                    resources.add(resource);
                 } else if (href.startsWith("/d_")) {
                     original = baseUrl + href;
                 }
@@ -179,6 +193,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
             logger.error("[BtApple] get resource failed: " + uri, e);
             service.publishEvent(uri, "get resource failed: " + uri);
         }
+        return count;
     }
 
 }
