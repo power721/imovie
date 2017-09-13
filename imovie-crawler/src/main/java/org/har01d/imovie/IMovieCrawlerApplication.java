@@ -226,7 +226,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(zmzCrawler, 4);
             }
 
-            if (/*types.contains("all") || */types.contains("btxf")) {
+            if (types.contains("all") || types.contains("btxf")) {
                 scheduleCrawler(btxfCrawler, 6);
             }
 
@@ -250,7 +250,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(mjxzCrawler, 6);
             }
 
-            if (/*types.contains("all") || */types.contains("dyb")) {
+            if (types.contains("all") || types.contains("dyb")) {
                 scheduleCrawler(dybCrawler, 6);
             }
 
