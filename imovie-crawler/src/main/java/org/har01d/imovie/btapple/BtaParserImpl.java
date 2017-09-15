@@ -96,7 +96,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
             } else {
                 zero++;
             }
-            if (zero > 5) {
+            if (zero > 3) {
                 break;
             }
         }
