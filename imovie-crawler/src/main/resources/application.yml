@@ -28,6 +28,7 @@ url:
   fix: http://www.fixsub.com/%E6%88%91%E4%BB%AC%E7%9A%84%E4%BD%9C%E5%93%81?set=
   lg: http://www.languang.co/movie_bt/page/
   yy: http://www.yyetss.com/list-%s-all-%d.html
+  ihd: http://www.ihd.me
   douban: https://movie.douban.com
   imdb: http://www.imdb.com/search/title?count=100&title_type=feature,tv_series&view=simple&page=
   mp4:
