@@ -75,7 +75,7 @@ export default {
         } else {
           this.creds.username = ''
           this.creds.password = ''
-          this.$router.replace(this.$route.query.redirect || '/')
+          this.$router.replace(this.$route.query.redirect || this.$route.query.return || '/')
         }
       })
       return false

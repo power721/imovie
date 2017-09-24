@@ -170,12 +170,12 @@ public class Movie {
     public void addResources(Collection<Resource> resources) {
         int size = this.resources.size();
         this.resources.addAll(resources);
-        newResources += this.resources.size() - size;
+        this.newResources += this.resources.size() - size;
     }
 
     public void addResource(Resource resource) {
         if (this.resources.add(resource)) {
-            newResources++;
+            this.newResources++;
         }
     }
 

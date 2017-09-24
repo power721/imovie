@@ -11,7 +11,7 @@
           <router-link class="item" to="/events" v-if="user.isAdmin">{{ $tc("token.event", 5) }}</router-link>
           <div class="right menu">
             <div class="item" v-if="!user.authenticated">
-              <router-link :to="'/login?redirect=' + $route.path">{{ $t("token.login") }}</router-link>
+              <router-link :to="'/login?return=' + $route.path">{{ $t("token.login") }}</router-link>
             </div>
             <div class="item" v-if="!user.authenticated">
               <router-link to="/signup">{{ $t("token.signup") }}</router-link>

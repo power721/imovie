@@ -44,7 +44,7 @@ public class IhdCrawlerImpl extends AbstractCrawler implements IhdCrawler {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("div.col-xs-6 a");
-                logger.info("[IHD-{}/{}]-{}", index + 1, genres.size(), elements.size());
+                logger.info("[IHD-{}/{}]-{} movies", index + 1, genres.size(), elements.size());
                 int count = 0;
                 int skip = 0;
                 for (Element element : elements) {
