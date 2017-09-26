@@ -45,6 +45,7 @@ public class OAuth2ServerConfiguration extends ResourceServerConfigurerAdapter {
             .antMatchers(HttpMethod.POST, "/api/users").anonymous()
             .antMatchers(HttpMethod.PUT, "/api/users").fullyAuthenticated()
             .antMatchers("/api/resources").fullyAuthenticated()
+            .antMatchers("/api/favourites/**").fullyAuthenticated()
             .antMatchers(HttpMethod.POST, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")
             .antMatchers(HttpMethod.PUT, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")
             .antMatchers(HttpMethod.DELETE, "/api/**").access("hasRole('ROLE_ADMIN') and isFullyAuthenticated()")

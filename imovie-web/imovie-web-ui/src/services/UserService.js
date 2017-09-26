@@ -15,6 +15,33 @@ export default {
     })
   },
 
+  isFavourite (id, cb) {
+    return Vue.http.get('/api/favourites/' + id)
+    .then(({data}) => {
+      if (cb) cb(true, data)
+    }, ({data}) => {
+      if (cb) cb(false, data)
+    })
+  },
+
+  addFavourite (id, cb) {
+    return Vue.http.post('/api/favourites/' + id)
+    .then(({data}) => {
+      if (cb) cb(true, data)
+    }, ({data}) => {
+      if (cb) cb(false, data)
+    })
+  },
+
+  deleteFavourite (id, cb) {
+    return Vue.http.delete('/api/favourites/' + id)
+    .then(({data}) => {
+      if (cb) cb(true, data)
+    }, ({data}) => {
+      if (cb) cb(false, data)
+    })
+  },
+
   signup (userInfo, cb) {
     Vue.http.post('/api/users', userInfo)
     .then(({data}) => {

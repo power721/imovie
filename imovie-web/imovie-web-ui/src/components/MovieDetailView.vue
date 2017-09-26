@@ -11,6 +11,7 @@
       <h2>
         <i class="ui yellow circular label" v-if="movie.db250">{{ movie.db250 }}</i>
         {{ movie.title }}
+        <a v-if="$auth.user.authenticated" @click="setFavourite(movie.id)"><i class="small star link icon" :class="{empty: !favourite, red: favourite}"></i></a>
         <a v-if="$auth.user.isAdmin" @click="refreshMovie(movie.id)"><i class="small refresh link icon"></i></a>
         <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove link icon"></i></a>
       </h2>
@@ -192,6 +193,7 @@
 </style>
 <script>
 import movieService from '@/services/MovieService'
+import userService from '@/services/UserService'
 import resourceService from '@/services/ResourceService'
 import VueSemanticModal from 'vue-semantic-modal'
 import $ from 'jquery'
@@ -210,6 +212,7 @@ export default {
         uri: null,
         title: null
       },
+      favourite: false,
       movieId: null,
       resourceIds: [],
       movie: null
@@ -217,6 +220,9 @@ export default {
   },
   created () {
     this.loadData()
+    if (this.$auth.user.authenticated) {
+      this.isFavourite(this.$route.params.id)
+    }
   },
   watch: {
     '$route': 'loadData'
@@ -278,6 +284,32 @@ export default {
           this.$router.go(this.$router.currentRoute)
         } else {
           console.log('refresh ' + id + ' failed: ')
+          console.log(data)
+        }
+      })
+    },
+    setFavourite: function (id) {
+      var func
+      if (this.favourite) {
+        func = userService.deleteFavourite
+      } else {
+        func = userService.addFavourite
+      }
+      func(id, (success, data) => {
+        if (success) {
+          this.favourite = data
+        } else {
+          console.log('set favourite ' + id + ' failed: ')
+          console.log(data)
+        }
+      })
+    },
+    isFavourite: function (id) {
+      userService.isFavourite(id, (success, data) => {
+        if (success) {
+          this.favourite = data
+        } else {
+          console.log('get favourite ' + id + ' failed: ')
           console.log(data)
         }
       })

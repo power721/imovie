@@ -1,6 +1,8 @@
 package org.har01d.imovie.web.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,8 +10,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.Role;
 import org.hibernate.validator.constraints.Email;
 
@@ -48,6 +52,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
+
+    @ManyToMany
+    private Set<Movie> favourite = new LinkedHashSet<>();
 
     public User() {
 
