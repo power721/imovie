@@ -53,6 +53,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
 
+    @JsonIgnore
     @ManyToMany
     private Set<Movie> favourite = new LinkedHashSet<>();
 

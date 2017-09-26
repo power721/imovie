@@ -1,10 +1,15 @@
 package org.har01d.imovie.web.user;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.har01d.imovie.web.domain.Movie;
 import org.har01d.imovie.web.domain.MovieRepository;
 import org.har01d.imovie.web.user.domain.User;
 import org.har01d.imovie.web.user.domain.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +28,13 @@ public class FavouriteController {
     public FavouriteController(UserRepository userRepository, MovieRepository movieRepository) {
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
+    }
+
+    @GetMapping
+    public Page<Favourite> getFavourites(Principal principal, Pageable pageable) {
+        User user = userRepository.findByUsername(principal.getName());
+        List<Favourite> favourites = user.getFavourite().stream().map(Favourite::new).collect(Collectors.toList());
+        return new PageImpl<>(favourites, pageable, favourites.size());
     }
 
     @PostMapping("{id}")

@@ -6,6 +6,7 @@
           <router-link class="item header" to="/" exact>{{ $t("token.index") }}</router-link>
           <router-link class="item" to="/movies">{{ $tc("token.movie", 5) }}</router-link>
           <router-link class="item" to="/episodes">{{ $tc("token.episodes", 5) }}</router-link>
+          <router-link class="item" to="/favourites" v-if="user.authenticated">{{ $tc("token.favourites", 5) }}</router-link>
           <router-link class="item" to="/resources" v-if="user.authenticated">{{ $tc("token.resource", 5) }}</router-link>
           <router-link class="item" to="/configs" v-if="user.isAdmin">{{ $tc("token.config", 5) }}</router-link>
           <router-link class="item" to="/events" v-if="user.isAdmin">{{ $tc("token.event", 5) }}</router-link>

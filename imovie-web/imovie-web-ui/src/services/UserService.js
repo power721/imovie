@@ -24,6 +24,15 @@ export default {
     })
   },
 
+  getFavourite (params, cb) {
+    return Vue.http.get('/api/favourites', {params: params})
+    .then(({data}) => {
+      if (cb) cb(true, data)
+    }, ({data}) => {
+      if (cb) cb(false, data)
+    })
+  },
+
   addFavourite (id, cb) {
     return Vue.http.post('/api/favourites/' + id)
     .then(({data}) => {

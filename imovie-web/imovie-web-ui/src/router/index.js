@@ -7,6 +7,7 @@ import MovieDetailView from '@/components/MovieDetailView'
 import ConfigListView from '@/components/ConfigListView'
 import EventListView from '@/components/EventListView'
 import UserView from '@/components/UserView'
+import FavouriteView from '@/components/FavouriteView'
 import LoginView from '@/components/LoginView'
 import SignupView from '@/components/SignupView'
 import NotFoundView from '@/components/NotFoundView'
@@ -71,6 +72,12 @@ export default new Router({
       path: '/users',
       name: 'UserView',
       component: UserView,
+      meta: {auth: true}
+    },
+    {
+      path: '/favourites',
+      name: 'FavouriteView',
+      component: FavouriteView,
       meta: {auth: true}
     },
     {

@@ -11,7 +11,7 @@
       <h2>
         <i class="ui yellow circular label" v-if="movie.db250">{{ movie.db250 }}</i>
         {{ movie.title }}
-        <a v-if="$auth.user.authenticated" @click="setFavourite(movie.id)"><i class="small star link icon" :class="{empty: !favourite, red: favourite}"></i></a>
+        <a v-if="$auth.user.authenticated" @click="setFavourite(movie.id)"><i class="small star link icon" :class="{empty: !favourite, red: favourite}"></i></a>&nbsp;
         <a v-if="$auth.user.isAdmin" @click="refreshMovie(movie.id)"><i class="small refresh link icon"></i></a>
         <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove link icon"></i></a>
       </h2>
