@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -73,7 +74,13 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         }
         for (Element element : elements) {
             String uri = element.select("td a").first().attr("href");
-            if (isResource(uri)) {
+            if (uri.startsWith("http://d.leyowo.com/bt/")) {
+                String title = element.text();
+                uri = getMagnetUrl(uri);
+                if (StringUtils.isNotEmpty(uri)) {
+                    resources.add(service.saveResource(uri, title));
+                }
+            } else if (isResource(uri)) {
                 String title = element.text();
                 try {
                     if (uri.startsWith("thunder://")) {
@@ -91,6 +98,18 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         }
 
         return resources;
+    }
+
+    private String getMagnetUrl(String url) {
+        try {
+            String html = HttpUtils.getHtml(url);
+            Document doc = Jsoup.parse(html);
+            return doc.select("div.tdown a").first().attr("href");
+        } catch (IOException e) {
+            service.publishEvent(url, e.getMessage());
+            logger.error("[lyw] get resource failed", e);
+        }
+        return null;
     }
 
     private void getMovie(Document doc, Movie movie) throws IOException {
