@@ -34,7 +34,12 @@ public class FavouriteController {
     public Page<Favourite> getFavourites(Principal principal, Pageable pageable) {
         User user = userRepository.findByUsername(principal.getName());
         List<Favourite> favourites = user.getFavourite().stream().map(Favourite::new).collect(Collectors.toList());
-        return new PageImpl<>(favourites, pageable, favourites.size());
+        int from = pageable.getPageNumber() * pageable.getPageSize();
+        int to = from + pageable.getPageSize();
+        if (to > favourites.size()) {
+            to = favourites.size();
+        }
+        return new PageImpl<>(favourites.subList(from, to), pageable, favourites.size());
     }
 
     @PostMapping("{id}")
