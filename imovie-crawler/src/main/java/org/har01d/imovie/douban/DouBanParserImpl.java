@@ -63,14 +63,7 @@ public class DouBanParserImpl implements DouBanParser {
             }
         }
 
-        String html;
-        try {
-            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
-            errorCount = 0;
-        } catch (HttpResponseException e) {
-            handle403(e);
-            throw e;
-        }
+        String html = getHtml(url);
 
         Document doc = Jsoup.parse(html);
         Element content = doc.select("#content").first();
@@ -150,6 +143,29 @@ public class DouBanParserImpl implements DouBanParser {
         return movie;
     }
 
+    private String getHtml(String url) throws IOException {
+        String html;
+        try {
+            html = HttpUtils.getHtml(url, "UTF-8");
+            errorCount = 0;
+            return html;
+        } catch (HttpResponseException e) {
+            handle403(e);
+            if (e.getStatusCode() != 404 || !douBanService.isLogin()) {
+                throw e;
+            }
+        }
+
+        try {
+            html = HttpUtils.getHtml(url, "UTF-8", cookieStore);
+            errorCount = 0;
+        } catch (HttpResponseException e) {
+            handle403(e);
+            throw e;
+        }
+        return html;
+    }
+
     @Override
     public synchronized List<Movie> search(String text) throws IOException {
         String url;
@@ -162,13 +178,7 @@ public class DouBanParserImpl implements DouBanParser {
             return movies;
         }
 
-        String html;
-        try {
-            html = HttpUtils.getHtml(url, null, cookieStore);
-        } catch (HttpResponseException e) {
-            handle403(e);
-            throw e;
-        }
+        String html = getHtml(url);
 
         Document doc = Jsoup.parse(html);
         Elements elements = doc.select("ul.search_results_subjects li a");

@@ -42,6 +42,12 @@ public abstract class AbstractCrawler implements Crawler {
             }
 
             long time = System.currentTimeMillis();
+
+            if ((time - source.getCreatedTime().getTime()) > TimeUnit.DAYS.toMillis(60)) {
+                log.info("skip {}", pageUrl);
+                return false;
+            }
+
             if ((time - source.getUpdatedTime().getTime()) < TimeUnit.HOURS.toMillis(24)) {
                 log.info("skip {}", pageUrl);
                 return false;
