@@ -62,6 +62,7 @@ public class LgCrawlerImpl extends AbstractCrawler implements LgCrawler {
                         if (movie != null) {
                             logger.info("[lg] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
                             count++;
                             total++;
                         } else {

@@ -125,7 +125,7 @@ public class DouBanExplorerImpl extends AbstractCrawler implements DouBanExplore
                 try {
                     movie = parser.parse(pageUrl);
                     service.save(movie);
-                    service.save(new Source(pageUrl));
+                    service.save(new Source(pageUrl, movie.getId()));
                     logger.info("{}: find movie {}", count.incrementAndGet(), movie.getTitle());
                 } catch (HttpResponseException e) {
                     service.publishEvent(pageUrl, e.getMessage());

@@ -89,6 +89,7 @@ public class DybCrawlerImpl extends AbstractCrawler implements DybCrawler {
                         if (movie != null) {
                             logger.info("[dyb-{}] {}-{}-{} find movie {}", id, page, total, count, movie.getName());
                             source = new Source(pageUrl, movie.getSourceTime(), movie.isCompleted());
+                            source.setMovieId(movie.getId());
                             count++;
                             total++;
                         } else {

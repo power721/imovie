@@ -90,7 +90,9 @@ public class XywCrawlerImpl extends AbstractCrawler implements XywCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             logger.info("[xyw] {}-{}-{} find movie {}", page, total, count, movie.getName());
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
+                            Source source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
+                            service.save(source);
                             count++;
                             total++;
                         } else {

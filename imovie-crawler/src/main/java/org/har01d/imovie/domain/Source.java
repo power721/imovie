@@ -39,6 +39,11 @@ public class Source {
         this.uri = uri;
     }
 
+    public Source(String uri, int id) {
+        this.uri = uri;
+        this.movieId = id;
+    }
+
     public Source(String uri, boolean completed) {
         this.uri = uri;
         this.completed = completed;

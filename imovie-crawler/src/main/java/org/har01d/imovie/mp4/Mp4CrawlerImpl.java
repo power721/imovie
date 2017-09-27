@@ -65,6 +65,7 @@ public class Mp4CrawlerImpl extends AbstractCrawler implements Mp4Crawler {
                         if (movie != null) {
                             logger.info("[mp4] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
                             count++;
                             total++;
                         } else {

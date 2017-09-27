@@ -71,12 +71,14 @@ public class BtxfCrawlerImpl extends AbstractCrawler implements BtxfCrawler {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
                             logger.info("[btxf] {}-{}-{} find movie {}", page, total, count, movie.getName());
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
+                            Source source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
+                            service.save(source);
                             count++;
                             total++;
-                        }/* else {
+                        } else {
                             service.save(new Source(pageUrl, false));
-                        }*/
+                        }
                         error = 0;
                     } catch (Exception e) {
                         error++;

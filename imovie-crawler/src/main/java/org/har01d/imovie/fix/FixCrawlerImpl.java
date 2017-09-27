@@ -71,6 +71,7 @@ public class FixCrawlerImpl extends AbstractCrawler implements FixCrawler {
                             logger.info("[fix] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             if (source == null) {
                                 source = new Source(pageUrl, movie.getSourceTime());
+                                source.setMovieId(movie.getId());
                             }
                             count++;
                             total++;

@@ -72,7 +72,9 @@ public class BtttCrawlerImpl extends AbstractCrawler implements BtttCrawler {
                         if (movie != null) {
                             logger.info("[bttiantang] {}-{}-{} find movie {}", page, total, count, movie.getName());
                             movie.setSourceTime(getSourceTime(element.select(".tt span").text()));
-                            service.save(new Source(pageUrl, movie.getSourceTime()));
+                            Source source = new Source(pageUrl, movie.getSourceTime());
+                            source.setMovieId(movie.getId());
+                            service.save(source);
                             count++;
                             total++;
                         } else {

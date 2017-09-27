@@ -229,7 +229,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            service.save(new Source(fixPageUrl(pageUrl), movie.getSourceTime()));
+                            Source source = new Source(fixPageUrl(pageUrl), movie.getSourceTime());
+                            source.setMovieId(movie.getId());
+                            service.save(source);
                             if (movie.getSize() == 0) {
                                 zero++;
                             } else {

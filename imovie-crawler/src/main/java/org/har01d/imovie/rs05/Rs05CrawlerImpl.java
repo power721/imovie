@@ -82,7 +82,8 @@ public class Rs05CrawlerImpl extends AbstractCrawler implements Rs05Crawler {
                     try {
                         movie = parser.parse(pageUrl, movie);
                         if (movie != null) {
-                            service.save(new Source(pageUrl, getSourceTime(element)));
+                            Source source = new Source(pageUrl, getSourceTime(element));
+                            service.save(source);
                             count++;
                             total++;
                         } else {
