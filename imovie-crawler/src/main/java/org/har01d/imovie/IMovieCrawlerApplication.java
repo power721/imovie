@@ -40,6 +40,7 @@ import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.s80.S80Crawler;
 import org.har01d.imovie.service.DouBanService;
 import org.har01d.imovie.service.MovieService;
+import org.har01d.imovie.sfz.SfzCrawler;
 import org.har01d.imovie.util.HttpUtils;
 import org.har01d.imovie.xyw.XywCrawler;
 import org.har01d.imovie.yy.YyCrawler;
@@ -143,6 +144,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private IhdCrawler ihdCrawler;
+
+    @Autowired
+    private SfzCrawler sfzCrawler;
 
     @Autowired
     private DouBanCrawler douBanCrawler;
@@ -288,6 +292,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             if (types.contains("all") || types.contains("ihd")) {
                 scheduleCrawler(ihdCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("sfz")) {
+                scheduleCrawler(sfzCrawler, 6);
             }
 
             if (types.contains("ckd")) {
