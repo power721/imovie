@@ -45,7 +45,7 @@ public class SfzCrawlerImpl extends AbstractCrawler implements SfzCrawler {
                 String html = HttpUtils.getHtml(url);
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.select("ul.movie-list li");
-                logger.info("{}-{}: get {} movies", page, total, elements.size());
+                logger.info("[SFZ]{}-{}: get {} movies", page, total, elements.size());
                 if (elements.isEmpty()) {
                     if (crawler != null) {
                         break;

@@ -48,7 +48,7 @@ public class SfzParserImpl extends AbstractParser implements SfzParser {
             findResource(doc);
         }
 
-        logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
+        logger.warn("[SFZ]Cannot find movie for {}: {}", movie.getName(), url);
         service.publishEvent(url, "Cannot find movie for " + movie.getName());
         return null;
     }
