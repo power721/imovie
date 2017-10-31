@@ -26,6 +26,7 @@ public abstract class AbstractCrawler implements Crawler {
     protected void handleError() throws InterruptedException {
         if (error >= 5) {
             if (error >= 10) {
+		error = 0;
                 throw new IllegalStateException("Too many errors.");
             }
             log.warn("sleep {} seconds", error * 30L);

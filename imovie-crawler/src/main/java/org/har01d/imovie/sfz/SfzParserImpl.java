@@ -28,7 +28,10 @@ public class SfzParserImpl extends AbstractParser implements SfzParser {
     public Movie parse(String url, Movie movie) throws IOException {
         String dbUrl = movie.getDbUrl();
         Movie m = null;
-        if (StringUtils.isNotEmpty(dbUrl)) {
+        if (movie.getId() != null) {
+            m = service.findById(movie.getId());
+        }
+        if (m == null && StringUtils.isNotEmpty(dbUrl)) {
             m = getByDb(dbUrl);
         }
         if (m == null) {
@@ -41,8 +44,8 @@ public class SfzParserImpl extends AbstractParser implements SfzParser {
         if (m != null) {
             m.addResources(findResource(doc));
 
-            logger
-                .info("[SFZ]get {}/{} resources for movie {}", m.getNewResources(), m.getRes().size(), movie.getName());
+            logger.info("[SFZ]get {}/{} resources for movie {} {}", m.getNewResources(), m.getRes().size(),
+                movie.getName(), url);
             return service.save(m);
         } else {
             findResource(doc);
