@@ -5,4 +5,5 @@ import org.json.simple.JSONObject;
 
 public interface DouBanCrawler extends Crawler {
     void updateDbScore(JSONObject item);
+    void updateDbRate(JSONObject item);
 }

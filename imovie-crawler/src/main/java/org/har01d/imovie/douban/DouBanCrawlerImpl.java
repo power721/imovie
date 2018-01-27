@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(DouBanCrawler.class);
-    private static final int LIMIT = 20;
+    private static final int LIMIT = 50;
 
     @Value("${url.douban}")
     private String baseUrl;
@@ -44,7 +44,8 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
     @Override
     public void crawler() throws InterruptedException {
 //        work0();
-        work1();
+//        work1();
+        work2();
     }
 
     private void work0() {
@@ -103,45 +104,83 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
         for (int i = getTypeIndex(); i < types.length; ++i) {
             saveTypeIndex(i);
             int type = types[i];
-            work(type);
+            int start = getTypeStart();
+            JSONParser jsonParser = new JSONParser();
+            while (true) {
+                String url =
+                    "https://movie.douban.com/j/chart/top_list?type=" + type + "&interval_id=100%3A90&action=&start="
+                        + start + "&limit=50";
+                try {
+                    String json = HttpUtils.getJson(url, cookieStore);
+                    JSONArray items = (JSONArray) jsonParser.parse(json);
+                    if (items == null || items.isEmpty()) {
+                        break;
+                    }
+                    logger.info("({}/{}){}-{} get {}-{} movies", i + 1, types.length, type, start, total, items.size());
+
+                    int count = 0;
+                    for (Object item : items) {
+                        updateDbScore((JSONObject) item);
+                        count++;
+                    }
+
+                    if (count == 0) {
+                        break;
+                    }
+                } catch (Exception e) {
+                    service.publishEvent(url, e.getMessage());
+                    logger.error("Get HTML failed: " + url, e);
+                }
+                start += 50;
+                saveTypeStart(start);
+            }
+            saveTypeStart(0);
         }
         saveTypeIndex(0);
 
         logger.info("===== update {} movies =====", total);
     }
 
-    private void work(int type) {
-        int start = getTypeStart();
+    private void work2() {
         JSONParser jsonParser = new JSONParser();
-        while (true) {
-            String url =
-                "https://movie.douban.com/j/chart/top_list?type=" + type + "&interval_id=100%3A90&action=&start="
-                    + start + "&limit=50";
-            try {
-                String json = HttpUtils.getJson(url, cookieStore);
-                JSONArray items = (JSONArray) jsonParser.parse(json);
-                if (items == null || items.isEmpty()) {
-                    break;
-                }
-                logger.info("{}-{} get {}-{} movies", type, start, total, items.size());
+        for (int i = getTagIndex(); i < tags.length; ++i) {
+            saveTagIndex(i);
+            String tag = tags[i];
+            int start = getStart();
+            while (true) {
+                String url = String.format("%s/j/search_subjects?type=tv&tag=%s&sort=time&page_limit=%d&page_start=%d",
+                    baseUrl, tag, LIMIT, start);
+                try {
+                    String json = HttpUtils.getJson(url);
+                    JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+                    JSONArray items = (JSONArray) jsonObject.get("subjects");
 
-                int count = 0;
-                for (Object item : items) {
-                    updateDbScore((JSONObject) item);
-                    count++;
-                }
+                    if (items == null || items.isEmpty()) {
+                        break;
+                    }
+                    logger.info("({}/{}){}:{} get {} movies", i, tags.length - 1, tag, start, items.size());
 
-                if (count == 0) {
-                    break;
+                    int count = 0;
+                    for (Object item : items) {
+                        updateDbRate((JSONObject) item);
+                        count++;
+                    }
+
+                    if (count == 0) {
+                        break;
+                    }
+                } catch (Exception e) {
+                    service.publishEvent(url, e.getMessage());
+                    logger.error("Get HTML failed: " + url, e);
                 }
-            } catch (Exception e) {
-                service.publishEvent(url, e.getMessage());
-                logger.error("Get HTML failed: " + url, e);
+                start += LIMIT;
+                saveStart(start);
             }
-            start += 50;
-            saveTypeStart(start);
+            saveStart(0);
         }
-        saveTypeStart(0);
+        saveTagIndex(0);
+
+        logger.info("===== get {} movies =====", total);
     }
 
     @Transactional
@@ -156,6 +195,25 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
                 return;
             }
             movie.setVotes(vote.intValue());
+            movie.setDbScore(score);
+            service.updateMovie(movie);
+            total++;
+        } catch (Exception e) {
+            service.publishEvent(pageUrl, e.getMessage());
+            logger.error("Parse page failed: " + pageUrl, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateDbRate(JSONObject item) {
+        String pageUrl = (String) item.get("url");
+        String score = (String) item.get("rate");
+        try {
+            Movie movie = service.findByDbUrl(pageUrl);
+            if (movie == null) {
+                return;
+            }
             movie.setDbScore(score);
             service.updateMovie(movie);
             total++;
