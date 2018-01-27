@@ -465,6 +465,12 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional
+    public Movie updateMovie(Movie movie) {
+        return movieRepository.save(movie);
+    }
+
+    @Override
     public Resource findResource(String uri) {
         Resource resource = resourceRepository.findFirstByUri(uri);
         if (resource != null) {

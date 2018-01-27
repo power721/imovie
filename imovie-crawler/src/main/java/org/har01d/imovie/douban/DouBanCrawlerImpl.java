@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler {
@@ -37,9 +38,16 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
         "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记", "情色", "暴力", "家庭",
         "音乐", "童年", "浪漫", "女性", "黑帮", "史诗", "童话", "西部", "电视剧", "人性", "奇幻"};
 
+    private static final int[] types = new int[]{11, 24, 5, 13, 17, 25, 10, 19, 20, 16, 15, 12, 29, 30, 3, 22, 14, 7,
+        28, 6, 26, 1,};
+
     @Override
     public void crawler() throws InterruptedException {
-        int total = 0;
+//        work0();
+        work1();
+    }
+
+    private void work0() {
         JSONParser jsonParser = new JSONParser();
         for (int i = getTagIndex(); i < tags.length; ++i) {
             saveTagIndex(i);
@@ -90,6 +98,73 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
         logger.info("===== get {} movies =====", total);
     }
 
+    private void work1() {
+        total = 0;
+        for (int i = getTypeIndex(); i < types.length; ++i) {
+            saveTypeIndex(i);
+            int type = types[i];
+            work(type);
+        }
+        saveTypeIndex(0);
+
+        logger.info("===== update {} movies =====", total);
+    }
+
+    private void work(int type) {
+        int start = getTypeStart();
+        JSONParser jsonParser = new JSONParser();
+        while (true) {
+            String url =
+                "https://movie.douban.com/j/chart/top_list?type=" + type + "&interval_id=100%3A90&action=&start="
+                    + start + "&limit=50";
+            try {
+                String json = HttpUtils.getJson(url, cookieStore);
+                JSONArray items = (JSONArray) jsonParser.parse(json);
+                if (items == null || items.isEmpty()) {
+                    break;
+                }
+                logger.info("{}-{} get {}-{} movies", type, start, total, items.size());
+
+                int count = 0;
+                for (Object item : items) {
+                    updateDbScore((JSONObject) item);
+                    count++;
+                }
+
+                if (count == 0) {
+                    break;
+                }
+            } catch (Exception e) {
+                service.publishEvent(url, e.getMessage());
+                logger.error("Get HTML failed: " + url, e);
+            }
+            start += 50;
+            saveTypeStart(start);
+        }
+        saveTypeStart(0);
+    }
+
+    @Transactional
+    @Override
+    public void updateDbScore(JSONObject item) {
+        String pageUrl = (String) item.get("url");
+        String score = (String) item.get("score");
+        Long vote = (Long) item.get("vote_count");
+        try {
+            Movie movie = service.findByDbUrl(pageUrl);
+            if (movie == null) {
+                return;
+            }
+            movie.setVotes(vote.intValue());
+            movie.setDbScore(score);
+            service.updateMovie(movie);
+            total++;
+        } catch (Exception e) {
+            service.publishEvent(pageUrl, e.getMessage());
+            logger.error("Parse page failed: " + pageUrl, e);
+        }
+    }
+
     private int getTagIndex() {
         String key = "db_tag_index";
         Config config = service.getConfig(key);
@@ -121,4 +196,37 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
     private void saveStart(int start) {
         service.saveConfig("db_tag_start", String.valueOf(start));
     }
+
+    private int getTypeIndex() {
+        String key = "db_type_index";
+        Config config = service.getConfig(key);
+        if (config == null) {
+            return 0;
+        }
+
+        int index = Integer.valueOf(config.getValue());
+        if (index >= tags.length) {
+            index = 0;
+        }
+        return index;
+    }
+
+    private void saveTypeIndex(int index) {
+        service.saveConfig("db_type_index", String.valueOf(index));
+    }
+
+    private int getTypeStart() {
+        String key = "db_type_start";
+        Config config = service.getConfig(key);
+        if (config == null) {
+            return 0;
+        }
+
+        return Integer.valueOf(config.getValue());
+    }
+
+    private void saveTypeStart(int start) {
+        service.saveConfig("db_type_start", String.valueOf(start));
+    }
+
 }
