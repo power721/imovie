@@ -38,7 +38,7 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
         "犯罪", "惊悚", "文艺", "搞笑", "纪录片", "励志", "恐怖", "战争", "黑色幽默", "魔幻", "传记", "情色", "暴力", "家庭",
         "音乐", "童年", "浪漫", "女性", "黑帮", "史诗", "童话", "西部", "电视剧", "人性", "奇幻"};
 
-    private static final String[] tyTags = new String[]{"热门", "美剧", "英剧", "韩剧", "日剧", "国产剧", "港剧", "日本动画", "综艺", "纪录片"};
+    private static final String[] tvTags = new String[]{"热门", "美剧", "英剧", "韩剧", "日剧", "国产剧", "港剧", "日本动画", "综艺", "纪录片"};
     private static final int[] types = new int[]{11, 24, 5, 13, 17, 25, 10, 19, 20, 16, 15, 12, 29, 30, 3, 22, 14, 7,
         28, 6, 26, 1,};
 
@@ -128,6 +128,7 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
                     if (count == 0) {
                         break;
                     }
+                    Thread.sleep(1000L);
                 } catch (Exception e) {
                     service.publishEvent(url, e.getMessage());
                     logger.error("Get HTML failed: " + url, e);
@@ -144,9 +145,9 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
 
     private void work2() {
         JSONParser jsonParser = new JSONParser();
-        for (int i = getTvTagIndex(); i < tyTags.length; ++i) {
+        for (int i = getTvTagIndex(); i < tvTags.length; ++i) {
             saveTvTagIndex(i);
-            String tag = tyTags[i];
+            String tag = tvTags[i];
             int start = getTvStart();
             while (true) {
                 String url = String.format("%s/j/search_subjects?type=tv&tag=%s&sort=time&page_limit=%d&page_start=%d",
@@ -159,7 +160,7 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
                     if (items == null || items.isEmpty()) {
                         break;
                     }
-                    logger.info("({}/{}){}:{} get {} movies", i + 1, tyTags.length - 1, tag, start, items.size());
+                    logger.info("({}/{}){}-{} get {}-{} movies", i + 1, tvTags.length, tag, start, total, items.size());
 
                     int count = 0;
                     for (Object item : items) {
@@ -170,6 +171,7 @@ public class DouBanCrawlerImpl extends AbstractCrawler implements DouBanCrawler 
                     if (count == 0) {
                         break;
                     }
+                    Thread.sleep(1000L);
                 } catch (Exception e) {
                     service.publishEvent(url, e.getMessage());
                     logger.error("Get HTML failed: " + url, e);
