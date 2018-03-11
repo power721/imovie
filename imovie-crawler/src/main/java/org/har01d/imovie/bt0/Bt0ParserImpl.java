@@ -1,12 +1,10 @@
-package org.har01d.imovie.pn;
+package org.har01d.imovie.bt0;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.har01d.imovie.AbstractParser;
 import org.har01d.imovie.domain.Movie;
 import org.har01d.imovie.domain.Resource;
@@ -23,9 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PnParserImpl extends AbstractParser implements PnParser {
+public class Bt0ParserImpl extends AbstractParser implements Bt0Parser {
 
-    private static final Logger logger = LoggerFactory.getLogger(PnParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(Bt0Parser.class);
+    private static final Pattern pattern = Pattern.compile("var did *=(\\d+)");
 
     @Override
     @Transactional
@@ -59,15 +58,15 @@ public class PnParserImpl extends AbstractParser implements PnParser {
         if (m != null) {
             Set<Resource> resources = m.getRes();
             int size = resources.size();
-            m.addResources(findResource(getId(url), movie.getName()));
+            m.addResources(findResource(doc, movie.getName()));
 
-            logger.info("[pn] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
+            logger.info("[bt0] get {}/{} resources for movie {}", (resources.size() - size), resources.size(),
                 m.getName());
             m.setSourceTime(movie.getSourceTime());
             service.save(m);
             return m;
         } else {
-            findResource(getId(url), movie.getName());
+            findResource(doc, movie.getName());
         }
 
         logger.warn("Cannot find movie for {}: {}", movie.getName(), url);
@@ -75,40 +74,23 @@ public class PnParserImpl extends AbstractParser implements PnParser {
         return null;
     }
 
-    private String getId(String url) {
-        int index1 = url.lastIndexOf('/');
-        int index2 = url.lastIndexOf('.');
-        return url.substring(index1+1, index2);
-    }
-
-    private Set<Resource> findResource(String id, String name) throws IOException {
+    private Set<Resource> findResource(Document doc, String name) throws IOException {
         Set<Resource> resources = new HashSet<>();
         if (skipResource) {
             return resources;
         }
-        String url = "http://www.pniao.com/Mdown/ajax_downUrls/" + id;
-        List<Header> headers = new ArrayList<>();
-        headers.add(new BasicHeader("X-Requested-With", "XMLHttpRequest"));
-        String html = HttpUtils.getHtml(url, headers);
-        Document doc = Jsoup.parse(html);
 
-        Elements elements = doc.select("div.dUrlFlag li.dUrl_link a");
+        Elements elements = doc.select("div.tabs-container ul.tabs-content div.picture-container div.container");
         for (Element element : elements) {
-            String uri = element.attr("href");
+            String uri = element.select("a div.tag-magnet").first().parent().attr("href");
             if (isResource(uri)) {
-                String title = element.text();
-                if (uri.contains("pan.baidu.com") && !title.contains("密码") && !title.contains("提取码")) {
-                    String temp = element.parent().parent().text();
-                    if (temp.contains("密码") || title.contains("提取码")) {
-                        title = temp;
-                    }
-                }
+                String title = element.select("a.torrent-title").text();
                 try {
                     resources
                         .add(service.saveResource(UrlUtils.convertUrl(uri), uri, TextUtils.truncate(title, 120)));
                 } catch (Exception e) {
                     service.publishEvent(name, e.getMessage());
-                    logger.error("[pn] get resource failed", e);
+                    logger.error("[bt0] get resource failed", e);
                 }
             }
         }
@@ -116,9 +98,15 @@ public class PnParserImpl extends AbstractParser implements PnParser {
     }
 
     private void getMovie(Document doc, Movie movie) {
-        String html = doc.select("div.dbScore").html();
-        if (movie.getDbUrl() == null) {
-            movie.setDbUrl(UrlUtils.getDbUrl(html));
+        String html = doc.select("script").html();
+        int index = html.indexOf("var did =");
+        if (index > -1) {
+            int index1 = html.indexOf(';', index);
+            html = html.substring(index, index1);
+        }
+        Matcher m = pattern.matcher(html);
+        if (m.matches()) {
+            movie.setDbUrl("https://movie.douban.com/subject/" + m.group(1));
         }
     }
 

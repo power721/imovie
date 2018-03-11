@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.har01d.imovie.bt0.Bt0Crawler;
 import org.har01d.imovie.btapple.BtaCrawler;
 import org.har01d.imovie.btdy.BtdyCrawler;
 import org.har01d.imovie.btpan.BtPanCrawler;
@@ -151,6 +152,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
     @Autowired
     private PnCrawler pnCrawler;
+
+    @Autowired
+    private Bt0Crawler bt0Crawler;
 
     @Autowired
     private DouBanCrawler douBanCrawler;
@@ -304,6 +308,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             if (types.contains("all") || types.contains("pn")) {
                 scheduleCrawler(pnCrawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("bt0")) {
+                scheduleCrawler(bt0Crawler, 6);
             }
 
             if (types.contains("ckd")) {
