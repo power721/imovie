@@ -48,7 +48,7 @@ public class PnCrawlerImpl extends AbstractCrawler implements PnCrawler {
                     if (elements.size() == 0) {
                         break;
                     }
-                    logger.info("[pn] {}: {} movies", page, elements.size());
+                    logger.info("[pn-{}] {}: {} movies", i, page, elements.size());
 
                     int count = 0;
                     for (Element element : elements) {
@@ -64,7 +64,7 @@ public class PnCrawlerImpl extends AbstractCrawler implements PnCrawler {
                         try {
                             movie = parser.parse(pageUrl, movie);
                             if (movie != null) {
-                                logger.info("[pn] {}-{}-{} find movie {}", page, total, count, movie.getName());
+                                logger.info("[pn-{}] {}-{}-{} find movie {}", i, page, total, count, movie.getName());
                                 source = new Source(pageUrl, movie.getSourceTime());
                                 source.setMovieId(movie.getId());
                                 count++;
