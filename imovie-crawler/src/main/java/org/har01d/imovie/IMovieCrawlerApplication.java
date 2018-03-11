@@ -347,6 +347,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
         ScheduledExecutorService executorService = crawler.isNew() ? executorServiceNew : executorServiceOld;
         executorService.scheduleWithFixedDelay(() -> {
             try {
+                logger.info(crawler.getClass().getSimpleName() + " start");
                 crawler.crawler();
             } catch (Exception e) {
                 logger.error("crawler failed", e);
