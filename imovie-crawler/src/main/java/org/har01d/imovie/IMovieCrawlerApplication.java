@@ -282,10 +282,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(xywCrawler, 6);
             }
 
-            if (types.contains("all") || types.contains("gg")) {
-                scheduleCrawler(ggCrawler, 6);
-            }
-
             if (types.contains("all") || types.contains("mjtt")) {
                 scheduleCrawler(mjttCrawler, 6);
             }
@@ -312,6 +308,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
 
             if (types.contains("all") || types.contains("bt0")) {
                 scheduleCrawler(bt0Crawler, 6);
+            }
+
+            if (types.contains("all") || types.contains("gg")) {
+                scheduleCrawler(ggCrawler, 6);
             }
 
             if (types.contains("ckd")) {
