@@ -100,6 +100,14 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         return resources;
     }
 
+    protected boolean isResource(String uri) {
+        return uri != null && (uri.startsWith("magnet:?")
+            || uri.startsWith("ed2k://")
+            || uri.startsWith("thunder://")
+            || uri.contains("pan.baidu.com/")
+        );
+    }
+
     private String getMagnetUrl(String url) {
         try {
             String html = HttpUtils.getHtml(url);
