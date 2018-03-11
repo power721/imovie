@@ -101,15 +101,24 @@ public final class HttpUtils {
         return getHtml(url, encoding, cookieStore, null);
     }
 
+    public static String getHtml(String url, List<Header> headers) throws IOException {
+        return getHtml(url, "UTF-8", cookieStore, null, headers);
+    }
+
     public static String getHtml(String url, HttpHost httpHost) throws IOException {
         return getHtml(url, "UTF-8", cookieStore, httpHost);
     }
 
     public static String getHtml(String url, String encoding, BasicCookieStore cookieStore) throws IOException {
-        return getHtml(url, "UTF-8", cookieStore, null);
+        return getHtml(url, encoding, cookieStore, null);
     }
 
     public static String getHtml(String url, String encoding, BasicCookieStore cookieStore, HttpHost httpHost)
+        throws IOException {
+        return getHtml(url, encoding, cookieStore, httpHost, null);
+    }
+
+    public static String getHtml(String url, String encoding, BasicCookieStore cookieStore, HttpHost httpHost, List<Header> headers)
         throws IOException {
         RequestConfig.Builder builder = RequestConfig.custom()
             .setConnectTimeout(CONNECTION_TIMEOUT_MS)
@@ -129,10 +138,15 @@ public final class HttpUtils {
             throw new IOException(e);
         }
 
+        List<Header> h = HEADERS;
+        if (headers != null) {
+            h = new ArrayList<>(HEADERS);
+            h.addAll(headers);
+        }
         CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
             .setDefaultCookieStore(cookieStore)
-            .setDefaultHeaders(HEADERS)
+            .setDefaultHeaders(h)
             .setSSLContext(context)
             .setUserAgent(getAgent())
             .build();

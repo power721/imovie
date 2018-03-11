@@ -35,6 +35,7 @@ import org.har01d.imovie.lyw.LywCrawler;
 import org.har01d.imovie.mjtt.MjttCrawler;
 import org.har01d.imovie.mjxz.MjxzCrawler;
 import org.har01d.imovie.mp4.Mp4Crawler;
+import org.har01d.imovie.pn.PnCrawler;
 import org.har01d.imovie.rarbt.RarBtCrawler;
 import org.har01d.imovie.rs05.Rs05Crawler;
 import org.har01d.imovie.s80.S80Crawler;
@@ -149,6 +150,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     private SfzCrawler sfzCrawler;
 
     @Autowired
+    private PnCrawler pnCrawler;
+
+    @Autowired
     private DouBanCrawler douBanCrawler;
 
     @Autowired
@@ -169,8 +173,8 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
     @Value("${offset:0}")
     private int offset = 0;
 
-    @Value("${threads:2}")
-    private int threads = 2;
+    @Value("${threads:1}")
+    private int threads = 1;
     private ScheduledExecutorService executorServiceOld;
     private ScheduledExecutorService executorServiceNew;
 
@@ -246,9 +250,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(ckCrawler, 6);
             }
 
-            if (types.contains("all") || types.contains("mp4")) {
-                scheduleCrawler(mp4Crawler, 6);
-            }
+//            if (types.contains("all") || types.contains("mp4")) {
+//                scheduleCrawler(mp4Crawler, 6);
+//            }
 
             if (types.contains("all") || types.contains("inp")) {
                 scheduleCrawler(inpCrawler, 6);
@@ -298,6 +302,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(sfzCrawler, 6);
             }
 
+            if (types.contains("all") || types.contains("pn")) {
+                scheduleCrawler(pnCrawler, 6);
+            }
+
             if (types.contains("ckd")) {
                 ckDramaCrawler.crawler();
             }
@@ -319,7 +327,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             }
 
             if (types.contains("all") || types.contains("btt")) {
-                bttCrawler.crawler();
+                scheduleCrawler(bttCrawler, 6);
             }
         }
     }

@@ -62,7 +62,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     private ScheduledExecutorService executorService;
 
     public BttCrawlerImpl() {
-        executorService = Executors.newScheduledThreadPool(3, new MyThreadFactory("BttCrawler"));
+        executorService = Executors.newScheduledThreadPool(1, new MyThreadFactory("BttCrawler"));
     }
 
     @Override
