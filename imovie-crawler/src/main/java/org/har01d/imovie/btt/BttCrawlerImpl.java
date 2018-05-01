@@ -278,7 +278,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     }
 
     private String fixPageUrl(String url) {
-        return url.replace(".pw/", ".co/").replace(".net/", ".co/").replace(".top/", ".co/");
+        return url.replace(".pw/", ".me/").replace(".net/", ".me/").replace(".top/", ".me/").replace(".co/", ".me/");
     }
 
     private Integer getNumber(String text) {
