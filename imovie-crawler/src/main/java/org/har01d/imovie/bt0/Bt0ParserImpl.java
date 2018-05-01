@@ -106,7 +106,7 @@ public class Bt0ParserImpl extends AbstractParser implements Bt0Parser {
         }
         Matcher m = pattern.matcher(html);
         if (m.matches()) {
-            movie.setDbUrl("https://movie.douban.com/subject/" + m.group(1));
+            movie.setDbUrl("https://movie.douban.com/subject/" + m.group(1) + "/");
         }
     }
 
