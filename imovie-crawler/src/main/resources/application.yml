@@ -41,8 +41,8 @@ url:
     site: http://www.inapian.com
     page: http://www.inapian.com/list/%d-%d.html
   hqc:
-    site: http://www.gscq.me/
-    page: http://www.gscq.me/index-%d.htm
+    site: https://www.gscq.me/
+    page: https://www.gscq.me/index-%d.htm
   gg:
     site: http://www.gagays.xyz
     page: http://www.gagays.xyz/movie/asearch
