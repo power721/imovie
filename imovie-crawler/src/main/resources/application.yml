@@ -65,9 +65,9 @@ url:
     movie: http://www.ck180.net/sift/?page=
     drama: http://www.ck180.net/drama/page/
   btt:
-    site: http://btbtt.co/
-    page: http://btbtt.co/forum-index-fid-%d-page-%d.htm
-    thread: http://btbtt.co/thread-index-fid-%d-tid-%d.htm
+    site: http://btbtt.me/
+    page: http://btbtt.me/forum-index-fid-%d-page-%d.htm
+    thread: http://btbtt.me/thread-index-fid-%d-tid-%d.htm
   rarbt:
     site: http://www.rarbt.com
     page: http://www.rarbt.com/index.php/index/index/p/%d.html
