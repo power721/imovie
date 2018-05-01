@@ -59,8 +59,8 @@ url:
     site: http://www.leyowo.com
     page: http://www.leyowo.com/Class_%d/Default_%d.aspx
   s80:
-    site: http://www.80s.tw
-    page: http://www.80s.tw/%s%d
+    site: https://www.80s.tw
+    page: https://www.80s.tw/%s%d
   ck:
     movie: http://www.ck180.net/sift/?page=
     drama: http://www.ck180.net/drama/page/
