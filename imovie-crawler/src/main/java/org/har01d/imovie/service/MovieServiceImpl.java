@@ -82,6 +82,7 @@ public class MovieServiceImpl implements MovieService {
     @Transactional
     public void fixDuplicateMovies() {
         Set<String> dbUrls = movieRepository.findDuplicated();
+        logger.info("find {} duplicated movies", dbUrls.size());
         for (String dbUrl : dbUrls) {
             List<Movie> movies = movieRepository.findByDbUrl(dbUrl);
             List<Movie> deleted = new ArrayList<>();
