@@ -127,6 +127,9 @@
           <button class="ui right floated primary button" id="move" @click="transferResources" v-if="$auth.user.isAdmin">
             Move
           </button>
+          <button class="ui right floated primary button" id="addResource" @click="addResource" v-if="$auth.user.isAdmin">
+            Add
+          </button>
         </div>
 
         <div class="ui modal" id="transfer">
@@ -147,20 +150,13 @@
             <div class="ui ok green button">OK</div>
           </div>
         </div>
-      </template>
-      <div class="ui hidden divider"></div>
 
-      <template v-if="$auth.user.isAdmin">
-        <div class="ui">
-          <button class="ui right floated primary button" id="add" @click="showAddModal=true">
-            Add
-          </button>
-        </div>
-        <vue-semantic-modal v-model="showAddModal" show-close-icon="true">
-          <template slot="header">
+        <div class="ui modal" id="resource">
+          <i class="close icon"></i>
+          <div class="header">
             Add Resource
-          </template>
-          <template slot="content">
+          </div>
+          <div class="content">
             <div class="ui form">
               <div class="required field">
                 <label>Title</label>
@@ -171,12 +167,12 @@
                 <input type="url" v-model="resourceDTO.uri" placeholder="URI" required>
               </div>
             </div>
-          </template>
-          <template slot="actions">
-            <div class="ui cancel button" @click="showAddModal=false">Cancel</div>
-            <div class="ui ok green button" @click="addResource">Add</div>
-          </template>
-        </vue-semantic-modal>
+          </div>
+          <div class="actions">
+            <div class="ui cancel button">Cancel</div>
+            <div class="ui ok green button">OK</div>
+          </div>
+        </div>
       </template>
       <div class="ui hidden divider"></div>
 
@@ -251,32 +247,37 @@ export default {
       return 'download'
     },
     fixBtbtt: function (uri) {
-       if (uri.startsWith('http://btbtt.co/')) {
+      if (uri.startsWith('http://btbtt.co/')) {
         return uri.replace('http://btbtt.co/', 'http://btbtt.me/')
-       }
+      }
       return uri
     },
     isNotEmpty (array) {
       return typeof array !== 'undefined' && array !== null && array.length !== null && array.length > 0
     },
     deleteResource: function (id) {
-      resourceService.deleteResource(id, (success, data) => {
-        if (success) {
-          $('div[key=' + id + ']').remove()
-        } else {
-          console.log('delete ' + id + ' failed: ' + data)
-        }
-      })
+      this.$dialog.confirm('Are you sure?').then(() => {
+        resourceService.deleteResource(id, (success, data) => {
+          if (success) {
+            this.movie.res = this.movie.res.filter(e => e.id !== id)
+          } else {
+            console.log('delete ' + id + ' failed: ')
+            console.log(data)
+          }
+        })
+      }).catch(() => {})
     },
     deleteMovie: function (id) {
-      movieService.deleteMovie(id, (success, data) => {
-        if (success) {
-          this.$router.push('/')
-        } else {
-          console.log('delete ' + id + ' failed: ')
-          console.log(data)
-        }
-      })
+      this.$dialog.confirm('Are you sure?').then(() => {
+        movieService.deleteMovie(id, (success, data) => {
+          if (success) {
+            this.$router.push('/')
+          } else {
+            console.log('delete ' + id + ' failed: ')
+            console.log(data)
+          }
+        })
+      }).catch(() => {})
     },
     refreshMovie: function (id) {
       movieService.refreshMovie(id, (success, data) => {
@@ -332,10 +333,16 @@ export default {
       return false
     },
     transferResources: function () {
+      if (!this.resourceIds) {
+        return false
+      }
       var that = this
       $('#transfer').modal({
         onApprove: function () {
           const movieId = $('input[name=movieId]').val()
+          if (!movieId) {
+            return false
+          }
           const data = {resourceIds: that.resourceIds, movieId: movieId}
           resourceService.transferResources(data, (success, data) => {
             if (success) {
@@ -345,7 +352,7 @@ export default {
                 that.$router.go(that.$router.currentRoute)
               }
             } else {
-              console.log('transfer resources failed: ')
+              console.log('Transfer resources failed: ')
               console.log(data)
             }
           })
@@ -353,15 +360,22 @@ export default {
       }).modal('show')
     },
     addResource: function () {
-      this.showAddModal = false
-      movieService.addResource(this.movie.id, this.resourceDTO, (success, data) => {
-        if (success) {
-          this.$router.go(this.$router.currentRoute)
-        } else {
-          console.log('Add resources failed: ')
-          console.log(data)
+      var that = this
+      $('#resource').modal({
+        onApprove: function () {
+          if (!(that.resourceDTO.title && that.resourceDTO.url)) {
+            return false
+          }
+          movieService.addResource(that.movie.id, that.resourceDTO, (success, data) => {
+            if (success) {
+              that.$router.go(that.$router.currentRoute)
+            } else {
+              console.log('Add resources failed: ')
+              console.log(data)
+            }
+          })
         }
-      })
+      }).modal('show')
     }
   }
 }

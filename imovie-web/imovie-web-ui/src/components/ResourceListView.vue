@@ -193,7 +193,8 @@ export default {
           if (success) {
             this.resources = this.resources.filter(e => e.id !== id)
           } else {
-            console.log('delete ' + id + ' failed: ' + data)
+            console.log('delete ' + id + ' failed: ')
+            console.log(data)
           }
         })
       }).catch(() => {})
