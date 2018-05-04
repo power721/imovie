@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 import VueI18n from 'vue-i18n'
 import NProgress from 'nprogress'
+import VuejsDialog from 'vuejs-dialog'
 import App from './App'
 import auth from './services/Auth'
 import storageService from './services/StorageService'
@@ -21,6 +22,7 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VueResource)
 Vue.use(VueI18n)
+Vue.use(VuejsDialog)
 
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

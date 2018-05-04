@@ -17,7 +17,6 @@
       <module name="imovie-common" target="1.8" />
       <module name="imovie-crawler" target="1.8" />
       <module name="imovie-web" target="1.8" />
-      <module name="movie-crawler" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -543,7 +543,6 @@ import {PaginationEvent} from './pagination/PaginationEvent'
 import Datepicker from './datepicker/Datepicker'
 import VueSemanticModal from 'vue-semantic-modal'
 import Multiselect from 'vue-multiselect'
-import $ from 'jquery'
 
 export default {
   name: 'MovieListView',
@@ -744,13 +743,15 @@ export default {
       return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
     },
     deleteMovie: function (id) {
-      movieService.deleteMovie(id, (success, data) => {
-        if (success) {
-          $('div[data-id=' + id + ']').remove()
-        } else {
-          console.log('delete ' + id + ' failed: ' + data)
-        }
-      })
+      this.$dialog.confirm('Are you sure?').then(() => {
+        movieService.deleteMovie(id, (success, data) => {
+          if (success) {
+            this.movies = this.movies.filter(e => e.id !== id)
+          } else {
+            console.log('delete ' + id + ' failed: ' + data)
+          }
+        })
+      }).catch(() => {})
     },
     findDirectorsByName: function (name) {
       this.options.isLoading = true

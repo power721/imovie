@@ -67,7 +67,6 @@ import storageService from '@/services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
-import $ from 'jquery'
 
 export default {
   name: 'ResourceListView',
@@ -189,13 +188,15 @@ export default {
       }
     },
     deleteResource: function (id) {
-      resourceService.deleteResource(id, (success, data) => {
-        if (success) {
-          $('div[data-id=' + id + ']').remove()
-        } else {
-          console.log('delete ' + id + ' failed: ' + data)
-        }
-      })
+      this.$dialog.confirm('Are you sure?').then(() => {
+        resourceService.deleteResource(id, (success, data) => {
+          if (success) {
+            this.resources = this.resources.filter(e => e.id !== id)
+          } else {
+            console.log('delete ' + id + ' failed: ' + data)
+          }
+        })
+      }).catch(() => {})
     }
   }
 }
