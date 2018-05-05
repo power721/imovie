@@ -81,7 +81,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
 
     @Override
     public boolean isNew() {
-        return getCrawlerConfig("951") == null && getCrawlerConfig("1183") == null && getCrawlerConfig("950") == null && getCrawlerConfig("981") == null && getCrawlerConfig("1193") == null;
+        return getCrawlerConfig("951") == null && getCrawlerConfig("1183") == null
+            && getCrawlerConfig("950") == null
+            && getCrawlerConfig("981") == null && getCrawlerConfig("1193") == null;
     }
 
     private void work(int fid) {
@@ -117,6 +119,9 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String text = element.text();
+                    if (text.contains("【站务】") || text.contains("[公告]") || text.contains("版规")) {
+                        continue;
+                    }
                     Movie movie = new Movie();
                     String pageUrl = siteUrl + element.select("a.subject_link").attr("href");
                     if (service.findSource(fixPageUrl(pageUrl)) != null) {
