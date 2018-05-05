@@ -169,7 +169,7 @@
           <div class="extra">
             <div>
               <span class="date" :data-tooltip="getTooltip(movie.updatedTime)" data-position="top left">{{ movie.createdTime | date }}</span>
-              <span class="category">{{ movie.categories | join }}</span>
+              <span class="category"><a v-for="c in movie.categories" @click="filterByCategory(c.name)">{{ c.name }}&nbsp;</a></span>
               <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB: {{ movie.imdbScore || '0.0' }}</a>
               <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}: {{ movie.dbScore || '0.0' }}</a>
             </div>
@@ -947,6 +947,13 @@ export default {
           this.search.resources = 'all'
         }
       }
+      this.advanceSearch()
+    },
+    filterByCategory: function (category) {
+      if (this.search.category.val.indexOf(category) > -1) {
+        this.search.category.val = []
+      }
+      this.search.category.val.push(category)
       this.advanceSearch()
     },
     clearAdvanceSearch: function () {
