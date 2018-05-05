@@ -192,8 +192,9 @@ export default {
         resourceService.deleteResource(id, (success, data) => {
           if (success) {
             this.resources = this.resources.filter(e => e.id !== id)
+            this.$toasted.success('The resource ' + id + ' is deleted.')
           } else {
-            console.log('delete ' + id + ' failed: ')
+            this.$toasted.error('Delete resource ' + id + ' failed.')
             console.log(data)
           }
         })

@@ -199,8 +199,9 @@ export default {
         userService.deleteFavourite(id, (success, data) => {
           if (success) {
             this.movies = this.movies.filter(e => e.id !== id)
+            this.$toasted.success('The favourite ' + id + ' is deleted.')
           } else {
-            console.log('delete ' + id + ' failed: ')
+            this.$toasted.error('Delete favourite ' + id + ' failed.')
             console.log(data)
           }
         })

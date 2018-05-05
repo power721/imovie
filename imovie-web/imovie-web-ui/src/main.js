@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 import VueI18n from 'vue-i18n'
 import NProgress from 'nprogress'
+import Toasted from 'vue-toasted'
 import VuejsDialog from 'vuejs-dialog'
 import App from './App'
 import auth from './services/Auth'
@@ -23,6 +24,18 @@ Vue.use(VueRouter)
 Vue.use(VueResource)
 Vue.use(VueI18n)
 Vue.use(VuejsDialog)
+
+let options = {
+  duration: 5000,
+  theme: 'outline',
+  action: {
+    text: 'x',
+    onClick: (e, toastObject) => {
+      toastObject.goAway(0)
+    }
+  }
+}
+Vue.use(Toasted, options)
 
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

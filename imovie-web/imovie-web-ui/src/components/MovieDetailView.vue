@@ -205,8 +205,8 @@ export default {
       error: '',
       showAddModal: false,
       resourceDTO: {
-        uri: null,
-        title: null
+        uri: '',
+        title: ''
       },
       favourite: false,
       movieId: null,
@@ -260,8 +260,9 @@ export default {
         resourceService.deleteResource(id, (success, data) => {
           if (success) {
             this.movie.res = this.movie.res.filter(e => e.id !== id)
+            this.$toasted.success('The resource ' + id + ' is deleted.')
           } else {
-            console.log('delete ' + id + ' failed: ')
+            this.$toasted.error('Delete resource ' + id + ' failed.')
             console.log(data)
           }
         })
@@ -273,7 +274,7 @@ export default {
           if (success) {
             this.$router.push('/')
           } else {
-            console.log('delete ' + id + ' failed: ')
+            this.$toasted.error('Delete movie ' + id + ' failed.')
             console.log(data)
           }
         })
@@ -284,7 +285,7 @@ export default {
         if (success) {
           this.$router.go(this.$router.currentRoute)
         } else {
-          console.log('refresh ' + id + ' failed: ')
+          this.$toasted.error('refresh movie ' + id + ' failed.')
           console.log(data)
         }
       })
@@ -300,7 +301,7 @@ export default {
         if (success) {
           this.favourite = data
         } else {
-          console.log('set favourite ' + id + ' failed: ')
+          this.$toasted.error('Change favourite ' + id + ' failed.')
           console.log(data)
         }
       })
@@ -310,7 +311,7 @@ export default {
         if (success) {
           this.favourite = data
         } else {
-          console.log('get favourite ' + id + ' failed: ')
+          this.$toasted.error('get favourite ' + id + ' failed.')
           console.log(data)
         }
       })
@@ -352,7 +353,7 @@ export default {
                 that.$router.go(that.$router.currentRoute)
               }
             } else {
-              console.log('Transfer resources failed: ')
+              this.$toasted.error('Transfer resources failed.')
               console.log(data)
             }
           })
@@ -362,15 +363,17 @@ export default {
     addResource: function () {
       let that = this
       $('#resource').modal({
-        onApprove: function () {
-          if (!(that.resourceDTO.title && that.resourceDTO.url)) {
+        onApprove: () => {
+          if (!(that.resourceDTO.title && that.resourceDTO.uri)) {
             return false
           }
           movieService.addResource(that.movie.id, that.resourceDTO, (success, data) => {
+            that.resourceDTO.title = ''
+            that.resourceDTO.uri = ''
             if (success) {
-              that.$router.go(that.$router.currentRoute)
+              that.movie.res.push(data)
             } else {
-              console.log('Add resources failed: ')
+              that.$toasted.error('Add resources failed.')
               console.log(data)
             }
           })

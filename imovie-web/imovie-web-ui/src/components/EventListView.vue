@@ -134,8 +134,9 @@ export default {
       eventService.deleteEvent(id, (success, data) => {
         if (success) {
           this.events = this.events.filter(e => e.id !== id)
+          this.$toasted.success('The event ' + id + ' is deleted.')
         } else {
-          console.log('delete ' + id + ' failed: ')
+          this.$toasted.error('Delete event ' + id + ' failed.')
           console.log(data)
         }
       })
