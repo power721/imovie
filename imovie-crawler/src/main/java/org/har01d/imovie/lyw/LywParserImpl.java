@@ -118,7 +118,7 @@ public class LywParserImpl extends AbstractParser implements LywParser {
         try {
             String html = HttpUtils.getHtml(url);
             Document doc = Jsoup.parse(html);
-            return doc.select("div.tdown a").first().attr("href");
+            return doc.select("div.tdown a .ico_magnet").first().parent().attr("href");
         } catch (IOException e) {
             service.publishEvent(url, e.getMessage());
             logger.error("[lyw] get resource failed", e);
