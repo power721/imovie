@@ -114,7 +114,7 @@
           <div class="extra">
             <div>
               <span class="date" :data-tooltip="getTooltip(movie.updatedTime)" data-position="top left">{{ movie.createdTime | date }}</span>
-              <span class="category">{{ movie.categories | join }}</span>
+              <span class="category"><a v-for="c in movie.categories" @click="filterByCategory(c.name)">{{ c.name }}&nbsp;</a></span>
               <a :href="movie.imdbUrl" target="_blank" class="imdb">IMDB: {{ movie.imdbScore || '0.0' }}</a>
               <a :href="movie.dbUrl" target="_blank" class="dou">{{ $t("token.db") }}: {{ movie.dbScore || '0.0' }}</a>
             </div>
@@ -239,6 +239,10 @@ export default {
       storageService.setItem('episodeCategory', this.query.category)
       this.loadData()
     },
+    filterByCategory: function (category) {
+      this.query.category = category
+      this.filter()
+    },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size
       pagination.from = pagination.number * pagination.size + 1
@@ -286,7 +290,11 @@ export default {
       }
     },
     getTooltip: function (updatedTime) {
-      return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
+      if (updatedTime) {
+        return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
+      } else {
+        return 'No update'
+      }
     },
     deleteMovie: function (id) {
       this.$dialog.confirm('Are you sure?').then(() => {

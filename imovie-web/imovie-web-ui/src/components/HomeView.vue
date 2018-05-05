@@ -356,7 +356,7 @@
               </select>
             </div>
             <div class="field">
-              <datepicker v-model="search.updated.val" :language="$i18n.locale" name="updatedTime" format="yyyy-MM-dd" clear-button="true"></datepicker>
+              <datepicker v-model="search.updated.val" :language="$i18n.locale" name="updatedTime" format="yyyy-MM-dd" :clear-button="true"></datepicker>
             </div>
           </div>
 
@@ -688,6 +688,10 @@ export default {
       storageService.setItem('category', this.query.category)
       this.loadData()
     },
+    filterByCategory: function (category) {
+      this.query.category = category
+      this.filter()
+    },
     sortMovies: function () {
       this.currentPage = 0
       storageService.setItem('sort', this.sort)
@@ -740,7 +744,11 @@ export default {
       }
     },
     getTooltip: function (updatedTime) {
-      return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
+      if (updatedTime) {
+        return this.$t('token.updatedTime') + ': ' + updatedTime.split('T')[0]
+      } else {
+        return 'No update'
+      }
     },
     deleteMovie: function (id) {
       this.$dialog.confirm('Are you sure?').then(() => {
@@ -947,13 +955,6 @@ export default {
           this.search.resources = 'all'
         }
       }
-      this.advanceSearch()
-    },
-    filterByCategory: function (category) {
-      if (this.search.category.val.indexOf(category) > -1) {
-        this.search.category.val = []
-      }
-      this.search.category.val.push(category)
       this.advanceSearch()
     },
     clearAdvanceSearch: function () {
