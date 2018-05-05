@@ -83,10 +83,11 @@ public class MovieServiceImpl implements MovieService {
     public void fixDuplicateMovies() {
         Set<String> dbUrls = movieRepository.findDuplicated();
         logger.info("find {} duplicated movies", dbUrls.size());
+        int i = 1;
         for (String dbUrl : dbUrls) {
             List<Movie> movies = movieRepository.findByDbUrl(dbUrl);
             List<Movie> deleted = new ArrayList<>();
-            logger.info("handle {}", dbUrl);
+            logger.info("handle {}/{}: {}", i++, dbUrls.size(), dbUrl);
             Movie m = null;
             for (Movie movie : movies) {
                 if (m == null) {
