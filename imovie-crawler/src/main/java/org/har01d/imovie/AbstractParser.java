@@ -42,6 +42,9 @@ public abstract class AbstractParser implements Parser {
     protected Movie getByDb(String dbUrl) {
         Movie m = null;
         if (dbUrl != null) {
+            if (!dbUrl.endsWith("/")) {
+                dbUrl += "/";
+            }
             m = service.findByDbUrl(dbUrl);
             if (m == null) {
                 try {
