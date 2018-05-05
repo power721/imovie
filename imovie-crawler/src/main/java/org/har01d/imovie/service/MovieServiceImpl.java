@@ -437,7 +437,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         title = TextUtils.truncate(title, 200);
-        if (uri == null) {
+        if (uri == null || uri.equals(original)) {
             resource = new Resource(original, title);
         } else {
             resource = new Resource(uri, original, title);
