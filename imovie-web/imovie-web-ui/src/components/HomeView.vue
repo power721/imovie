@@ -782,10 +782,10 @@ export default {
       })
     },
     advanceSearch: function () {
-      var q = []
+      let q = []
       if (this.search.text.val) {
-        var op = '=='
-        var val = ''
+        let op = '=='
+        let val = ''
         if (this.search.text.op1 === 'not') {
           op = '!='
         }
@@ -809,7 +809,7 @@ export default {
       }
 
       if (this.search.updated.val) {
-        var date = new Date(this.search.updated.val).toISOString().substring(0, 10)
+        let date = new Date(this.search.updated.val).toISOString().substring(0, 10)
         q.push('updatedTime' + this.search.updated.op + date)
       }
 
@@ -913,7 +913,7 @@ export default {
     reSearch: function (type, value) {
       console.log(type + ': ' + value)
       if (Array.isArray(type)) {
-        var index = type.indexOf(value)
+        let index = type.indexOf(value)
         if (index > -1) {
           type.splice(index, 1)
         }

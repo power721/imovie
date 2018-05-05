@@ -49,7 +49,6 @@ import eventService from '@/services/EventService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
-import $ from 'jquery'
 
 export default {
   name: 'EventListView',
@@ -134,9 +133,10 @@ export default {
     deleteEvent: function (id) {
       eventService.deleteEvent(id, (success, data) => {
         if (success) {
-          $('tr[data-id=' + id + ']').remove()
+          this.events = this.events.filter(e => e.id !== id)
         } else {
-          console.log('delete ' + id + ' failed: ' + data)
+          console.log('delete ' + id + ' failed: ')
+          console.log(data)
         }
       })
     }

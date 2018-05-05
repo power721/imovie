@@ -290,7 +290,7 @@ export default {
       })
     },
     setFavourite: function (id) {
-      var func
+      let func
       if (this.favourite) {
         func = userService.deleteFavourite
       } else {
@@ -325,7 +325,7 @@ export default {
       if (!movie._embedded.categories) {
         return false
       }
-      for (var entry of movie._embedded.categories) {
+      for (let entry of movie._embedded.categories) {
         if (entry.name === '情色' || entry.name === '同性') {
           return true
         }
@@ -336,7 +336,7 @@ export default {
       if (!this.resourceIds) {
         return false
       }
-      var that = this
+      let that = this
       $('#transfer').modal({
         onApprove: function () {
           const movieId = $('input[name=movieId]').val()
@@ -360,7 +360,7 @@ export default {
       }).modal('show')
     },
     addResource: function () {
-      var that = this
+      let that = this
       $('#resource').modal({
         onApprove: function () {
           if (!(that.resourceDTO.title && that.resourceDTO.url)) {

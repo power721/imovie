@@ -136,9 +136,9 @@ export default {
       return 'download'
     },
     fixBtbtt: function (uri) {
-      // if (uri.startsWith('http://btbtt.co/')) {
-      //   return uri.replace('http://btbtt.co/', 'http://btbtt.pw/')
-      // }
+      if (uri.startsWith('http://btbtt.co/')) {
+        return uri.replace('http://btbtt.co/', 'http://btbtt.me/')
+      }
       return uri
     },
     getPaginationData: function (pagination) {

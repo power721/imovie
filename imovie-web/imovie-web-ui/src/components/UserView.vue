@@ -136,9 +136,9 @@ export default {
         if (success) {
           this.$router.push('/')
         } else {
-          var errors = {}
+          let errors = {}
           data.errors.forEach(entry => {
-            var text = entry.error || entry.defaultMessage
+            let text = entry.error || entry.defaultMessage
             if (entry.field && !text.includes(entry.field)) {
               text = entry.field + ' ' + text
             }

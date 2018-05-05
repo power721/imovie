@@ -191,7 +191,7 @@ export default {
       }
     },
     getTooltip: function (updatedTime) {
-      var d = new Date(updatedTime)
+      let d = new Date(updatedTime)
       return this.$t('token.updatedTime') + ': ' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
     },
     deleteFavourite: function (id) {

@@ -116,7 +116,7 @@ export default {
         if (success) {
           this.$router.push('/login')
         } else {
-          var errors = {}
+          let errors = {}
           data.errors.forEach(entry => {
             errors[entry.field] = entry.error || entry.defaultMessage
             $('#signup-form').form('add prompt', entry.field)
