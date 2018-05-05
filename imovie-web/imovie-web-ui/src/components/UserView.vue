@@ -1,5 +1,5 @@
 <template>
-  <div class="ui middle aligned center aligned grid" id="editUser">
+  <div class="ui middle center aligned grid" id="editUser">
     <div class="column">
       <h2 class="ui teal image header">
         <div class="content">
