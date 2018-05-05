@@ -161,6 +161,7 @@
           <div class="ui label" v-if="$auth.user.authenticated && movie.size">
             {{ movie.size }}
           </div>
+          <a v-if="$auth.user.isAdmin" @click="refreshMovie(movie.id)"><i class="small refresh link icon"></i></a>
           <a v-if="$auth.user.isAdmin" @click="deleteMovie(movie.id)"><i class="small red remove icon"></i></a>
           <div class="description">
             <p>{{ movie.synopsis || $t("message.noIntro") | truncate }}</p>
@@ -754,6 +755,16 @@ export default {
           }
         })
       }).catch(() => {})
+    },
+    refreshMovie: function (id) {
+      movieService.refreshMovie(id, (success, data) => {
+        if (success) {
+          this.$toasted.success('The movie ' + id + ' is refreshed.')
+        } else {
+          this.$toasted.error('Refresh movie ' + id + ' failed.')
+          console.log(data)
+        }
+      })
     },
     findDirectorsByName: function (name) {
       this.options.isLoading = true

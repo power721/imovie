@@ -285,7 +285,7 @@ export default {
         if (success) {
           this.$router.go(this.$router.currentRoute)
         } else {
-          this.$toasted.error('refresh movie ' + id + ' failed.')
+          this.$toasted.error('Refresh movie ' + id + ' failed.')
           console.log(data)
         }
       })
