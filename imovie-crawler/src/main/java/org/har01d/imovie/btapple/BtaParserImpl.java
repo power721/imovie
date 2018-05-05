@@ -91,7 +91,7 @@ public class BtaParserImpl extends AbstractParser implements BtaParser {
         for (Element element : elements) {
             String uri = baseUrl + element.attr("href");
             String title = element.text();
-            if (service.findResource(uri) == null && getResource(uri, title, resources) > 0) {
+            if (service.findResourceByOriginal(uri.replace("r_", "d_")) == null && getResource(uri, title, resources) > 0) {
                 zero = 0;
             } else {
                 zero++;
