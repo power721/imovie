@@ -210,6 +210,10 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
             executorServiceOld = Executors.newSingleThreadScheduledExecutor();
             executorServiceNew = Executors.newScheduledThreadPool(threads, new MyThreadFactory("Crawler"));
 
+            if (types.contains("all") || types.contains("btt")) {
+                scheduleCrawler(bttCrawler, 6);
+            }
+
             if (types.contains("all") || types.contains("rar")) {
                 scheduleCrawler(rarBtCrawler, 5);
             }
@@ -230,7 +234,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(btdyCrawler, 5);
             }
 
-            if (types.contains("all") || types.contains("btp")) {
+            if (/*types.contains("all") || */types.contains("btp")) {
                 scheduleCrawler(btPanCrawler, 5);
             }
 
@@ -254,9 +258,9 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(ckCrawler, 6);
             }
 
-//            if (types.contains("all") || types.contains("mp4")) {
-//                scheduleCrawler(mp4Crawler, 6);
-//            }
+            if (/*types.contains("all") || */types.contains("mp4")) {
+                scheduleCrawler(mp4Crawler, 6);
+            }
 
             if (types.contains("all") || types.contains("inp")) {
                 scheduleCrawler(inpCrawler, 6);
@@ -266,7 +270,7 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 scheduleCrawler(mjxzCrawler, 6);
             }
 
-            if (types.contains("all") || types.contains("dyb")) {
+            if (/*types.contains("all") || */types.contains("dyb")) {
                 scheduleCrawler(dybCrawler, 6);
             }
 
@@ -334,9 +338,6 @@ public class IMovieCrawlerApplication implements CommandLineRunner {
                 douBanCrawler.crawler();
             }
 
-            if (types.contains("all") || types.contains("btt")) {
-                scheduleCrawler(bttCrawler, 6);
-            }
         }
     }
 
