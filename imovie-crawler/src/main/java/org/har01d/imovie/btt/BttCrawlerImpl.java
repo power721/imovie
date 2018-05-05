@@ -79,6 +79,11 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
         }
     }
 
+    @Override
+    public boolean isNew() {
+        return getCrawlerConfig("951") == null && getCrawlerConfig("1183") == null && getCrawlerConfig("950") == null && getCrawlerConfig("981") == null && getCrawlerConfig("1193") == null;
+    }
+
     private void work(int fid) {
         Config crawler = getCrawlerConfig(String.valueOf(fid));
         if (!checkTime(crawler)) {
