@@ -191,14 +191,10 @@
 import movieService from '@/services/MovieService'
 import userService from '@/services/UserService'
 import resourceService from '@/services/ResourceService'
-import VueSemanticModal from 'vue-semantic-modal'
 import $ from 'jquery'
 
 export default {
   name: 'MovieDetail',
-  components: {
-    VueSemanticModal
-  },
   data () {
     return {
       loading: false,

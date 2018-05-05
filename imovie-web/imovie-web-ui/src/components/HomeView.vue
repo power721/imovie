@@ -74,7 +74,7 @@
           <label>{{ $t("token.search") }}</label>
           <div class="ui icon input">
             <input type="search" v-model="query.text" @change="filter" placeholder="Search...">
-            <i class="circular search link icon" :class="{inverted: query.search}" @click="showModal=true"></i>
+            <i class="circular search link icon" :class="{inverted: query.search}" @click="showModal"></i>
           </div>
         </div>
 
@@ -185,11 +185,12 @@
 
     <div class="ui hidden divider"></div>
 
-    <vue-semantic-modal v-model="showModal" show-close-icon="true">
-      <template slot="header">
+    <div class="ui modal" id="search">
+      <i class="close icon"></i>
+      <div class="header">
         {{ $t("message.AdvanceSearch") }}
-      </template>
-      <template slot="content">
+      </div>
+      <div class="content">
         <div class="ui form">
           <div class="inline fields">
             <div class="field">
@@ -489,12 +490,12 @@
           </div>
 
         </div>
-      </template>
-      <template slot="actions">
-        <div class="ui cancel button" @click="showModal=false">Cancel</div>
+      </div>
+      <div class="actions">
+        <div class="ui cancel button">Cancel</div>
         <div class="ui ok green button" @click="advanceSearch">Search</div>
-      </template>
-    </vue-semantic-modal>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -536,21 +537,20 @@
   }
 </style>
 <script>
-import movieService from '@/services/MovieService'
-import storageService from '@/services/StorageService'
+import movieService from '../services/MovieService'
+import storageService from '../services/StorageService'
 import VuePagination from './pagination/VuePagination'
 import VuePaginationInfo from './pagination/VuePaginationInfo'
 import {PaginationEvent} from './pagination/PaginationEvent'
 import Datepicker from './datepicker/Datepicker'
-import VueSemanticModal from 'vue-semantic-modal'
 import Multiselect from 'vue-multiselect'
+import $ from 'jquery'
 
 export default {
   name: 'MovieListView',
   components: {
     VuePagination,
     VuePaginationInfo,
-    VueSemanticModal,
     Datepicker,
     Multiselect
   },
@@ -558,7 +558,6 @@ export default {
     return {
       loading: false,
       error: '',
-      showModal: false,
       sort: this.$route.query.sort || storageService.getItem('sort') || '',
       search: {
         text: {
@@ -793,6 +792,9 @@ export default {
         }
       })
     },
+    showModal: function () {
+      $('#search').modal('show')
+    },
     advanceSearch: function () {
       let q = []
       if (this.search.text.val) {
@@ -919,7 +921,6 @@ export default {
       this.currentPage = 0
       this.query.search = q.join(';')
       this.query.text = ''
-      this.showModal = false
       this.loadData()
     },
     reSearch: function (type, value) {
