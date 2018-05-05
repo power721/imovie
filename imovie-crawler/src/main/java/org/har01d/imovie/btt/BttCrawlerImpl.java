@@ -59,36 +59,27 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
     @Autowired
     private BttParser parser;
 
-    private ScheduledExecutorService executorService;
-
-    public BttCrawlerImpl() {
-        executorService = Executors.newScheduledThreadPool(1, new MyThreadFactory("BttCrawler"));
-    }
-
     @Override
     public void crawler() throws InterruptedException {
         if (types.contains("all") || types.contains("951")) {
-            executorService.scheduleWithFixedDelay(() -> work(951), 0, 60, TimeUnit.MINUTES);
+            work(951);
         }
 
         if (types.contains("all") || types.contains("1183")) {
-            executorService.scheduleWithFixedDelay(() -> work(1183), 0, 360, TimeUnit.MINUTES);
+            work(1183);
         }
 
         if (types.contains("all") || types.contains("950")) {
-            executorService.scheduleWithFixedDelay(() -> work(950), 0, 60, TimeUnit.MINUTES);
+            work(950);
         }
 
         if (types.contains("all") || types.contains("981")) {
-            executorService.scheduleWithFixedDelay(() -> work(981), 0, 180, TimeUnit.MINUTES);
+            work(981);
         }
 
         if (types.contains("all") || types.contains("1193")) {
-            executorService.scheduleWithFixedDelay(() -> work(1193), 0, 360, TimeUnit.MINUTES);
+            work(1193);
         }
-
-        executorService.awaitTermination(5L, TimeUnit.DAYS);
-        executorService.shutdown();
     }
 
     private void work(int fid) {
