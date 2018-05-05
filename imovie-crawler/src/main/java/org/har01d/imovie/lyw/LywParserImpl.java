@@ -76,12 +76,18 @@ public class LywParserImpl extends AbstractParser implements LywParser {
             String uri = element.select("td a").first().attr("href");
             if (uri.startsWith("http://d.leyowo.com/bt/")) {
                 String title = element.text();
+                if (!validate(title)) {
+                    continue;
+                }
                 uri = getMagnetUrl(uri);
                 if (StringUtils.isNotEmpty(uri)) {
                     resources.add(service.saveResource(uri, title));
                 }
             } else if (isResource(uri)) {
                 String title = element.text();
+                if (!validate(title)) {
+                    continue;
+                }
                 try {
                     if (uri.startsWith("thunder://")) {
                         resources.add(service.saveResource(UrlUtils.convertUrl(uri), uri, title));

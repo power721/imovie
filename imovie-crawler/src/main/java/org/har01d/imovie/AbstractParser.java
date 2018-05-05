@@ -291,4 +291,20 @@ public abstract class AbstractParser implements Parser {
         sb.append(text.replaceAll(" ", " "));
     }
 
+    protected boolean validate(String title) {
+        if (title.toUpperCase().contains("SIS001") || title.contains("第一会所") || title.contains("第一會所")) {
+            return false;
+        }
+
+        if (title.contains("SIRO-") || title.contains("ABP-")) {
+            return false;
+        }
+
+        if (title.toUpperCase().contains("X-ART") || title.toUpperCase().contains("HEYZO")) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
