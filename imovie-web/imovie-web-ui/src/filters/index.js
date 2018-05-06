@@ -26,10 +26,10 @@ export function truncate (text, length, clamp) {
 }
 
 export function date (value) {
-  var dateObj = new Date(value)
-  var month = dateObj.getUTCMonth() + 1
-  var day = dateObj.getUTCDate()
-  var year = dateObj.getUTCFullYear()
+  let dateObj = new Date(value)
+  let month = dateObj.getUTCMonth() + 1
+  let day = dateObj.getUTCDate()
+  let year = dateObj.getUTCFullYear()
   return year + '-' + month + '-' + day
 }
 

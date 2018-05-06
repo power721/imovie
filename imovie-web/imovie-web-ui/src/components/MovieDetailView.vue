@@ -112,7 +112,7 @@
             <i class="middle aligned icon" :class="getIconClass(resource.uri)"></i>
             <div class="content">
               <div class="header">
-                <a :href="resource.uri" target="_blank" :title="'点击下载资源 ' + resource.id">{{ resource.title || resource.uri }}</a>
+                <a :href="fixBtbtt(resource.uri)" target="_blank" :title="'点击下载资源 ' + resource.id">{{ resource.title || resource.uri }}</a>
                 <a v-if="resource.original" :href="fixBtbtt(resource.original)" title="资源原始地址" target="_blank">
                   &nbsp;&nbsp;<i class="small external icon"></i>
                 </a>
