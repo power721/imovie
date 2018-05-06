@@ -40,7 +40,8 @@
 </template>
 
 <script>
-import auth from '@/services/Auth'
+import auth from '../services/Auth'
+import storage from '../services/StorageService'
 import $ from 'jquery'
 
 export default {
@@ -48,7 +49,7 @@ export default {
   data () {
     return {
       creds: {
-        username: '',
+        username: storage.getItem('username'),
         password: '',
         grant_type: 'password',
         scope: 'read'
@@ -71,8 +72,10 @@ export default {
         if (!success) {
           $('#login-form').form('add errors', {password: 'Invalid Credentials'})
           $('#login-form').form('add prompt', 'password')
+          storage.removeItem('username')
           this.creds.password = ''
         } else {
+          storage.setItem('username', this.creds.username)
           this.creds.username = ''
           this.creds.password = ''
           this.$router.replace(this.$route.query.redirect || this.$route.query.return || '/')
