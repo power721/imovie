@@ -140,6 +140,7 @@ public abstract class AbstractParser implements Parser {
             } else if ("国粤".equals(name)) {
                 name = "粤语";
             }
+            name = name.replace("中英字幕", "");
             Language l = new Language(name);
             languages.add(l);
         }
@@ -164,7 +165,7 @@ public abstract class AbstractParser implements Parser {
             if (name.isEmpty()) {
                 continue;
             }
-            if ("大陆".equals(name)) {
+            if ("大陆".equals(name) || "中国".equals(name)) {
                 name = "中国大陆";
             }
             Region r = new Region(name);

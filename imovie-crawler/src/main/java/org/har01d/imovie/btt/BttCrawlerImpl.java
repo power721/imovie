@@ -119,7 +119,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
                 int count = 0;
                 for (Element element : elements) {
                     String text = element.text();
-                    if (text.contains("【站务】") || text.contains("[公告]") || text.contains("版规")) {
+                    if (text.contains("【站务】") || text.contains("[公告]") || text.contains("版规") || text.contains("每日更新 汇总")) {
                         continue;
                     }
                     Movie movie = new Movie();
@@ -299,7 +299,7 @@ public class BttCrawlerImpl extends AbstractCrawler implements BttCrawler {
             temp = fixName(title, index, temp);
             index = title.indexOf(temp) + temp.length();
             temp = fixName(title, index, temp);
-            title = temp.replace("未删减版", "").replace("鼠绘汉化", "");
+            title = temp.replace("未分级版", "").replace("未删减版", "").replace("鼠绘汉化", "").trim();
         }
 
         String[] comps = title.split("/");
