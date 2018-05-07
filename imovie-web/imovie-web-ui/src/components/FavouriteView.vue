@@ -56,7 +56,7 @@
   </div>
 </template>
 <style>
-  #movies>.movie-list>.movie>.content>.description {
+  #favourites>.movie-list>.movie>.content>.description {
     min-height: 150px;
     text-align: left;
   }

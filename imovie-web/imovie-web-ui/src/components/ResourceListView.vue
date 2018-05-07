@@ -17,6 +17,9 @@
             <i class="circular search link icon" @click="search"></i>
           </div>
         </div>
+
+        <a @click="refresh()"><i class="refresh link icon"></i></a>
+
       </div>
     </div>
 
@@ -120,6 +123,9 @@ export default {
           this.fireEvent('loaded')
         }
       })
+    },
+    refresh: function () {
+      this.loadData()
     },
     search: function () {
       this.currentPage = 0

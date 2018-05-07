@@ -10,6 +10,9 @@
 
     <div class="vue-pagination ui basic segment grid">
       <vue-pagination-info></vue-pagination-info>
+      <div class="ui input">
+        <input type="number" min="1" class="page" v-model="page" @change="loadData">
+      </div>
       <vue-pagination @vue-pagination:change-page="changePage"></vue-pagination>
     </div>
 
@@ -68,6 +71,16 @@ export default {
   created () {
     this.loadData()
   },
+  computed: {
+    page: {
+      get: function () {
+        return parseInt(this.currentPage) + 1
+      },
+      set: function (newValue) {
+        this.currentPage = newValue - 1
+      }
+    }
+  },
   methods: {
     loadData: function () {
       this.error = this.events = null
@@ -90,6 +103,9 @@ export default {
           this.fireEvent('loaded')
         }
       })
+    },
+    refresh: function () {
+      this.loadData()
     },
     getPaginationData: function (pagination) {
       let number = pagination.numberOfElements || pagination.size

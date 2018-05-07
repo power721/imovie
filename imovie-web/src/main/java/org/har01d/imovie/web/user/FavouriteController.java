@@ -34,6 +34,7 @@ public class FavouriteController {
     public Page<Favourite> getFavourites(Principal principal, Pageable pageable) {
         User user = userRepository.findByUsername(principal.getName());
         List<Favourite> favourites = user.getFavourite().stream().map(Favourite::new).collect(Collectors.toList());
+        favourites.sort((a, b) -> b.getId() - a.getId());
         int from = pageable.getPageNumber() * pageable.getPageSize();
         int to = from + pageable.getPageSize();
         if (to > favourites.size()) {
