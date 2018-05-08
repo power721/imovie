@@ -142,6 +142,8 @@ public class MjttParserImpl extends AbstractParser implements MjttParser {
                 movie.setEditors(getPeople(getValues(element)));
             } else if (text.contains("主演：")) {
                 movie.setActors(getPeople(getValues(element)));
+            } else if (text.contains("小分类：")) {
+                movie.setCategories(getCategories(getValues(element)));
             } else if (text.contains("时间：")) {
                 try {
                     movie.setSourceTime(df.parse(element.select("label").first().ownText()));

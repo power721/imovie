@@ -2,8 +2,8 @@ import Vue from 'vue'
 
 export default {
   getMovies (params, cb) {
-    var q = []
-    var query = params.q
+    let q = []
+    let query = params.q
     if (query.search) {
       q.push(query.search)
     } else {

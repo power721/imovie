@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.har01d.imovie.domain.Category;
 import org.har01d.imovie.domain.CategoryRepository;
 import org.har01d.imovie.domain.Config;
@@ -546,23 +547,25 @@ public class MovieServiceImpl implements MovieService {
             if (movie.getAliases() != null && !movie.getAliases().isEmpty() && m.getAliases() != null) {
                 if (m.getAliases().containsAll(movie.getAliases())) {
                     match += 10;
+                } else if (movie.getAliases().containsAll(m.getAliases())) {
+                    match += 5;
                 }
             }
 
             if (movie.getDirectors() != null && !movie.getDirectors().isEmpty() && m.getDirectors() != null) {
-                if (m.getDirectors().containsAll(movie.getDirectors())) {
+                if (containsAll(m.getDirectors(), movie.getDirectors())) {
                     match += 10;
                 }
             }
 
             if (movie.getEditors() != null && !movie.getEditors().isEmpty() && m.getEditors() != null) {
-                if (m.getEditors().containsAll(movie.getEditors())) {
+                if (containsAll(m.getEditors(), movie.getEditors())) {
                     match += 10;
                 }
             }
 
             if (movie.getActors() != null && !movie.getActors().isEmpty() && m.getActors() != null) {
-                if (m.getActors().containsAll(movie.getActors())) {
+                if (containsAll(m.getActors(), movie.getActors())) {
                     match += 10;
                 }
             }
@@ -615,6 +618,12 @@ public class MovieServiceImpl implements MovieService {
             logger.info("find best matched movie {} for {}, match: {}", best.getTitle(), movie.getName(), maxMatch);
         }
         return best;
+    }
+
+    private boolean containsAll(Set<Person> people1, Set<Person> people2) {
+        Set<String> names1 = people1.stream().map(e -> e.getName().replace("·", " ")).collect(Collectors.toSet());
+        Set<String> names2 = people2.stream().map(e -> e.getName().replace("·", " ")).collect(Collectors.toSet());
+        return names1.containsAll(names2);
     }
 
     private Set<String> getDates(String text) {

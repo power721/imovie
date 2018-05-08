@@ -123,6 +123,9 @@ public abstract class AbstractParser implements Parser {
             if (name.isEmpty()) {
                 continue;
             }
+            if ("罪案".equals(name)) {
+                name = "犯罪";
+            }
             Category c = new Category(name);
             categories.add(c);
         }
